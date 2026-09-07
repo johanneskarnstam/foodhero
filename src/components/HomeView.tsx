@@ -1,0 +1,284 @@
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { ShoppingCart, CalendarDays, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, Sparkles } from 'lucide-react';
+import { useApp } from '../context/AppContext';
+import { useMealPlan } from '../hooks/useMealPlan';
+import { formatDate } from '../utils/dateUtils';
+import type { List, Item } from '../types';
+
+export const HomeView: React.FC = () => {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    const { lists, defaultListId } = useApp();
+    const { getPlanForDate, mealPlans } = useMealPlan();
+
+    // 1. Inköpslista sammanfattning
+    const list: List | undefined = useMemo(() => {
+        return lists.find((l) => l.id === defaultListId);
+    }, [lists, defaultListId]);
+
+    const { uncompletedItems, completedCount, totalCount, previewItems, moreCount } = useMemo(() => {
+        if (!list || !list.items) {
+            return { uncompletedItems: [], completedCount: 0, totalCount: 0, previewItems: [], moreCount: 0 };
+        }
+        const total = list.items.length;
+        const completed = list.items.filter((i: Item) => i.completed).length;
+        const uncompleted = list.items.filter((i: Item) => !i.completed);
+        const preview = uncompleted.slice(0, 4);
+        const more = Math.max(0, uncompleted.length - 4);
+
+        return {
+            uncompletedItems: uncompleted,
+            completedCount: completed,
+            totalCount: total,
+            previewItems: preview,
+            moreCount: more,
+        };
+    }, [list]);
+
+    // 2. Måltidsplanering sammanfattning
+    const nextMealInfo = useMemo(() => {
+        const now = new Date();
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+        const isAfterEveningCutoff = hour > 19 || (hour === 19 && minute >= 30);
+
+        const targetDate = new Date(now);
+        let isTomorrow = false;
+
+        if (isAfterEveningCutoff) {
+            targetDate.setDate(targetDate.getDate() + 1);
+            isTomorrow = true;
+        }
+
+        const getMealForDay = (d: Date) => {
+            const plan = getPlanForDate(d);
+            if (!plan) return null;
+            const dateStr = formatDate(d);
+            const day = plan.days.find((dayPlan) => dayPlan.date === dateStr);
+            if (!day || !day.meals || day.meals.length === 0) return null;
+
+            // Prioritera middag om det finns, annars lunch, annars första
+            const dinner = day.meals.find((m) => m.type === 'dinner');
+            if (dinner && dinner.plannedMeal?.customTitle?.trim()) {
+                return { meal: dinner, mealType: 'dinner' as const };
+            }
+            const lunch = day.meals.find((m) => m.type === 'lunch');
+            if (lunch && lunch.plannedMeal?.customTitle?.trim()) {
+                return { meal: lunch, mealType: 'lunch' as const };
+            }
+            const anyMeal = day.meals.find((m) => m.plannedMeal?.customTitle?.trim());
+            if (anyMeal) {
+                return { meal: anyMeal, mealType: anyMeal.type };
+            }
+            return null;
+        };
+
+        // 1. Kolla targetDate (idag eller imorgon beroende på klockslag)
+        const primaryMatch = getMealForDay(targetDate);
+        if (primaryMatch) {
+            return {
+                hasMeal: true,
+                title: primaryMatch.meal.plannedMeal.customTitle,
+                label: isTomorrow ? t('dashboard.tomorrowDinner') : t('dashboard.todayDinner'),
+            };
+        }
+
+        // 2. Om targetDate var idag men saknade måltid, kolla imorgon
+        if (!isTomorrow) {
+            const tomorrow = new Date(targetDate);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowMatch = getMealForDay(tomorrow);
+            if (tomorrowMatch) {
+                return {
+                    hasMeal: true,
+                    title: tomorrowMatch.meal.plannedMeal.customTitle,
+                    label: t('dashboard.tomorrowDinner'),
+                };
+            }
+        }
+
+        // 3. Kolla resten av aktuell vecka (upp till 5 dagar framåt)
+        for (let offset = 2; offset <= 6; offset++) {
+            const upcoming = new Date(now);
+            upcoming.setDate(now.getDate() + offset);
+            const match = getMealForDay(upcoming);
+            if (match) {
+                const dayName = upcoming.toLocaleDateString(undefined, { weekday: 'long' });
+                const capitalizedDay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                return {
+                    hasMeal: true,
+                    title: match.meal.plannedMeal.customTitle,
+                    label: `${capitalizedDay} - ${t('dashboard.nextMeal')}`,
+                };
+            }
+        }
+
+        return { hasMeal: false, title: '', label: '' };
+    }, [getPlanForDate, mealPlans, t]);
+
+    return (
+        <div className="max-w-3xl mx-auto space-y-6 pb-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        {t('dashboard.title', 'Hem')}
+                    </h1>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                        {t('app.title', 'BuyMilk')}
+                    </p>
+                </div>
+            </div>
+
+            {/* Sektion 1: Inköpslista */}
+            <div
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate('/shopping')}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        navigate('/shopping');
+                    }
+                }}
+                className="group relative bg-white dark:bg-gray-800/90 rounded-2xl p-5 md:p-6 border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md hover:border-blue-500/50 dark:hover:border-blue-400/50 transition-all duration-200 cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            >
+                {/* Kortrubrik och räknare */}
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
+                            <ShoppingCart size={22} />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                {t('dashboard.shoppingTitle', 'Inköpslista')}
+                            </h2>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {totalCount > 0 && uncompletedItems.length === 0
+                                    ? t('dashboard.allDone', 'Allt är inhandlat! 🎉')
+                                    : t('dashboard.itemsLeft', { count: uncompletedItems.length })}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {uncompletedItems.length > 0 && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                                {uncompletedItems.length}
+                            </span>
+                        )}
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all">
+                            <ArrowRight size={18} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Progress bar om listan innehåller både klara och oklara varor */}
+                {totalCount > 0 && completedCount > 0 && uncompletedItems.length > 0 && (
+                    <div className="mb-4">
+                        <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
+                            <span>{completedCount} av {totalCount} klara</span>
+                            <span>{Math.round((completedCount / totalCount) * 100)}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                                style={{ width: `${(completedCount / totalCount) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Förhandsvisning av varor */}
+                {uncompletedItems.length > 0 ? (
+                    <div className="space-y-2 pt-1 border-t border-gray-100 dark:border-gray-700/60">
+                        {previewItems.map((item) => (
+                            <div key={item.id} className="flex items-center gap-2.5 text-sm text-gray-700 dark:text-gray-300">
+                                <Circle size={13} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                <span className="truncate">{item.text}</span>
+                            </div>
+                        ))}
+
+                        {/* Indikation om fler varor */}
+                        {moreCount > 0 && (
+                            <div className="pt-1 text-xs font-medium text-blue-600 dark:text-blue-400">
+                                {t('dashboard.moreItems', { count: moreCount })}
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="py-2 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-700/60 pt-3">
+                        <CheckCircle2 size={16} className="text-emerald-500" />
+                        <span>
+                            {totalCount > 0
+                                ? t('dashboard.allDone', 'Allt är inhandlat! 🎉')
+                                : t('dashboard.emptyList', 'Inköpslistan är tom')}
+                        </span>
+                    </div>
+                )}
+            </div>
+
+            {/* Sektion 2: Måltidsplanering */}
+            <div
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate('/mealplan')}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        navigate('/mealplan');
+                    }
+                }}
+                className="group relative bg-white dark:bg-gray-800/90 rounded-2xl p-5 md:p-6 border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md hover:border-amber-500/50 dark:hover:border-amber-400/50 transition-all duration-200 cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            >
+                <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
+                            <CalendarDays size={22} />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                                {t('dashboard.mealPlanTitle', 'Måltidsplanering')}
+                            </h2>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {nextMealInfo.hasMeal ? nextMealInfo.label : t('nav.mealplan', 'Matsedel')}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-1 transition-all">
+                        <ArrowRight size={18} />
+                    </div>
+                </div>
+
+                {/* Innehåll: Planerad måltid ELLER uppmaning */}
+                <div className="pt-2 border-t border-gray-100 dark:border-gray-700/60">
+                    {nextMealInfo.hasMeal ? (
+                        <div className="flex items-center gap-3 py-1.5">
+                            <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex-shrink-0">
+                                <UtensilsCrossed size={16} />
+                            </div>
+                            <div className="min-w-0">
+                                <span className="text-sm font-semibold text-gray-900 dark:text-white truncate block">
+                                    {nextMealInfo.title}
+                                </span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {nextMealInfo.label}
+                                </span>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-3 py-2 text-amber-700 dark:text-amber-300">
+                            <Sparkles size={18} className="text-amber-500 flex-shrink-0" />
+                            <span className="text-sm font-medium">
+                                {t('dashboard.noMealsPlannedPrompt', 'Hey, hittar inga planerade måltider, dags att planera matsedeln!')}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};

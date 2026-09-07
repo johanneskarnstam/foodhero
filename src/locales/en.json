@@ -9,6 +9,24 @@
     "more": "More",
     "viewMealPlan": "View meal plan"
   },
+  "dashboard": {
+    "title": "Home",
+    "shoppingTitle": "Shopping List",
+    "itemsLeft_one": "{{count}} item left to buy",
+    "itemsLeft_other": "{{count}} items left to buy",
+    "itemsLeft_zero": "0 items left to buy",
+    "allDone": "Everything is bought! 🎉",
+    "emptyList": "The shopping list is empty",
+    "moreItems": "+{{count}} more",
+    "openShopping": "Open shopping list",
+    "mealPlanTitle": "Meal Planning",
+    "todayDinner": "Today's dinner",
+    "tomorrowDinner": "Tomorrow's dinner",
+    "todayLunch": "Today's lunch",
+    "nextMeal": "Next meal",
+    "noMealsPlannedPrompt": "Hey, no planned meals found, time to plan the menu!",
+    "openMealPlan": "Open meal planner"
+  },
   "app": {
     "title": "BuyMilk",
     "searchPlaceholder": "Search groceries...",

@@ -48,12 +48,12 @@ describe('Layout route-aware WakeLock', () => {
         });
     });
 
-    it('opens shopping list overlay and requests wake lock when eye button is clicked on home page (/)', () => {
+    it('opens shopping list overlay and requests wake lock when eye button is clicked on shopping page (/shopping)', () => {
         render(
-            <MemoryRouter initialEntries={['/']}>
+            <MemoryRouter initialEntries={['/shopping']}>
                 <Routes>
                     <Route element={<Layout />}>
-                        <Route path="/" element={<div>Home View</div>} />
+                        <Route path="/shopping" element={<div>Shopping View</div>} />
                     </Route>
                 </Routes>
             </MemoryRouter>
@@ -67,12 +67,12 @@ describe('Layout route-aware WakeLock', () => {
         expect(mockShowToast).not.toHaveBeenCalled();
     });
 
-    it('closes shopping list overlay and releases wake lock when eye button is clicked again on home page (/)', () => {
+    it('closes shopping list overlay and releases wake lock when eye button is clicked again on shopping page (/shopping)', () => {
         render(
-            <MemoryRouter initialEntries={['/']}>
+            <MemoryRouter initialEntries={['/shopping']}>
                 <Routes>
                     <Route element={<Layout />}>
-                        <Route path="/" element={<div>Home View</div>} />
+                        <Route path="/shopping" element={<div>Shopping View</div>} />
                     </Route>
                 </Routes>
             </MemoryRouter>

@@ -23,17 +23,17 @@ export const Layout: React.FC = () => {
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isShoppingListViewOpen, setIsShoppingListViewOpen] = useState(false);
 
-    const isHomePage = location.pathname === '/';
+    const isShoppingPage = location.pathname === '/shopping';
 
-    // Close shopping list overlay if navigating away from home page
+    // Close shopping list overlay if navigating away from shopping page
     useEffect(() => {
-        if (!isHomePage && isShoppingListViewOpen) {
+        if (!isShoppingPage && isShoppingListViewOpen) {
             setIsShoppingListViewOpen(false);
         }
-    }, [isHomePage, isShoppingListViewOpen]);
+    }, [isShoppingPage, isShoppingListViewOpen]);
 
     const handleEyeButtonClick = () => {
-        if (isHomePage) {
+        if (isShoppingPage) {
             if (!isShoppingListViewOpen) {
                 requestWakeLock();
                 setIsShoppingListViewOpen(true);

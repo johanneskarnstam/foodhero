@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingCart, CalendarDays, ChefHat, MoreHorizontal, X, SquareCheck, Settings, Activity, BarChart3, History, Search } from 'lucide-react';
+import { ShoppingCart, CalendarDays, ChefHat, MoreHorizontal, X, SquareCheck, Settings, Activity, BarChart3, History, Search, LayoutGrid } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface BottomNavProps {
@@ -76,9 +76,15 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onMoreOpen, onNavigate, st
     const primaryTabs = [
         {
             path: '/',
+            icon: LayoutGrid,
+            label: t('nav.home', 'Hem'),
+            exact: true,
+        },
+        {
+            path: '/shopping',
             icon: ShoppingCart,
             label: t('nav.shopping', 'Inköp'),
-            exact: true,
+            exact: false,
         },
         {
             path: '/mealplan',

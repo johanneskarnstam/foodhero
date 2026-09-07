@@ -2,6 +2,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
     LayoutGrid,
+    ShoppingCart,
     SquareCheck,
     Utensils,
     UtensilsCrossed,
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNavClick }) => {
 
     const navItems = [
         { path: '/', icon: LayoutGrid, label: t('nav.home') },
+        { path: '/shopping', icon: ShoppingCart, label: t('nav.shopping', 'Inköp') },
         { path: '/todos', icon: SquareCheck, label: t('nav.todos') },
         { path: '/meals', icon: Utensils, label: t('nav.meals', 'Måltider') },
         { path: '/mealplan', icon: UtensilsCrossed, label: t('nav.mealplan', 'Måltidsplan') },

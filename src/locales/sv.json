@@ -9,6 +9,24 @@
     "more": "Mer",
     "viewMealPlan": "Visa matsedeln"
   },
+  "dashboard": {
+    "title": "Hem",
+    "shoppingTitle": "Inköpslista",
+    "itemsLeft_one": "{{count}} vara kvar att handla",
+    "itemsLeft_other": "{{count}} varor kvar att handla",
+    "itemsLeft_zero": "0 varor kvar att handla",
+    "allDone": "Allt är inhandlat! 🎉",
+    "emptyList": "Inköpslistan är tom",
+    "moreItems": "+{{count}} till",
+    "openShopping": "Öppna inköpslistan",
+    "mealPlanTitle": "Måltidsplanering",
+    "todayDinner": "Dagens middag",
+    "tomorrowDinner": "Morgondagens middag",
+    "todayLunch": "Dagens lunch",
+    "nextMeal": "Nästa måltid",
+    "noMealsPlannedPrompt": "Hey, hittar inga planerade måltider, dags att planera matsedeln!",
+    "openMealPlan": "Öppna matsedeln"
+  },
   "app": {
     "title": "BuyMilk",
     "searchPlaceholder": "Sök matvaror",

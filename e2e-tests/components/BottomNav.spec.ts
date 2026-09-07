@@ -5,11 +5,13 @@ test.describe('BottomNav Component', () => {
   // They are skipped by default and should be enabled when Firebase Emulator is set up
   test.skip('should display navigation tabs', async ({ page }) => {
     await page.goto('/buymilk/');
+    const homeTab = page.locator('text=Hem');
     const shoppingTab = page.locator('text=Inköp');
     const mealplanTab = page.locator('text=Matsedel');
     const mealsTab = page.locator('text=Recept');
     const moreTab = page.locator('text=Mer');
 
+    await expect(homeTab).toBeVisible();
     await expect(shoppingTab).toBeVisible();
     await expect(mealplanTab).toBeVisible();
     await expect(mealsTab).toBeVisible();
@@ -18,9 +20,9 @@ test.describe('BottomNav Component', () => {
 
   test.skip('should highlight active tab', async ({ page }) => {
     await page.goto('/buymilk/');
-    // The shopping tab should be active on the home page
-    const shoppingTab = page.locator('text=Inköp');
-    await expect(shoppingTab).toHaveClass(/text-blue-600|dark:text-blue-400/);
+    // The home tab should be active on the home page
+    const homeTab = page.locator('text=Hem');
+    await expect(homeTab).toHaveClass(/text-blue-600|dark:text-blue-400/);
   });
 
   test.skip('should navigate to mealplan page', async ({ page }) => {

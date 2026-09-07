@@ -39,6 +39,20 @@ describe('BottomNav Component', () => {
         // Verify onMoreOpen was called
         expect(onMoreOpen).toHaveBeenCalled();
     });
+
+    it('should render all 5 navigation tabs', () => {
+        render(
+            <MemoryRouter>
+                <BottomNav onMoreOpen={vi.fn()} onNavigate={vi.fn()} />
+            </MemoryRouter>
+        );
+
+        expect(screen.getByText('Hem')).toBeDefined();
+        expect(screen.getByText('Inköp')).toBeDefined();
+        expect(screen.getByText('Matsedel')).toBeDefined();
+        expect(screen.getByText('Recept')).toBeDefined();
+        expect(screen.getByText('Mer')).toBeDefined();
+    });
 });
 
 describe('MoreDrawer Component', () => {

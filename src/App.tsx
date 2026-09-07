@@ -1,6 +1,7 @@
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { AppProvider } from './context/AppContext'
 import { Layout } from './components/Layout'
+import { HomeView } from './components/HomeView'
 import { GroceryListView } from './components/GroceryListView'
 import { MealPlanView } from './components/MealPlanView'
 import { TodoView } from './components/TodoView'
@@ -26,6 +27,10 @@ const router = createHashRouter([
         children: [
             {
                 path: "/",
+                element: <HomeView />,
+            },
+            {
+                path: "/shopping",
                 element: <GroceryListView />,
             },
             {

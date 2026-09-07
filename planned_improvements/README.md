@@ -29,9 +29,17 @@ This directory contains planning documents for upcoming features and improvement
 - **File**: [ingredient-search-view.md](./ingredient-search-view.md)
 - **Status**: Implementation plan created ✅
 
+### 🏠 3. Startsida (Home Dashboard)
+
+- **Description**: Ny startsida med två primära sektioner: Inköpslista (övre) och Måltidsplanering (nedre).
+- **Priority**: High
+- **Functionality**: Snabb överblick över varor att handla och planerad matsedel, med direktnavigering till respektive vy.
+- **File**: [home-dashboard-view.md](./home-dashboard-view.md)
+- **Status**: Implementation plan created ✅
+
 ## Implementation Order
 
-1. What's New Modal (higher user visibility)
+1. Startsida (Home Dashboard) / What's New Modal
 2. Ingredient Search View (enhances recipe discovery)
 
 ## Notes
