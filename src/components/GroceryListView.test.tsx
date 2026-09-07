@@ -153,4 +153,52 @@ describe('GroceryListView Voice Input', () => {
             expect(updatedInput).toHaveValue('Milk');
         }, { timeout: 2000 });
     });
+
+    it('hides the floating add item bar when editing an existing item in the list', () => {
+        vi.mocked(useVoiceInput).mockReturnValue({
+            isListening: false,
+            transcript: '',
+            startListening: vi.fn(),
+            stopListening: vi.fn(),
+            resetTranscript: vi.fn(),
+            hasSupport: true,
+        });
+
+        vi.mocked(useApp).mockReturnValue({
+            lists: [{
+                id: '1',
+                items: [{ id: 'item-1', text: 'Mjölk', completed: false, createdAt: '' }],
+                settings: {},
+                isPending: false
+            }],
+            defaultListId: '1',
+            updateListItems: vi.fn(),
+            updateListAccess: vi.fn(),
+            loading: false,
+            itemHistory: [],
+            addToHistory: vi.fn(),
+            categories: [],
+            addCategory: vi.fn(),
+            mealPlans: [],
+        } as unknown as ReturnType<typeof useApp>);
+
+        render(<MemoryRouter><GroceryListView /></MemoryRouter>);
+
+        // Initially, the add-item input is visible
+        const addItemInput = screen.getByPlaceholderText('lists.addItemPlaceholder');
+        expect(addItemInput).toBeInTheDocument();
+
+        // Focus the existing item text input
+        const itemInput = screen.getByDisplayValue('Mjölk');
+        fireEvent.focus(itemInput);
+
+        // The floating add-item bar should now be hidden
+        expect(screen.queryByPlaceholderText('lists.addItemPlaceholder')).not.toBeInTheDocument();
+
+        // Blur the item input
+        fireEvent.blur(itemInput);
+
+        // The floating add-item bar should reappear
+        expect(screen.getByPlaceholderText('lists.addItemPlaceholder')).toBeInTheDocument();
+    });
 });

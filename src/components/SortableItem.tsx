@@ -24,6 +24,7 @@ interface SortableItemProps {
     onCategorize?: (id: string) => void;
     disabled?: boolean;
     isCategorized?: boolean;
+    onEditingChange?: (isEditing: boolean) => void;
 }
 
 export const SortableItem: React.FC<SortableItemProps> = ({
@@ -35,7 +36,8 @@ export const SortableItem: React.FC<SortableItemProps> = ({
     onTogglecheckIfExistAtHome,
     onCategorize,
     disabled,
-    isCategorized
+    isCategorized,
+    onEditingChange
 }) => {
     const { t } = useTranslation();
     const [localText, setLocalText] = React.useState(item.text);
@@ -53,6 +55,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
     }, [item.note]);
 
     const handleBlur = () => {
+        onEditingChange?.(false);
         if (onEdit && localText !== item.text) {
             onEdit(item.id, localText);
         }
@@ -65,6 +68,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
     };
 
     const handleNoteBlur = () => {
+        onEditingChange?.(false);
         const trimmed = localNote.trim();
         if (onEditNote && trimmed !== (item.note || '')) {
             onEditNote(item.id, trimmed || undefined);
@@ -80,6 +84,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
         } else if (e.key === 'Escape') {
             setLocalNote(item.note || '');
             setIsEditingNote(false);
+            onEditingChange?.(false);
         }
     };
 
@@ -87,10 +92,12 @@ export const SortableItem: React.FC<SortableItemProps> = ({
         e.stopPropagation();
         if (!isEditingNote) {
             setIsEditingNote(true);
+            onEditingChange?.(true);
             setTimeout(() => noteInputRef.current?.focus(), 50);
         } else {
             handleNoteBlur();
             setIsEditingNote(false);
+            onEditingChange?.(false);
         }
     };
 
@@ -197,6 +204,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
                                         type="text"
                                         value={localText}
                                         onChange={(e) => setLocalText(e.target.value)}
+                                        onFocus={() => onEditingChange?.(true)}
                                         onBlur={handleBlur}
                                         onKeyDown={handleKeyDown}
                                         disabled={isReadOnly}
@@ -216,6 +224,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
                                                     type="text"
                                                     value={localNote}
                                                     onChange={(e) => setLocalNote(e.target.value)}
+                                                    onFocus={() => onEditingChange?.(true)}
                                                     onBlur={handleNoteBlur}
                                                     onKeyDown={handleNoteKeyDown}
                                                     placeholder={t('lists.notePlaceholder')}
@@ -231,6 +240,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
                                                         e.stopPropagation();
                                                         if (!isReadOnly) {
                                                             setIsEditingNote(true);
+                                                            onEditingChange?.(true);
                                                             setTimeout(() => noteInputRef.current?.focus(), 50);
                                                         }
                                                     }}

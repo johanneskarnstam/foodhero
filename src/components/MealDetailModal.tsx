@@ -60,7 +60,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
     return (
         <div 
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-[120] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
             role="dialog"
             aria-modal="true"
             aria-labelledby="meal-detail-title"
@@ -69,7 +69,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200"
             >
                 {/* Hero / Header Image */}
-                <div className="relative h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-900 flex-shrink-0">
+                <div className="relative h-36 sm:h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-900 flex-shrink-0">
                     {meal.imageUrl ? (
                         <img 
                             src={meal.imageUrl} 
@@ -211,13 +211,14 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                 </div>
 
                 {/* Action Footer */}
-                <div className="p-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700/80 flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                <div className="p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+                    {/* Secondary actions */}
+                    <div className="flex items-center gap-1.5 sm:gap-2">
                         {onRandomMeal && (
                             <button
                                 type="button"
                                 onClick={onRandomMeal}
-                                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <Dices size={14} className="text-blue-500" />
                                 <span>{t('mealDetail.randomMeal', 'Slumpa ny')}</span>
@@ -227,7 +228,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                             <button 
                                 type="button"
                                 onClick={() => onEdit(meal)}
-                                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <Edit2 size={13} />
                                 <span>{t('common.edit', 'Redigera')}</span>
@@ -237,7 +238,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                             <button
                                 type="button"
                                 onClick={handleDelete}
-                                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-gray-800 border border-red-200/60 dark:border-red-800/40 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
+                                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-gray-800 border border-red-200/60 dark:border-red-800/40 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
                             >
                                 <Trash2 size={13} />
                                 <span>{t('common.delete', 'Ta bort')}</span>
@@ -245,12 +246,13 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                         )}
                     </div>
 
+                    {/* Primary actions */}
                     <div className="flex items-center gap-2">
                         {onAddToShoppingList && hasIngredients && (
                             <button
                                 type="button"
                                 onClick={() => onAddToShoppingList(meal)}
-                                className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/40 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
+                                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/40 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
                             >
                                 <ShoppingCart size={13} />
                                 <span>{t('meals.addToShoppingList', 'Handla')}</span>
@@ -261,7 +263,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                             <button
                                 type="button"
                                 onClick={() => onPlanMeal(meal)}
-                                className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md shadow-blue-600/20 transition-all cursor-pointer"
+                                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md shadow-blue-600/20 transition-all cursor-pointer"
                             >
                                 <Calendar size={13} />
                                 <span>{t('meals.planInMealPlan', 'Planera')}</span>

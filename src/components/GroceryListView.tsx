@@ -44,6 +44,7 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
     const [importModalOpen, setImportModalOpen] = useState(false);
     const [completedAccordionOpen, setCompletedAccordionOpen] = useState(false);
     const [clearCompletedModalOpen, setClearCompletedModalOpen] = useState(false);
+    const [isEditingItem, setIsEditingItem] = useState(false);
 
     const list: List | undefined = lists.find((l) => l.id === defaultListId);
 
@@ -479,6 +480,7 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
                                             onEdit={handleEdit}
                                             onEditNote={handleEditNote}
                                             onTogglecheckIfExistAtHome={handleTogglecheckIfExistAtHome}
+                                            onEditingChange={setIsEditingItem}
                                         />
                                     ))}
                                 </div>
@@ -525,6 +527,7 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
                                                     onEdit={handleEdit}
                                                     onEditNote={handleEditNote}
                                                     onTogglecheckIfExistAtHome={handleTogglecheckIfExistAtHome}
+                                                    onEditingChange={setIsEditingItem}
                                                     disabled={true}
                                                 />
                                             </div>
@@ -539,7 +542,7 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
 
 
             {/* Floating Persistent Bottom Bar */}
-            {!importModalOpen && document.body && !isMoreOpen && createPortal(
+            {!importModalOpen && document.body && !isMoreOpen && !isEditingItem && createPortal(
                 <div className="fixed bottom-[50px] left-0 right-0 md:left-72 bg-gradient-to-t from-white via-white/95 to-white/0 dark:from-gray-900 dark:via-gray-900/95 dark:to-gray-900/0 pt-10 pb-6 px-4 z-[99] transition-all duration-300 pointer-events-none">
                     <div className="max-w-4xl mx-auto pointer-events-auto">
                             <div className="relative group">
