@@ -178,6 +178,8 @@
     "auto": "Auto",
     "wakeLock": "Håll skärmen vaken",
     "wakeLockDesc": "Förhindra att skärmen släcks",
+    "wakeLockActive": "Skärmen hålls vaken",
+    "wakeLockDisabled": "Skärmlås avaktiverat",
     "reloadUpdate": "Uppdatera & Ladda om",
     "reloadUpdateDesc": "Tvinga uppdatering",
     "dataManagement": "Datahantering",

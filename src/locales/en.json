@@ -174,6 +174,8 @@
     "auto": "Auto",
     "wakeLock": "Keep Screen On",
     "wakeLockDesc": "Prevent screen from sleeping",
+    "wakeLockActive": "Screen kept awake",
+    "wakeLockDisabled": "Screen wake lock disabled",
     "reloadUpdate": "Reload & Update",
     "reloadUpdateDesc": "Force app update",
     "dataManagement": "Data Management",

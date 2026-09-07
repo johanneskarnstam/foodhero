@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Moon, Sun, Eye } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Sidebar } from './Sidebar';
@@ -11,14 +11,46 @@ import { ShoppingListOverlay } from './ShoppingListOverlay';
 import { BottomNav, MoreDrawer } from './BottomNav';
 import { ToastContainer } from './ToastContainer';
 import { UpdatePrompt } from './UpdatePrompt';
+import { useToast } from '../context/ToastContext';
 
 export const Layout: React.FC = () => {
     const { t } = useTranslation();
     const { theme, toggleTheme } = useApp();
     const { isSupported, isLocked, requestWakeLock, releaseWakeLock } = useWakeLock();
+    const { showToast } = useToast();
+    const location = useLocation();
     
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isShoppingListViewOpen, setIsShoppingListViewOpen] = useState(false);
+
+    const isHomePage = location.pathname === '/';
+
+    // Close shopping list overlay if navigating away from home page
+    useEffect(() => {
+        if (!isHomePage && isShoppingListViewOpen) {
+            setIsShoppingListViewOpen(false);
+        }
+    }, [isHomePage, isShoppingListViewOpen]);
+
+    const handleEyeButtonClick = () => {
+        if (isHomePage) {
+            if (!isShoppingListViewOpen) {
+                requestWakeLock();
+                setIsShoppingListViewOpen(true);
+            } else {
+                releaseWakeLock();
+                setIsShoppingListViewOpen(false);
+            }
+        } else {
+            if (isLocked) {
+                releaseWakeLock();
+                showToast(t('settings.wakeLockDisabled', 'Skärmlås avaktiverat'), 'info');
+            } else {
+                requestWakeLock();
+                showToast(t('settings.wakeLockActive', 'Skärmen hålls vaken'), 'info');
+            }
+        }
+    };
 
     return (
         <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-x-hidden">
@@ -41,20 +73,14 @@ export const Layout: React.FC = () => {
                     <div className="flex items-center gap-1.5">
                         {isSupported && (
                             <button
-                                onClick={() => {
-                                    if (!isShoppingListViewOpen) {
-                                        requestWakeLock();
-                                    } else {
-                                        releaseWakeLock();
-                                    }
-                                    setIsShoppingListViewOpen(!isShoppingListViewOpen);
-                                }}
+                                onClick={handleEyeButtonClick}
                                 className={`p-2 rounded-full transition-colors ${
                                     isLocked
                                         ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
                                         : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                                 }`}
-                                title={t('settings.wakeLock')}
+                                title={t('settings.wakeLock', 'Håll skärmen vaken')}
+                                aria-label={t('settings.wakeLock', 'Håll skärmen vaken')}
                             >
                                 <Eye size={20} />
                             </button>
