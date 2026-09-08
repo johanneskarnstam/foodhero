@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { createNewList, addItemToList } from '../fixtures/utils';
+import { signInWithGoogle, createNewList, addItemToList, deleteItemFromList } from '../fixtures/utils';
 
 test.describe('Shopping Lists', () => {
   // These tests require authentication to access the lists page

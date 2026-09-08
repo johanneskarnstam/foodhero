@@ -1,5 +1,15 @@
 [
   {
+    "hash": "7e2b5346d15bd214ab2be950ca9aa6a90dcd0e7d",
+    "date": "2026-09-08 12:44:05 +0200",
+    "message": "feat(test): enable Firebase Emulator tests and update gitignore"
+  },
+  {
+    "hash": "e742df781f393cf7906b72845422b1ee90607d1d",
+    "date": "2026-09-08 12:09:43 +0200",
+    "message": "feat(assets): update app icons and favicons, add commits.json entry"
+  },
+  {
     "hash": "7da53bc1beae5e45481866f8b601afe882b06f1f",
     "date": "2026-09-08 11:54:08 +0200",
     "message": "chore: uppdatera commits.json"
@@ -88,15 +98,5 @@
     "hash": "c84972f7b3c8d2f2e6384a39a9840f69468e2f7a",
     "date": "2026-09-03 16:19:25 +0200",
     "message": "test: update IngredientSearchView empty state and add RandomMealCard mock"
-  },
-  {
-    "hash": "1f3f7e3fd7e04221e13f9195065c2bb04bd162f6",
-    "date": "2026-09-03 15:57:32 +0200",
-    "message": "feat: implement lazy loading for meal suggestions with loading state"
-  },
-  {
-    "hash": "1f7d5fe32d737d1de75aee915e56a07c7426eebb",
-    "date": "2026-09-03 15:26:59 +0200",
-    "message": "feat(data): add 100 new meal suggestions to mealSuggestions.json"
   }
 ]

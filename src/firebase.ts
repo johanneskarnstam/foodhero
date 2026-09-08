@@ -30,7 +30,13 @@ if (useEmulator) {
         // Connect Firestore emulator
         connectFirestoreEmulator(db, 'localhost', 8080);
     } catch (error) {
-        console.warn('⚠️  Could not connect to Firebase Emulator:', error);
+        // In test environments (Vitest), Firebase functions might be mocked
+        // and connectAuthEmulator/connectFirestoreEmulator won't be available
+        if (import.meta.env.MODE === 'test') {
+            console.log('🧪 Running in test mode - Firebase Emulator connection skipped');
+        } else {
+            console.warn('⚠️  Could not connect to Firebase Emulator:', error);
+        }
     }
 }
 

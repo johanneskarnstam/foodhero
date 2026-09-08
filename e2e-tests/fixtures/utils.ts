@@ -1,8 +1,8 @@
 import { Page, expect } from '@playwright/test';
+import { mockSignInWithGoogle, mockSignInWithEmail, mockSignOut, isMockAuthenticated, getMockUser, mockUser } from './mockAuth';
 
-// Firebase Emulator URLs
-const FIREBASE_AUTH_EMULATOR_URL = 'http://localhost:9099';
-const FIREBASE_FIRESTORE_EMULATOR_URL = 'http://localhost:8080';
+// Re-export mock functions for convenience
+export { mockSignInWithGoogle, mockSignInWithEmail, mockSignOut, isMockAuthenticated, getMockUser, mockUser };
 
 // Test user credentials
 interface TestUser {
@@ -28,52 +28,47 @@ export const testUsers: Record<string, TestUser> = {
 };
 
 /**
- * Sign in with email and password using Firebase Emulator
+ * Sign in with email and password using Mock
  */
 export async function signInWithEmail(page: Page, email: string = 'test1@example.com', password: string = 'test123') {
   console.log(`🔐 Signing in with email: ${email}`);
   
   await page.goto('/buymilk/');
-  await page.click('button:has-text("Logga in")');
-  await page.fill('input[type="email"]', email);
-  await page.fill('input[type="password"]', password);
-  await page.click('button[type="submit"]');
+  await mockSignInWithEmail(page, email, password);
+  
+  // Reload to trigger auth state change
+  await page.reload();
   await page.waitForURL('/buymilk/**');
+  
+  // Verify we're signed in by checking for user-specific content
   await expect(page.locator('text=Mina listor')).toBeVisible({ timeout: 10000 });
   console.log('✅ Signed in successfully');
 }
 
 /**
- * Sign in with Google using Firebase Emulator (mocked)
+ * Sign in with Google using Mock
  */
 export async function signInWithGoogle(page: Page) {
   console.log('🔐 Signing in with Google (mocked)');
   
   await page.goto('/buymilk/');
-  await page.click('button:has-text("Logga in med Google")');
+  await mockSignInWithGoogle(page);
   
-  await page.evaluate((emulatorUrl) => {
-    const mockUser = {
-      uid: 'test-user-1',
-      email: 'test1@example.com',
-      displayName: 'Test User 1',
-      photoURL: 'https://example.com/avatar.jpg',
-      emailVerified: true
-    };
-    localStorage.setItem('firebase:authUser', JSON.stringify(mockUser));
-  }, FIREBASE_AUTH_EMULATOR_URL);
-  
+  // Reload to trigger auth state change
   await page.reload();
   await page.waitForURL('/buymilk/**');
   console.log('✅ Signed in with Google (mocked)');
 }
 
 /**
- * Sign out from Firebase Emulator
+ * Sign out using Mock
  */
 export async function signOut(page: Page) {
   console.log('🔓 Signing out');
-  await page.click('button:has-text("Logga ut")');
+  await mockSignOut(page);
+  
+  // Reload to trigger auth state change
+  await page.reload();
   await expect(page.locator('text=Välkommen till BuyMilk')).toBeVisible();
   console.log('✅ Signed out successfully');
 }
