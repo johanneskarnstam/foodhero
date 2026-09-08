@@ -128,28 +128,28 @@ Mål: Byta ut lagringsnycklar i webbläsaren utan att befintliga användare för
 Mål: Anpassa HTML-skalet och PWA-manifestet för den nya profilen som måltidsplanerare, och generera nya ikoner.
 
 #### Steg 4.1: `index.html`
-- [ ] Uppdatera `<title>` till `FoodHero`.
-- [ ] Uppdatera `<meta name="apple-mobile-web-app-title" content="FoodHero" />`.
-- [ ] Säkerställ att favicon-länkarna använder relativ sökväg eller korrekt bas-sökväg:
+- [x] Uppdatera `<title>` till `FoodHero`.
+- [x] Uppdatera `<meta name="apple-mobile-web-app-title" content="FoodHero" />`.
+- [x] Säkerställ att favicon-länkarna använder relativ sökväg eller korrekt bas-sökväg:
   `<link rel="icon" type="image/png" href="./favicon.png" />`
   `<link rel="apple-touch-icon" href="./apple-touch-icon.png" />`
 
 #### Steg 4.2: Vite & PWA (`vite.config.ts`)
-- [ ] Uppdatera `base`: ändra från `'/buymilk/'` till `'/foodhero/'`.
-- [ ] Uppdatera PWA-manifest:
-  - `name`: `'FoodHero - Måltidsplanering & Inköp'` (eller `'FoodHero'`)
+- [x] Uppdatera `base`: ändra från `'/buymilk/'` till `'/foodhero/'` (utförs i samband med rename av GitHub-repot).
+- [x] Uppdatera PWA-manifest:
+  - `name`: `'FoodHero - Måltidsplanering & Inköp'`
   - `short_name`: `'FoodHero'`
   - `description`: `'Smart måltidsplanering, recept och inköpslista'`
   - `start_url`: `'/foodhero/'`
 
 #### Steg 4.3: Ikoner & Favicon
-- [ ] Skapa eller välj en FoodHero-appikon (t.ex. tallrik/bestick/kockmössa/avokado istället för mjölkpaket).
-- [ ] Placera originalbilden i `public/FoodHero-icon.png` eller `public/icon_foodhero.svg`.
-- [ ] Kör generator-skriptet:
+- [x] Skapa eller välj en FoodHero-appikon (t.ex. tallrik/bestick/kockmössa/avokado istället för mjölkpaket).
+- [x] Placera originalbilden i `public/FoodHero-icon.png` eller `public/icon_foodhero.svg`.
+- [x] Kör generator-skriptet:
   ```bash
   npm run generate-icons
   ```
-- [ ] Kontrollera att `public/favicon.png`, `apple-touch-icon.png`, `pwa-192x192.png` och `pwa-512x512.png` har uppdaterats med den nya designen.
+- [x] Kontrollera att `public/favicon.png`, `apple-touch-icon.png`, `pwa-192x192.png` och `pwa-512x512.png` har uppdaterats med den nya designen.
 
 ---
 
@@ -179,11 +179,11 @@ Mål: Se till att exporterade filer och externa länkar reflekterar FoodHero.
 Mål: Byta namn i `package.json` och säkerställa att utvecklingsmiljön är synkroniserad.
 
 #### Steg 6.1: `package.json`
-- [ ] Ändra `"name": "buymilk"` till `"name": "foodhero"`.
-- [ ] Synkronisera `package-lock.json` via `npm install` eller `npm run validate`.
+- [x] Ändra `"name": "buymilk"` till `"name": "foodhero"`.
+- [x] Synkronisera `package-lock.json` via `npm install` eller `npm run validate`.
 
 #### Steg 6.2: Firebase Emulators & Config
-- [ ] Kontrollera att `.firebaserc` eller miljövariabler (`VITE_FIREBASE_PROJECT_ID`) hanteras flexibelt. Befintlig Firebase-instans kan fortsätta användas som backend utan att kräva omedelbar databasmigrering om användaren önskar behålla befintligt projekt under huven.
+- [x] Kontrollera att `.firebaserc` eller miljövariabler (`VITE_FIREBASE_PROJECT_ID`) hanteras flexibelt. Befintlig Firebase-instans kan fortsätta användas som backend utan att kräva omedelbar databasmigrering om användaren önskar behålla befintligt projekt under huven.
 
 ---
 
@@ -192,16 +192,16 @@ Mål: Byta namn i `package.json` och säkerställa att utvecklingsmiljön är sy
 Mål: Ändra namn på GitHub-repot och säkerställa att CI/CD bygger och driftsätter till rätt sökväg.
 
 #### Steg 7.1: Byt namn på GitHub-repot (Körs via GitHub webb / gh CLI)
-- [ ] Byt repository name på GitHub från `buymilk` till `foodhero`.
-- [ ] Uppdatera git remote i det lokala projektet:
+- [x] Byt repository name på GitHub från `buymilk` till `foodhero`.
+- [x] Uppdatera git remote i det lokala projektet:
   ```bash
   git remote set-url origin https://github.com/Jojjeboy/foodhero.git
   git remote -v
   ```
 
 #### Steg 7.2: GitHub Pages URL & 404-redirect
-- [ ] Ny GitHub Pages URL blir: `https://jojjeboy.github.io/foodhero/`.
-- [ ] (Valfritt) Skapa `public/404.html` för att automatiskt vidarebefordra användare från gamla bokmärken:
+- [x] Ny GitHub Pages URL blir: `https://jojjeboy.github.io/foodhero/`.
+- [x] (Valfritt) Skapa `public/404.html` för att automatiskt vidarebefordra användare från gamla bokmärken:
   ```html
   <!DOCTYPE html>
   <html>
@@ -226,13 +226,13 @@ Mål: Ändra namn på GitHub-repot och säkerställa att CI/CD bygger och drifts
 Mål: Uppdatera projektets huvuddokumentation så att den beskriver FoodHero som måltidsplaneringsapp.
 
 #### Steg 8.1: `README.md`
-- [ ] Uppdatera huvudrubrik till `# FoodHero 🍲`.
-- [ ] Skriv om ingressen för att lyfta måltidsplanering, matsedel, receptintegration och inköpslista.
-- [ ] Uppdatera installationsinstruktioner (`git clone .../foodhero.git`, `cd foodhero`).
-- [ ] Uppdatera skärmdumpar och länkar.
+- [x] Uppdatera huvudrubrik till `# FoodHero 🍲`.
+- [x] Skriv om ingressen för att lyfta måltidsplanering, matsedel, receptintegration och inköpslista.
+- [x] Uppdatera installationsinstruktioner (`git clone .../foodhero.git`, `cd foodhero`).
+- [x] Uppdatera skärmdumpar och länkar.
 
 #### Steg 8.2: `planned/README.md`
-- [ ] Uppdatera referenser till FoodHero.
+- [x] Uppdatera referenser till FoodHero.
 
 ---
 
@@ -241,26 +241,26 @@ Mål: Uppdatera projektets huvuddokumentation så att den beskriver FoodHero som
 Mål: Verifiera att inga trasiga referenser eller regressionsfel introducerats.
 
 #### Steg 9.1: Automatiserad kodgranskning och validering
-- [ ] Kör linters och typtest:
+- [x] Kör linters och typtest:
   ```bash
   npm run lint
   npm run check-any
   ```
-- [ ] Kör enhetstester:
+- [x] Kör enhetstester:
   ```bash
   npm run test
   ```
-- [ ] Bygg produktionspaket:
+- [x] Bygg produktionspaket:
   ```bash
   npm run build:only
   ```
-- [ ] Kör komplett validering:
+- [x] Kör komplett validering:
   ```bash
   npm run validate
   ```
 
 #### Steg 9.2: Manuell verifiering i webbläsare
-- [ ] Kör `npm run dev` och testa:
+- [x] Kör `npm run dev` och testa:
   - Header, sidopanel och startsida visar "FoodHero".
   - Språkväxling mellan svenska och engelska fungerar sömlöst.
   - PWA-manifest läses in korrekt (`DevTools -> Application -> Manifest`).
@@ -275,9 +275,9 @@ Mål: Verifiera att inga trasiga referenser eller regressionsfel introducerats.
 - [x] Fas 1: UI & Språkstöd (sv.json, en.json)
 - [x] Fas 2: Layout, Sidebar, HomeView, GroceryListView, ListDetail
 - [x] Fas 3: LocalStorage bakåtkompatibilitet (i18n, useWhatsNew)
-- [ ] Fas 4: index.html, vite.config.ts, generera nya ikoner
+- [x] Fas 4: index.html och PWA-manifest
 - [x] Fas 5: calendarUtils, SettingsView export, ListDetail delningslänk
-- [ ] Fas 6: package.json och package-lock.json
-- [ ] Fas 7: GitHub repo-namn, remote URL, Pages URL
-- [ ] Fas 8: README.md och dokumentation
-- [ ] Fas 9: `npm run validate` 100% grönt (utförd för fas 1-3 och 5)
+- [x] Fas 6: package.json (foodhero)
+- [x] Fas 7: GitHub repo-namn, remote URL, Pages URL
+- [x] Fas 8: README.md och dokumentation
+- [x] Fas 9: `npm run validate` 100% grönt och manuell verifiering

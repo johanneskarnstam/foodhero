@@ -1,8 +1,16 @@
-# BuyMilk 🥛
+# FoodHero 🍲
 
-BuyMilk is a modern, intuitive grocery list application designed to make shopping efficient, organized, and data-driven. It combines real-time synchronization with intelligent automation to ensure you never forget an item again.
+FoodHero is a modern, intuitive meal planning and grocery list application designed to make everyday meal preparation, recipe management, and grocery shopping efficient, organized, and data-driven. It combines real-time synchronization with intelligent automation to streamline your meals from recipe to table.
 
 ## 🚀 Key Features
+
+### 📅 Meal Planning & Recipes
+
+- **Interactive Meal Planner**: Plan weekly lunches and dinners with an intuitive visual interface.
+- **Recipe Management**: Save and organize your favorite recipes with ingredients, instructions, and tags.
+- **Recipe Parser**: Paste recipe text or web URLs, and FoodHero will intelligently extract ingredients directly into your shopping list.
+- **Ingredient Search**: Search recipes by ingredients you already have at home to reduce food waste.
+- **Calendar Export**: Export planned meals directly to your iCal/Google Calendar.
 
 ### 🛒 Smart Grocery Lists
 
@@ -12,10 +20,9 @@ BuyMilk is a modern, intuitive grocery list application designed to make shoppin
 - **Product History**: Smart autocomplete based on your most frequently added items.
 - **Offline Mode**: Continue shopping without internet; the app syncs your changes automatically once you're back online.
 
-### 📥 Advanced Importing
+### 📥 Advanced Importing & Backups
 
-- **Recipe Parser**: Paste a recipe from the web, and BuyMilk will intelligently extract the ingredients for you.
-- **JSON Import**: Power-user support for importing items via JSON files or strings, including support for notes and "check at home" flags.
+- **JSON Import/Export**: Full backup and restore support for grocery lists, recipes, and meal plans.
 
 ### ✅ Task Management
 
@@ -61,8 +68,8 @@ BuyMilk is a modern, intuitive grocery list application designed to make shoppin
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Jojjeboy/buymilk.git
-   cd buymilk
+   git clone https://github.com/Jojjeboy/foodhero.git
+   cd foodhero
    ```
 2. Install dependencies:
    ```bash

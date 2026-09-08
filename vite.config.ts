@@ -5,20 +5,20 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/buymilk/',
+  base: '/foodhero/',
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'apple-touch-icon.png', 'pwa-maskable-192x192.png', 'pwa-maskable-512x512.png'],
       manifest: {
-        name: 'Buy milk',
-        short_name: 'Buy milk',
-        description: 'A progressive list management app',
+        name: 'FoodHero - Måltidsplanering & Inköp',
+        short_name: 'FoodHero',
+        description: 'Smart måltidsplanering, recept och inköpslista',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/buymilk/',
+        start_url: '/foodhero/',
         icons: [
           {
             src: 'pwa-192x192.png',
