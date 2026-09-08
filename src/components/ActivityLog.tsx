@@ -7,7 +7,7 @@ import { Commit } from '../types';
 
 const commits = commitsData as Commit[];
 
-const GITHUB_REPO = 'https://github.com/Jojjeboy/buymilk';
+const GITHUB_REPO = 'https://github.com/Jojjeboy/foodhero';
 
 export const ActivityLog: React.FC = () => {
     const { t } = useTranslation();
@@ -25,7 +25,7 @@ export const ActivityLog: React.FC = () => {
                             {t('activity.title', 'Activity Log')}
                         </h2>
                         <p className="text-gray-500 dark:text-gray-400 font-medium">
-                            {t('activity.subtitle', 'Recent updates and improvements to BuyMilk')}
+                            {t('activity.subtitle', 'Recent updates and improvements to FoodHero')}
                         </p>
                     </div>
                 </div>

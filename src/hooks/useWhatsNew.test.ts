@@ -11,7 +11,8 @@ vi.mock('../commits.json', () => ({
   ]
 }));
 
-const STORAGE_KEY = 'buymilk:whats-new-last-seen';
+const STORAGE_KEY = 'foodhero:whats-new-last-seen';
+const LEGACY_STORAGE_KEY = 'buymilk:whats-new-last-seen';
 
 describe('useWhatsNew', () => {
   beforeEach(() => {
@@ -25,6 +26,16 @@ describe('useWhatsNew', () => {
     expect(result.current.showModal).toBe(false);
     expect(result.current.newCommits).toEqual([]);
     expect(localStorage.getItem(STORAGE_KEY)).toBe('hash3');
+  });
+
+  it('should migrate legacy buymilk key if foodhero key is not present', () => {
+    localStorage.setItem(LEGACY_STORAGE_KEY, 'hash1');
+    
+    const { result } = renderHook(() => useWhatsNew());
+    
+    expect(result.current.showModal).toBe(true);
+    expect(result.current.newCommits).toHaveLength(2);
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('hash1');
   });
 
   it('should show modal with unseen commits if returning visitor', () => {

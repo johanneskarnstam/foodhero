@@ -2,14 +2,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { Commit } from '../types';
 import commitsJson from '../commits.json';
 
-const STORAGE_KEY = 'buymilk:whats-new-last-seen';
+const STORAGE_KEY = 'foodhero:whats-new-last-seen';
+const LEGACY_STORAGE_KEY = 'buymilk:whats-new-last-seen';
 
 export function useWhatsNew() {
     const [showModal, setShowModal] = useState(false);
     const [newCommits, setNewCommits] = useState<Commit[]>([]);
 
     useEffect(() => {
-        const lastSeenHash = localStorage.getItem(STORAGE_KEY);
+        let lastSeenHash = localStorage.getItem(STORAGE_KEY);
+        
+        // Bakåtkompatibel migrering från tidigare BuyMilk-nyckel
+        if (!lastSeenHash) {
+            const legacyHash = localStorage.getItem(LEGACY_STORAGE_KEY);
+            if (legacyHash) {
+                lastSeenHash = legacyHash;
+                localStorage.setItem(STORAGE_KEY, legacyHash);
+            }
+        }
+
         // Ensure commits are typed correctly. Since files property is optional on Commit but might be missing in json, as unknown as Commit[] is safest.
         const commits: Commit[] = commitsJson as unknown as Commit[];
 

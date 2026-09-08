@@ -5,6 +5,17 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en.json';
 import sv from './locales/sv.json';
 
+if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+        const oldLang = localStorage.getItem('buymilk_language');
+        if (oldLang && !localStorage.getItem('foodhero_language')) {
+            localStorage.setItem('foodhero_language', oldLang);
+        }
+    } catch {
+        // Ignore storage access errors
+    }
+}
+
 i18n
     .use(LanguageDetector)
     .use(initReactI18next)
@@ -16,7 +27,7 @@ i18n
         fallbackLng: 'sv',
         detection: {
             order: ['localStorage', 'querystring'],
-            lookupLocalStorage: 'buymilk_language',
+            lookupLocalStorage: 'foodhero_language',
             caches: ['localStorage'],
         },
         interpolation: {

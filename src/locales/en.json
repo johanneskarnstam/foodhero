@@ -28,7 +28,7 @@
     "openMealPlan": "Open meal planner"
   },
   "app": {
-    "title": "BuyMilk",
+    "title": "FoodHero",
     "searchPlaceholder": "Search groceries...",
     "settings": "Settings",
     "toggleTheme": "Toggle theme",
@@ -409,7 +409,7 @@
   },
   "activity": {
     "title": "Activity Log",
-    "subtitle": "Recent updates and changes",
+    "subtitle": "Recent updates and improvements to FoodHero",
     "show": "Show",
     "filesChanged": "{{count}} file changed",
     "filesChanged_plural": "{{count}} files changed"
@@ -418,8 +418,8 @@
     "justNow": "Just now"
   },
   "landing": {
-    "welcome": "Welcome to BuyMilk",
-    "subtitle": "Food shopping list",
+    "welcome": "Welcome to FoodHero",
+    "subtitle": "Smart meal planning & grocery lists",
     "signIn": "Sign in with Google"
   },
   "import": {

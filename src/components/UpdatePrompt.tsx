@@ -23,7 +23,7 @@ export const UpdatePrompt: React.FC = () => {
     useEffect(() => {
         if (needRefresh) {
             // Fetch the latest commits from the server (bypassing cache if possible)
-            fetch(`/buymilk/commits.json?t=${Date.now()}`)
+            fetch(`${import.meta.env.BASE_URL}commits.json?t=${Date.now()}`)
                 .then(res => res.json())
                 .then((data: Commit[]) => {
                     if (data && data.length > 0) {
@@ -76,7 +76,7 @@ export const UpdatePrompt: React.FC = () => {
                                     </span>
                                 </div>
                                 <a
-                                    href="https://github.com/jojjeboy/buymilk/commits/master"
+                                    href="https://github.com/jojjeboy/foodhero/commits/main"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"

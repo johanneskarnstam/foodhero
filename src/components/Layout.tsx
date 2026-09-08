@@ -71,8 +71,8 @@ export const Layout: React.FC = () => {
                 {/* Mobile Header */}
                 <header className="md:hidden sticky top-0 z-10 glass p-3 flex items-center justify-between border-b border-gray-200/60 dark:border-gray-800/60">
                     <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-                        <img src="/buymilk/favicon.png" alt="Logo" className="w-9 h-9 rounded-xl shadow-sm" />
-                        <h1 className="text-2xl font-bold text-[#2c6de3]">BuyMilk</h1>
+                        <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="FoodHero logo" className="w-9 h-9 rounded-xl shadow-sm" />
+                        <h1 className="text-2xl font-bold text-[#2c6de3]">{t('app.title', 'FoodHero')}</h1>
                     </Link>
                     <div className="flex items-center gap-1.5">
                         {isSupported && (

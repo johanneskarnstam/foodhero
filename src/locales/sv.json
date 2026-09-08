@@ -28,7 +28,7 @@
     "openMealPlan": "Öppna matsedeln"
   },
   "app": {
-    "title": "BuyMilk",
+    "title": "FoodHero",
     "searchPlaceholder": "Sök matvaror",
     "settings": "Inställningar",
     "toggleTheme": "Växla tema",
@@ -413,7 +413,7 @@
   },
   "activity": {
     "title": "Aktivitetslogg",
-    "subtitle": "Senaste uppdateringar och ändringar",
+    "subtitle": "Senaste uppdateringar och ändringar i FoodHero",
     "show": "Visa",
     "filesChanged": "{{count}} fil ändrad",
     "filesChanged_plural": "{{count}} filer ändrade"
@@ -422,8 +422,8 @@
     "justNow": "Just nu"
   },
   "landing": {
-    "welcome": "Välkommen till BuyMilk",
-    "subtitle": "Inhandlingslista för mat",
+    "welcome": "Välkommen till FoodHero",
+    "subtitle": "Smart måltidsplanering & inköpslista",
     "signIn": "Logga in med Google"
   },
   "import": {

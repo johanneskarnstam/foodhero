@@ -198,7 +198,7 @@ export const SettingsView: React.FC = () => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `buymilk-shopping-list.json`;
+        link.download = `foodhero-shopping-list.json`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

@@ -50,7 +50,7 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
 
     React.useEffect(() => {
         if (list) {
-            document.title = `BuyMilk - ${t('lists.groceryTitle')}`;
+            document.title = `FoodHero - ${t('lists.groceryTitle')}`;
             updateListAccess(list.id);
         }
     }, [list?.id, t, updateListAccess]);

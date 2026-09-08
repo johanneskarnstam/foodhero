@@ -4,7 +4,7 @@ export const exportMealPlanToICS = (days: { date: Date; lunch: string; dinner: s
     const icsContent = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//BuyMilk//MealPlan//SV',
+        'PRODID:-//FoodHero//MealPlan//SV',
         'CALSCALE:GREGORIAN',
         'METHOD:PUBLISH'
     ];
@@ -15,7 +15,7 @@ export const exportMealPlanToICS = (days: { date: Date; lunch: string; dinner: s
         if (lunch) {
             icsContent.push(
                 'BEGIN:VEVENT',
-                `UID:${`lunch-${dateStr}@buymilk.app`}`,
+                `UID:${`lunch-${dateStr}@foodhero.app`}`,
                 `DTSTAMP:${now}`,
                 `DTSTART;VALUE=DATE:${dateStr}`,
                 `DTEND;VALUE=DATE:${dateStr}`, // iCal DATE is exclusive for DTEND, but for all-day we usually just set start
@@ -27,7 +27,7 @@ export const exportMealPlanToICS = (days: { date: Date; lunch: string; dinner: s
         if (dinner) {
             icsContent.push(
                 'BEGIN:VEVENT',
-                `UID:${`dinner-${dateStr}@buymilk.app`}`,
+                `UID:${`dinner-${dateStr}@foodhero.app`}`,
                 `DTSTAMP:${now}`,
                 `DTSTART;VALUE=DATE:${dateStr}`,
                 `DTEND;VALUE=DATE:${dateStr}`,
@@ -46,7 +46,7 @@ function generateCorrectICS(days: { date: Date; lunch: string; dinner: string }[
     const icsContent = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//BuyMilk//MealPlan//SV',
+        'PRODID:-//FoodHero//MealPlan//SV',
         'CALSCALE:GREGORIAN',
         'METHOD:PUBLISH'
     ];
@@ -63,7 +63,7 @@ function generateCorrectICS(days: { date: Date; lunch: string; dinner: string }[
         if (lunch) {
             icsContent.push(
                 'BEGIN:VEVENT',
-                `UID:${`lunch-${startStr}@buymilk.app`}`,
+                `UID:${`lunch-${startStr}@foodhero.app`}`,
                 `DTSTAMP:${now}`,
                 `DTSTART;VALUE=DATE:${startStr}`,
                 `DTEND;VALUE=DATE:${endStr}`,
@@ -75,7 +75,7 @@ function generateCorrectICS(days: { date: Date; lunch: string; dinner: string }[
         if (dinner) {
             icsContent.push(
                 'BEGIN:VEVENT',
-                `UID:${`dinner-${startStr}@buymilk.app`}`,
+                `UID:${`dinner-${startStr}@foodhero.app`}`,
                 `DTSTAMP:${now}`,
                 `DTSTART;VALUE=DATE:${startStr}`,
                 `DTEND;VALUE=DATE:${endStr}`,

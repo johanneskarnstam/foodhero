@@ -127,7 +127,7 @@ export const HomeView: React.FC = () => {
                         {t('dashboard.title', 'Hem')}
                     </h1>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                        {t('app.title', 'BuyMilk')}
+                        {t('app.title', 'FoodHero')}
                     </p>
                 </div>
             </div>
