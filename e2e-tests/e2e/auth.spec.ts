@@ -26,8 +26,8 @@ test.describe('Authentication Flow', () => {
     await expect(subtitle).toBeVisible();
   });
 
-  // Note: This test would require Firebase Emulator or mocking
-  test.skip('should allow user to sign in with Google', async ({ page }) => {
+  // This test uses Firebase Emulator
+  test('should allow user to sign in with Google', async ({ page }) => {
     await signInWithGoogle(page);
   });
 });

@@ -30,6 +30,13 @@ coverage
 # Firebase
 firebase-debug.log
 firestore-export/
+.firebase/
+.firebaserc
+
+# Firebase Emulator
+firebase-emulator-*
+*.firebaserc.emulator
+firebase.emulator.json
 
 # Playwright
 playwright-report/

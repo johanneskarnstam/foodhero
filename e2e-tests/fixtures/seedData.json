@@ -1,0 +1,111 @@
+{
+  "users": [
+    {
+      "uid": "test-user-1",
+      "email": "test1@example.com",
+      "displayName": "Test User 1",
+      "photoURL": "https://example.com/avatar1.jpg"
+    },
+    {
+      "uid": "test-user-2",
+      "email": "test2@example.com",
+      "displayName": "Test User 2",
+      "photoURL": "https://example.com/avatar2.jpg"
+    }
+  ],
+  "lists": [
+    {
+      "id": "test-list-1",
+      "userId": "test-user-1",
+      "name": "Veckohandla",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z",
+      "items": [
+        {
+          "id": "item-1",
+          "name": "Mjölk",
+          "completed": false,
+          "createdAt": "2024-01-01T00:00:00Z",
+          "aisle": "Mejeri",
+          "quantity": "1 liter"
+        },
+        {
+          "id": "item-2",
+          "name": "Bröd",
+          "completed": false,
+          "createdAt": "2024-01-01T00:01:00Z",
+          "aisle": "Bageri",
+          "quantity": "1 limpa"
+        },
+        {
+          "id": "item-3",
+          "name": "Ägg",
+          "completed": true,
+          "createdAt": "2024-01-01T00:02:00Z",
+          "aisle": "Mejeri",
+          "quantity": "10 st"
+        }
+      ]
+    },
+    {
+      "id": "test-list-2",
+      "userId": "test-user-1",
+      "name": "Extra",
+      "createdAt": "2024-01-02T00:00:00Z",
+      "updatedAt": "2024-01-02T00:00:00Z",
+      "items": []
+    }
+  ],
+  "meals": [
+    {
+      "id": "meal-1",
+      "userId": "test-user-1",
+      "title": "Pasta Carbonara",
+      "ingredients": "Pasta, Ägg, Bacon, Grädde, Parmesan",
+      "instructions": "1. Koka pastan\n2. Stek bacon\n3. Blanda med ägg och grädde\n4. Servera med parmesan",
+      "category": "Pasta",
+      "createdAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": "meal-2",
+      "userId": "test-user-1",
+      "title": "Pannkakor",
+      "ingredients": "Mjöl, Ägg, Mjölk, Smör",
+      "instructions": "1. Blanda ingredienser\n2. Stek i panna\n3. Servera med sylt",
+      "category": "Frukost",
+      "createdAt": "2024-01-02T00:00:00Z"
+    }
+  ],
+  "mealPlans": [
+    {
+      "id": "plan-1",
+      "userId": "test-user-1",
+      "week": 1,
+      "year": 2024,
+      "days": {
+        "monday": {
+          "breakfast": "meal-2",
+          "lunch": "meal-1",
+          "dinner": ""
+        },
+        "tuesday": {
+          "breakfast": "",
+          "lunch": "",
+          "dinner": ""
+        }
+      }
+    }
+  ],
+  "settings": [
+    {
+      "userId": "test-user-1",
+      "language": "sv",
+      "theme": "light",
+      "aisles": [
+        {"name": "Mejeri", "keywords": ["mjölk", "ost", "yoghurt", "grädde", "smör"]},
+        {"name": "Bageri", "keywords": ["bröd", "bullar", "kaka", "limpa"]},
+        {"name": "Kött", "keywords": ["kött", "kyckling", "bacon", "korv", "nöt"]}
+      ]
+    }
+  ]
+}

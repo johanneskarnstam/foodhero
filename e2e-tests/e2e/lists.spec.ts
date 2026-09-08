@@ -3,34 +3,37 @@ import { createNewList, addItemToList } from '../fixtures/utils';
 
 test.describe('Shopping Lists', () => {
   // These tests require authentication to access the lists page
-  // They are skipped by default and should be enabled when Firebase Emulator is set up
-  test.skip('should display the lists page', async ({ page }) => {
-    await page.goto('/buymilk/lists');
-    await expect(page).toHaveURL('/buymilk/lists');
+  // They use Firebase Emulator for testing
+  test('should display the shopping page', async ({ page }) => {
+    await signInWithGoogle(page);
+    await page.goto('/buymilk/shopping');
+    await expect(page).toHaveURL('/buymilk/shopping');
   });
 
-  test.skip('should show create list button', async ({ page }) => {
-    await page.goto('/buymilk/lists');
-    const createButton = page.locator('text=Create List');
-    await expect(createButton).toBeVisible();
+  test('should show add item input', async ({ page }) => {
+    await signInWithGoogle(page);
+    await page.goto('/buymilk/shopping');
+    const addInput = page.locator('input[placeholder*="Lägg till"]');
+    await expect(addInput).toBeVisible();
   });
 
-  // Note: These tests would require authentication and Firebase Emulator
-  test.skip('should create a new list', async ({ page }) => {
-    await page.goto('/buymilk/lists');
+  // These tests require authentication and Firebase Emulator
+  test('should create a new list', async ({ page }) => {
+    await signInWithGoogle(page);
+    await page.goto('/buymilk/shopping');
     await createNewList(page, 'Groceries');
   });
 
-  test.skip('should add item to list', async ({ page }) => {
-    await page.goto('/buymilk/lists/123'); // Assume 123 is a list ID
+  test('should add item to list', async ({ page }) => {
+    await signInWithGoogle(page);
+    await page.goto('/buymilk/shopping');
     await addItemToList(page, 'Milk');
   });
 
-  test.skip('should delete item from list', async ({ page }) => {
-    await page.goto('/buymilk/lists/123');
-    await addItemToList(page, 'Milk');
-    await page.click('text=Milk >> nth=0'); // Select the item
-    await page.click('text=Delete');
-    await expect(page.locator('text=Milk')).not.toBeVisible();
+  test('should delete item from list', async ({ page }) => {
+    await signInWithGoogle(page);
+    await page.goto('/buymilk/shopping');
+    await addItemToList(page, 'Test Item');
+    await deleteItemFromList(page, 'Test Item');
   });
 });

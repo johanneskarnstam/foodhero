@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,3 +16,22 @@ export const auth = getAuth(app);
 export const db = initializeFirestore(app, {
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
 });
+
+// Connect to Firebase Emulator if enabled
+const useEmulator = import.meta.env.VITE_FIREBASE_EMULATOR === 'true';
+
+if (useEmulator) {
+    try {
+        console.log('🔥 Connecting to Firebase Emulator');
+        
+        // Connect Auth emulator
+        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+        
+        // Connect Firestore emulator
+        connectFirestoreEmulator(db, 'localhost', 8080);
+    } catch (error) {
+        console.warn('⚠️  Could not connect to Firebase Emulator:', error);
+    }
+}
+
+export { useEmulator };
