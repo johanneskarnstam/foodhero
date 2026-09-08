@@ -558,5 +558,16 @@
       "drinks": "Drinks",
       "other": "Other"
     }
+  },
+  "whatsNew": {
+    "title": "What's new since your last visit",
+    "close": "Close",
+    "categories": {
+      "feat": "New feature",
+      "fix": "Bug fix",
+      "refactor": "Improvement",
+      "other": "Other"
+    }
   }
 }
+

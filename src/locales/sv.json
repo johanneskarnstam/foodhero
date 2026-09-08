@@ -553,5 +553,16 @@
       "drinks": "Drycker",
       "other": "Övrigt"
     }
+  },
+  "whatsNew": {
+    "title": "Nyheter sedan ditt senaste besök",
+    "close": "Stäng",
+    "categories": {
+      "feat": "Nyhet",
+      "fix": "Buggfix",
+      "refactor": "Förbättring",
+      "other": "Övrigt"
+    }
   }
 }
+

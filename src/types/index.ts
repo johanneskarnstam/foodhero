@@ -154,3 +154,7 @@ export interface QuickItemsSettings {
     id: string;
     enabledItems: string[];
 }
+
+export interface WhatsNewState {
+    lastSeenHash: string;
+}

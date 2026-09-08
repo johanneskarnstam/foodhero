@@ -120,7 +120,6 @@ Always work on dedicated feature branches for new features or non-trivial fixes:
 
 - **Framework:**
   - **Unit & Component Testing:** Vitest with @testing-library/react.
-  - **End-to-End (E2E) Testing:** Playwright.
 
 - **Coverage Mandatory:** Every new feature, hook, or critical bug fix must include tests in `.test.ts` or `.test.tsx` files.
 - **Test Execution:**
@@ -136,3 +135,30 @@ Always work on dedicated feature branches for new features or non-trivial fixes:
 2. **Tool Discipline:** Use file reading tools (`read_file`) to inspect the full file context before performing inline modifications (`replace_in_file`).
 3. **Architectural Alignment:** Follow existing patterns rather than introducing conflicting paradigms.
 4. **Tone & Style:** Keep all responses direct, concise, technical, and actionable.
+
+---
+
+## 8. Versioning & Release Management
+
+### Semantic Versioning (SemVer)
+This project follows [Semantic Versioning 2.0.0](https://semver.org/) for `package.json`. The version number is structured as `MAJOR.MINOR.PATCH`.
+
+### When to Update the Version
+The version in `package.json` **MUST** be incremented **automatically by the AI agent** when:
+- All tests pass (`npm run validate` succeeds).
+- Changes are ready to be merged into the `main` branch.
+
+### Version Update Criteria
+The AI agent **MUST** determine the version type (MAJOR, MINOR, or PATCH) based on the following rules:
+
+| Version Type | When to Use                                                                                     | Examples                                                                                     |
+|--------------|--------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| **MAJOR**    | Incompatible API changes, breaking changes, or major architectural overhauls.                  | Removing a core feature, changing Firebase schema in a non-backward-compatible way.       |
+| **MINOR**    | Backward-compatible new functionality or significant improvements.                              | Adding a new feature, new hooks, or major UI/UX improvements.                                |
+| **PATCH**    | Backward-compatible bug fixes, minor improvements, or non-functional changes (e.g., styling). | Fixing a bug, adjusting layouts, or updating dependencies without functional impact.       |
+
+### How to Update the Version
+1. **AI Agent Responsibility:** Before merging to `main`, the AI agent **MUST** update the version in `package.json` according to the criteria above.
+2. **Commit the Change:** Include the version update in the same commit or PR that introduces the change.
+   - Example commit message: `release: bump version to 1.1.0`
+3. **Verify:** Ensure `npm run validate` passes before merging.

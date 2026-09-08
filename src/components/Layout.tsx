@@ -12,6 +12,8 @@ import { BottomNav, MoreDrawer } from './BottomNav';
 import { ToastContainer } from './ToastContainer';
 import { UpdatePrompt } from './UpdatePrompt';
 import { useToast } from '../context/ToastContext';
+import { useWhatsNew } from '../hooks/useWhatsNew';
+import { WhatsNewModal } from './WhatsNewModal';
 
 export const Layout: React.FC = () => {
     const { t } = useTranslation();
@@ -19,6 +21,8 @@ export const Layout: React.FC = () => {
     const { isSupported, isLocked, requestWakeLock, releaseWakeLock } = useWakeLock();
     const { showToast } = useToast();
     const location = useLocation();
+    
+    const { showModal, newCommits, dismiss } = useWhatsNew();
     
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isShoppingListViewOpen, setIsShoppingListViewOpen] = useState(false);
@@ -115,6 +119,7 @@ export const Layout: React.FC = () => {
             <MoreDrawer isOpen={isMoreOpen} onClose={() => setIsMoreOpen(false)} />
             <ToastContainer />
             <UpdatePrompt />
+            <WhatsNewModal isOpen={showModal} commits={newCommits} onClose={dismiss} />
         </div>
     );
 };

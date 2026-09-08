@@ -1,5 +1,35 @@
 [
   {
+    "hash": "d547776c9633c7b7467b90f5b9cfe0d89efe4bb4",
+    "date": "2026-09-08 16:04:32 +0200",
+    "message": "chore(ci): update workflow name to be more descriptive"
+  },
+  {
+    "hash": "393ce0a34e98a0fce227dc2e6a217f29fbb37364",
+    "date": "2026-09-08 16:00:06 +0200",
+    "message": "fix: ta bort e2e-jobb från CI, körs lokalt istället"
+  },
+  {
+    "hash": "26b78be21d7a95fc8782c1bdd21a829407dd59cb",
+    "date": "2026-09-08 15:42:59 +0200",
+    "message": "fix: lägg till väntan på UI-element i e2e-hjälpfunktioner"
+  },
+  {
+    "hash": "7930fe04d22be12a6a45854134db8ca0612c25bf",
+    "date": "2026-09-08 15:02:35 +0200",
+    "message": "fix: ta bort onödig firebase-emulator från e2e-jobb i CI"
+  },
+  {
+    "hash": "f9854fb47ce6e9173f00129893b79af8fdd069d2",
+    "date": "2026-09-08 14:49:12 +0200",
+    "message": "feat(ci): add test coverage upload, caching, and Firebase secret support"
+  },
+  {
+    "hash": "68bbbdfa46e2ffc4d0f96457dee518196b4e0d6e",
+    "date": "2026-09-08 14:40:23 +0200",
+    "message": "chore: update commits.json with latest commit and remove old entry"
+  },
+  {
     "hash": "0f52bd5771f832adc7714be9a4b005a01ad0bae4",
     "date": "2026-09-08 14:40:00 +0200",
     "message": "refactor(e2e-tests): improve selectors and add beforeEach hooks"
@@ -68,35 +98,5 @@
     "hash": "235d8050afe3a37a113583005d9e073c018076b5",
     "date": "2026-09-03 20:42:50 +0200",
     "message": "feat: add meal deletion confirmation modal"
-  },
-  {
-    "hash": "df1166cc5f2462de619c8a0215c9426cf01ac957",
-    "date": "2026-09-03 20:22:45 +0200",
-    "message": "feat: add meal planning and shopping list handlers to IngredientSearchView"
-  },
-  {
-    "hash": "74d0ee2168bca053cc9287bb6b82f29f4627224a",
-    "date": "2026-09-03 20:13:40 +0200",
-    "message": "fix(IngredientSearchView): update random meal selection to mix user and suggestion meals"
-  },
-  {
-    "hash": "0e992951e213182425eaf2cd41a735b1b7c41d1c",
-    "date": "2026-09-03 20:08:00 +0200",
-    "message": "feat: add meal editing from detail modal in IngredientSearchView"
-  },
-  {
-    "hash": "2013036e066b77719947c955d05c8babaeb16078",
-    "date": "2026-09-03 19:17:21 +0200",
-    "message": "fix: stäng Mer-drawern automatiskt vid navigation på primära navalternativ"
-  },
-  {
-    "hash": "1f528385e3ca535b264e51db6d3d37fd3cd71d0c",
-    "date": "2026-09-03 18:39:33 +0200",
-    "message": "feat: add useOutletContext mock and remove prop-types disable"
-  },
-  {
-    "hash": "4874fa5c66eb8d8d3901bd6941eb6b419ab49c31",
-    "date": "2026-09-03 18:31:03 +0200",
-    "message": "refactor: consolidate layout routing and add ingredient search to navigation"
   }
 ]
