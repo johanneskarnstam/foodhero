@@ -1,5 +1,10 @@
 [
   {
+    "hash": "0f52bd5771f832adc7714be9a4b005a01ad0bae4",
+    "date": "2026-09-08 14:40:00 +0200",
+    "message": "refactor(e2e-tests): improve selectors and add beforeEach hooks"
+  },
+  {
     "hash": "fca6ee01619712b3268bb42669e7c7762ca7d09e",
     "date": "2026-09-08 13:52:42 +0200",
     "message": "feat(test): improve BottomNav e2e test selectors and viewport setup"
@@ -93,10 +98,5 @@
     "hash": "4874fa5c66eb8d8d3901bd6941eb6b419ab49c31",
     "date": "2026-09-03 18:31:03 +0200",
     "message": "refactor: consolidate layout routing and add ingredient search to navigation"
-  },
-  {
-    "hash": "78fa0346c0ac7d4cf24b7301f7622c9ca2a9b29e",
-    "date": "2026-09-03 17:09:20 +0200",
-    "message": "feat: exclude node_modules from vite coverage config"
   }
 ]
