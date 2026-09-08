@@ -110,11 +110,6 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Start Firebase Emulator
-        run: |
-          npx firebase emulators:start --only auth,firestore &
-          npx wait-on -t 30000 http://localhost:9099
-
       - name: Run Playwright tests
         run: npm run test:e2e
 
