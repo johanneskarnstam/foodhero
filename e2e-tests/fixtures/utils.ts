@@ -57,6 +57,9 @@ export async function signInWithGoogle(page: Page) {
   // Reload to trigger auth state change
   await page.reload();
   await page.waitForURL('/buymilk/**');
+
+  // Wait for the app content to actually render after auth state resolves
+  await expect(page.locator('nav.fixed.bottom-0.left-0.right-0')).toBeVisible({ timeout: 15000 });
   console.log('✅ Signed in with Google (mocked)');
 }
 
@@ -76,6 +79,7 @@ export async function signOut(page: Page) {
 // Helper function to create a new list
 export async function createNewList(page: Page, listName: string) {
   console.log(`📝 Creating new list: ${listName}`);
+  await expect(page.locator('button:text-matches("lista|list")')).toBeVisible({ timeout: 15000 });
   await page.click('button:text-matches("lista|list")');
   await page.fill('input[name="listName"]', listName);
   await page.click('button[type="submit"]');
@@ -86,6 +90,7 @@ export async function createNewList(page: Page, listName: string) {
 // Helper function to add an item to a list
 export async function addItemToList(page: Page, itemName: string) {
   console.log(`➕ Adding item: ${itemName}`);
+  await expect(page.locator('input[placeholder*="Lägg till"]')).toBeVisible({ timeout: 15000 });
   await page.fill('input[placeholder*="Lägg till"]', itemName);
   await page.keyboard.press('Enter');
   await expect(page.locator(`text=${itemName}`)).toBeVisible();
