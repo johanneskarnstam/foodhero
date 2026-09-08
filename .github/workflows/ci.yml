@@ -1,4 +1,4 @@
-name: CI
+name: Validate Application Code
 
 on:
   workflow_call:
@@ -67,4 +67,3 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-
