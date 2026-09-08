@@ -37,10 +37,19 @@ This directory contains planning documents for upcoming features and improvement
 - **File**: [home-dashboard-view.md](./home-dashboard-view.md)
 - **Status**: Implementation plan created ✅
 
+### 🎨 4. Ikon- och Favicon-generator
+
+- **Description**: Automatiserat skript för att generera favicon, apple-touch-icon och PWA-ikoner från en SVG eller bildfil.
+- **Priority**: Medium
+- **Functionality**: CLI-verktyg (`npm run generate-icons`) som skapar alla ikonstorlekar för webb och PWA.
+- **File**: [icon-generator-script.md](./icon-generator-script.md)
+- **Status**: Implementation plan created ✅
+
 ## Implementation Order
 
 1. Startsida (Home Dashboard) / What's New Modal
 2. Ingredient Search View (enhances recipe discovery)
+3. Ikon- och Favicon-generator
 
 ## Notes
 

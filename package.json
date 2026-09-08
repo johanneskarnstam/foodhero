@@ -18,6 +18,7 @@
     "lint": "eslint .",
     "check-any": "eslint . --config eslint.strict.config.ts",
     "generate-env": "node scripts/generate-env.js",
+    "generate-icons": "node scripts/generate-icons.js",
     "validate": "npm run lint && npm run check-any && npm run test && npm run build:only && npm run test:e2e"
   },
   "dependencies": {
@@ -61,6 +62,7 @@
     "jiti": "^2.6.1",
     "jsdom": "^25.0.0",
     "postcss": "^8.5.6",
+    "sharp": "^0.35.4",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "~5.9.3",

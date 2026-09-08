@@ -1,5 +1,70 @@
 [
   {
+    "hash": "d0fbbcb53e5868e17fac66c6c9b86e82edfbb57a",
+    "date": "2026-09-07 13:26:14 +0200",
+    "message": "feat: add name change guide for BuyMilk to FoodHero migration"
+  },
+  {
+    "hash": "ea1488c62989a9051af28ea1a3bf3ca3ceae6f66",
+    "date": "2026-09-07 13:08:00 +0200",
+    "message": "feat: lägg till ny startsida med översikt för inköp och måltidsplanering"
+  },
+  {
+    "hash": "a6c52e00a84eb10811531c79134b024adf8eace0",
+    "date": "2026-09-07 12:48:37 +0200",
+    "message": "feat: update validation and workflow rules, adjust package.json scripts, and add AGENTS.md"
+  },
+  {
+    "hash": "b41ec5f92d3e10acfff61b74c6ec80cff0dec60e",
+    "date": "2026-09-07 11:35:24 +0200",
+    "message": "feat: förbättra receptdetaljmodal och dölj inmatningsfält vid redigering"
+  },
+  {
+    "hash": "f8b4eaf06e952ef1fbebd4fd09e3a0e9e32fd0d5",
+    "date": "2026-09-07 09:50:24 +0200",
+    "message": "feat: rutt-medveten wake lock och inköpsliste-overlay"
+  },
+  {
+    "hash": "58dd545702c7599dfafb239e608fad51fa4866e6",
+    "date": "2026-09-03 21:00:54 +0200",
+    "message": "feat: add JSON import/export functionality to MealEditModal"
+  },
+  {
+    "hash": "235d8050afe3a37a113583005d9e073c018076b5",
+    "date": "2026-09-03 20:42:50 +0200",
+    "message": "feat: add meal deletion confirmation modal"
+  },
+  {
+    "hash": "df1166cc5f2462de619c8a0215c9426cf01ac957",
+    "date": "2026-09-03 20:22:45 +0200",
+    "message": "feat: add meal planning and shopping list handlers to IngredientSearchView"
+  },
+  {
+    "hash": "74d0ee2168bca053cc9287bb6b82f29f4627224a",
+    "date": "2026-09-03 20:13:40 +0200",
+    "message": "fix(IngredientSearchView): update random meal selection to mix user and suggestion meals"
+  },
+  {
+    "hash": "0e992951e213182425eaf2cd41a735b1b7c41d1c",
+    "date": "2026-09-03 20:08:00 +0200",
+    "message": "feat: add meal editing from detail modal in IngredientSearchView"
+  },
+  {
+    "hash": "2013036e066b77719947c955d05c8babaeb16078",
+    "date": "2026-09-03 19:17:21 +0200",
+    "message": "fix: stäng Mer-drawern automatiskt vid navigation på primära navalternativ"
+  },
+  {
+    "hash": "1f528385e3ca535b264e51db6d3d37fd3cd71d0c",
+    "date": "2026-09-03 18:39:33 +0200",
+    "message": "feat: add useOutletContext mock and remove prop-types disable"
+  },
+  {
+    "hash": "4874fa5c66eb8d8d3901bd6941eb6b419ab49c31",
+    "date": "2026-09-03 18:31:03 +0200",
+    "message": "refactor: consolidate layout routing and add ingredient search to navigation"
+  },
+  {
     "hash": "78fa0346c0ac7d4cf24b7301f7622c9ca2a9b29e",
     "date": "2026-09-03 17:09:20 +0200",
     "message": "feat: exclude node_modules from vite coverage config"
@@ -33,70 +98,5 @@
     "hash": "c493b48823482e01ceaac573e3b87a302eb7d1b9",
     "date": "2026-09-03 14:41:03 +0200",
     "message": "feat: slutför ingredienssökvy med mealSuggestions och enhetstester"
-  },
-  {
-    "hash": "6aaa694429a5bebb74ca45389463f2899114e17c",
-    "date": "2026-09-03 13:24:30 +0200",
-    "message": "docs: update ingredient search view progress and commits history"
-  },
-  {
-    "hash": "5c9597576e534c472eb9b524717a61476dd5ee44",
-    "date": "2026-09-03 12:48:16 +0200",
-    "message": "feat: lägg till förbättrad ingredienssökning med snabbåtgärder och matchningsindikatorer"
-  },
-  {
-    "hash": "f9e7a09e55e17153886f0565455d9c76fcd0db31",
-    "date": "2026-09-03 11:14:33 +0200",
-    "message": "fix: lägg till mock för useNavigate i testfiler"
-  },
-  {
-    "hash": "0faaec26685167f9a183cc4a207fa40c64633635",
-    "date": "2026-09-03 11:05:35 +0200",
-    "message": "feat: lägg till ingredienssökvy med routing och navigation"
-  },
-  {
-    "hash": "9f0758f7037c864c4a2fda730a194e8be266460a",
-    "date": "2026-09-03 10:43:54 +0200",
-    "message": "chore: update commits.json and adjust BottomNav active indicator position"
-  },
-  {
-    "hash": "f991e6df08c073118fd8067d6b45bc10f5f7aee2",
-    "date": "2026-09-03 08:16:21 +0200",
-    "message": "chore: update dependencies and add audit fix to validate script"
-  },
-  {
-    "hash": "da50332e8c3a3467b106edf3589e29b05f02524b",
-    "date": "2026-09-03 08:03:23 +0200",
-    "message": "docs: update commit history and add QuickItem, QuickItemsSettings interfaces"
-  },
-  {
-    "hash": "98fe48fb0979a652d59cdb0bdbac302a66353eae",
-    "date": "2026-09-02 16:43:31 +0200",
-    "message": "chore: update browserslist and related dependencies to latest versions"
-  },
-  {
-    "hash": "d712addbac4b1c23d3215bb4f1b75e354d7c5a1c",
-    "date": "2026-09-02 16:41:14 +0200",
-    "message": "feat: add mobile bottom navigation and improve grocery list UX"
-  },
-  {
-    "hash": "bffaf1f3bb434e8337e68d2dee662c01dac45d45",
-    "date": "2026-09-02 16:32:22 +0200",
-    "message": "docs: update guidelines and mark completed tasks in improvement plan"
-  },
-  {
-    "hash": "548beb46773dcae4ce5b83646eff9d341c987df9",
-    "date": "2026-09-02 16:02:28 +0200",
-    "message": "feat: lägg till omfattande dokument för flödesförbättringsplanLägg till FLOWS_IMPROVEMENT_PLAN.md med en strukturerad färdplan för att förbättra BuyMilks användarflöden, inklusive måltidsplanering, matinköp och recepthantering. Dokumentet beskriver fyra faser med specifika uppgifter för att förbättra UX-konsistens och funktionalitet."
-  },
-  {
-    "hash": "3ee29821977890c953b033a1aee96258a872ecd6",
-    "date": "2026-08-31 15:55:56 +0200",
-    "message": "feat(mealplan): add clear meal button, favorites search filter, and save prompt"
-  },
-  {
-    "hash": "79bf52384b6dacc71e4096bfdf9b2a508c955aba",
-    "date": "2026-08-31 15:46:31 +0200",
-    "message": "commits"
   }
 ]
