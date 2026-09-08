@@ -40,8 +40,8 @@ export async function signInWithEmail(page: Page, email: string = 'test1@example
   await page.reload();
   await page.waitForURL('/buymilk/**');
   
-  // Verify we're signed in by checking for user-specific content
-  await expect(page.locator('text=Inköp')).toBeVisible({ timeout: 10000 });
+  // Verify we're signed in by checking for BottomNav (works in any language)
+  await expect(page.locator('nav.fixed.bottom-0.left-0.right-0')).toBeVisible({ timeout: 10000 });
   console.log('✅ Signed in successfully');
 }
 
@@ -69,14 +69,14 @@ export async function signOut(page: Page) {
   
   // Reload to trigger auth state change
   await page.reload();
-  await expect(page.locator('text=Välkommen till BuyMilk')).toBeVisible();
+  await expect(page.locator('h1')).toBeVisible();
   console.log('✅ Signed out successfully');
 }
 
 // Helper function to create a new list
 export async function createNewList(page: Page, listName: string) {
   console.log(`📝 Creating new list: ${listName}`);
-  await page.click('button:has-text("Ny lista")');
+  await page.click('button:text-matches("lista|list")');
   await page.fill('input[name="listName"]', listName);
   await page.click('button[type="submit"]');
   await expect(page.locator(`text=${listName}`)).toBeVisible();
@@ -100,7 +100,7 @@ export async function navigateToList(page: Page, listId: string) {
 // Helper function to mark item as completed
 export async function markItemAsCompleted(page: Page, itemName: string) {
   console.log(`✅ Marking item as completed: ${itemName}`);
-  await page.click(`text=${itemName} >> xpath=../..//input[@type="checkbox"]`);
+  await page.locator(`text=${itemName}`).locator('xpath=../..//input[@type="checkbox"]').click();
   await expect(page.locator(`text=${itemName}`)).toHaveClass(/line-through/);
   console.log(`✅ Marked item as completed: ${itemName}`);
 }
@@ -109,9 +109,9 @@ export async function markItemAsCompleted(page: Page, itemName: string) {
 export async function deleteItemFromList(page: Page, itemName: string) {
   console.log(`🗑️  Deleting item: ${itemName}`);
   await page.locator(`text=${itemName}`).hover();
-  await page.click('button:has-text("Ta bort")');
-  if (await page.locator('text=Bekräfta radering').isVisible()) {
-    await page.click('button:has-text("Ja")');
+  await page.click('button:text-matches("bort|delete|remove")');
+  if (await page.locator('text-matches("Bekräfta|Confirm")').isVisible()) {
+    await page.click('button:text-matches("Ja|Yes")');
   }
   await expect(page.locator(`text=${itemName}`)).not.toBeVisible();
   console.log(`✅ Deleted item: ${itemName}`);

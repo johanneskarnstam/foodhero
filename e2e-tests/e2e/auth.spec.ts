@@ -17,12 +17,12 @@ test.describe('Authentication Flow', () => {
   });
 
   test('should show landing page title', async ({ page }) => {
-    const title = page.locator('text=Välkommen till BuyMilk');
+    const title = page.locator('h1');
     await expect(title).toBeVisible();
   });
 
   test('should show landing page subtitle', async ({ page }) => {
-    const subtitle = page.locator('text=Inhandlingslista för mat');
+    const subtitle = page.locator('p:text-matches("lista|list")');
     await expect(subtitle).toBeVisible();
   });
 

@@ -1,5 +1,10 @@
 [
   {
+    "hash": "fca6ee01619712b3268bb42669e7c7762ca7d09e",
+    "date": "2026-09-08 13:52:42 +0200",
+    "message": "feat(test): improve BottomNav e2e test selectors and viewport setup"
+  },
+  {
     "hash": "fef6be43ea8879a57327ba883bf9505ab71b125e",
     "date": "2026-09-08 13:36:56 +0200",
     "message": "feat(test): refactor e2e tests to use mock auth and improve selectors"
@@ -93,10 +98,5 @@
     "hash": "78fa0346c0ac7d4cf24b7301f7622c9ca2a9b29e",
     "date": "2026-09-03 17:09:20 +0200",
     "message": "feat: exclude node_modules from vite coverage config"
-  },
-  {
-    "hash": "e19acacee22d757604291636760616de42e89149",
-    "date": "2026-09-03 16:57:09 +0200",
-    "message": "feat(ci): add e2e tests with Playwright and Firebase emulator"
   }
 ]

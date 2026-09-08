@@ -3,16 +3,23 @@ import { signInWithGoogle } from '../fixtures/utils';
 
 test.describe('BottomNav Component', () => {
   test.use({ viewport: { width: 375, height: 667 } }); // iPhone size
-  // These tests require authentication to see the BottomNav component
-  // They use Firebase Emulator for testing
-  test('should display navigation tabs', async ({ page }) => {
+  
+  test.beforeEach(async ({ page }) => {
     await signInWithGoogle(page);
     await page.goto('/buymilk/');
-    const homeTab = page.locator('nav a:has-text("Hem")').first;
-    const shoppingTab = page.locator('nav a:has-text("Inköp")').first;
-    const mealplanTab = page.locator('nav a:has-text("Matsedel")').first;
-    const mealsTab = page.locator('nav a:has-text("Recept")').first;
-    const moreTab = page.locator('nav a:has-text("Mer")').first;
+    // Wait for BottomNav to be visible - use specific class selector
+    await expect(page.locator('nav.fixed.bottom-0.left-0.right-0')).toBeVisible({ timeout: 10000 });
+  });
+  
+  test('should display navigation tabs', async ({ page }) => {
+    // Use specific BottomNav selector
+    const bottomNav = page.locator('nav.fixed.bottom-0.left-0.right-0');
+    
+    const homeTab = bottomNav.locator('a').filter({ hasText: 'Hem' });
+    const shoppingTab = bottomNav.locator('a').filter({ hasText: 'Inköp' });
+    const mealplanTab = bottomNav.locator('a').filter({ hasText: 'Matsedel' });
+    const mealsTab = bottomNav.locator('a').filter({ hasText: 'Recept' });
+    const moreTab = bottomNav.locator('button').filter({ hasText: 'Mer' });
 
     await expect(homeTab).toBeVisible();
     await expect(shoppingTab).toBeVisible();
@@ -22,25 +29,21 @@ test.describe('BottomNav Component', () => {
   });
 
   test('should highlight active tab', async ({ page }) => {
-    await signInWithGoogle(page);
-    await page.goto('/buymilk/');
-    // The home tab should be active on the home page
-    const homeTab = page.locator('nav a:has-text("Hem")').first;
+    const bottomNav = page.locator('nav.fixed.bottom-0.left-0.right-0');
+    const homeTab = bottomNav.locator('a').filter({ hasText: 'Hem' });
     await expect(homeTab).toHaveClass(/text-blue-600|dark:text-blue-400/);
   });
 
   test('should navigate to mealplan page', async ({ page }) => {
-    await signInWithGoogle(page);
-    await page.goto('/buymilk/');
-    const mealplanTab = page.locator('nav a:has-text("Matsedel")').first;
+    const bottomNav = page.locator('nav.fixed.bottom-0.left-0.right-0');
+    const mealplanTab = bottomNav.locator('a').filter({ hasText: 'Matsedel' });
     await mealplanTab.click();
     await expect(page).toHaveURL('/buymilk/mealplan');
   });
 
   test('should navigate to meals page', async ({ page }) => {
-    await signInWithGoogle(page);
-    await page.goto('/buymilk/');
-    const mealsTab = page.locator('nav a:has-text("Recept")').first;
+    const bottomNav = page.locator('nav.fixed.bottom-0.left-0.right-0');
+    const mealsTab = bottomNav.locator('a').filter({ hasText: 'Recept' });
     await mealsTab.click();
     await expect(page).toHaveURL('/buymilk/meals');
   });
