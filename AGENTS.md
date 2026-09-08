@@ -58,7 +58,8 @@ Always work on dedicated feature branches for new features or non-trivial fixes:
    git checkout -b feature/brief-description
    ```
 2. **Develop & Validate:** Implement changes locally and ensure `npm run validate` passes.
-3. **Commit & Push (Commit messages MUST be in Swedish):**
+3. **Update Version:** If changes are ready for commit, update the version in `package.json` according to [Semantic Versioning rules](#8-versioning--release-management) **after** `npm run validate` passes and **before** committing.
+4. **Commit & Push (Commit messages MUST be in Swedish):**
    - Format: `<type>: <beskrivning på svenska>`
    - Examples: `feat: lägg till ny receptredigerare`, `fix: justera tabb-layout på mobilen`
    ```bash
@@ -146,7 +147,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/) for `packa
 ### When to Update the Version
 The version in `package.json` **MUST** be incremented **automatically by the AI agent** when:
 - All tests pass (`npm run validate` succeeds).
-- Changes are ready to be merged into the `main` branch.
+- Changes are ready to be committed **in the feature branch**.
 
 ### Version Update Criteria
 The AI agent **MUST** determine the version type (MAJOR, MINOR, or PATCH) based on the following rules:
@@ -158,7 +159,7 @@ The AI agent **MUST** determine the version type (MAJOR, MINOR, or PATCH) based 
 | **PATCH**    | Backward-compatible bug fixes, minor improvements, or non-functional changes (e.g., styling). | Fixing a bug, adjusting layouts, or updating dependencies without functional impact.       |
 
 ### How to Update the Version
-1. **AI Agent Responsibility:** Before merging to `main`, the AI agent **MUST** update the version in `package.json` according to the criteria above.
-2. **Commit the Change:** Include the version update in the same commit or PR that introduces the change.
+1. **AI Agent Responsibility:** After `npm run validate` passes and **before committing in the feature branch**, the AI agent **MUST** update the version in `package.json` according to the criteria above.
+2. **Commit the Change:** Include the version update in the same commit as the feature or fix.
    - Example commit message: `release: bump version to 1.1.0`
-3. **Verify:** Ensure `npm run validate` passes before merging.
+3. **Verify:** Ensure `npm run validate` passes before committing.
