@@ -1,5 +1,10 @@
 [
   {
+    "hash": "fef6be43ea8879a57327ba883bf9505ab71b125e",
+    "date": "2026-09-08 13:36:56 +0200",
+    "message": "feat(test): refactor e2e tests to use mock auth and improve selectors"
+  },
+  {
     "hash": "7e2b5346d15bd214ab2be950ca9aa6a90dcd0e7d",
     "date": "2026-09-08 12:44:05 +0200",
     "message": "feat(test): enable Firebase Emulator tests and update gitignore"
@@ -93,10 +98,5 @@
     "hash": "e19acacee22d757604291636760616de42e89149",
     "date": "2026-09-03 16:57:09 +0200",
     "message": "feat(ci): add e2e tests with Playwright and Firebase emulator"
-  },
-  {
-    "hash": "c84972f7b3c8d2f2e6384a39a9840f69468e2f7a",
-    "date": "2026-09-03 16:19:25 +0200",
-    "message": "test: update IngredientSearchView empty state and add RandomMealCard mock"
   }
 ]

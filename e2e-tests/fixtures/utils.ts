@@ -41,7 +41,7 @@ export async function signInWithEmail(page: Page, email: string = 'test1@example
   await page.waitForURL('/buymilk/**');
   
   // Verify we're signed in by checking for user-specific content
-  await expect(page.locator('text=Mina listor')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('text=Inköp')).toBeVisible({ timeout: 10000 });
   console.log('✅ Signed in successfully');
 }
 
