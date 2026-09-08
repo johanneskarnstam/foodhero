@@ -1,5 +1,10 @@
 [
   {
+    "hash": "7da53bc1beae5e45481866f8b601afe882b06f1f",
+    "date": "2026-09-08 11:54:08 +0200",
+    "message": "chore: uppdatera commits.json"
+  },
+  {
     "hash": "bad00035d5032f1474bef5924f63678430e0a1ba",
     "date": "2026-09-08 11:48:25 +0200",
     "message": "feat: lägg till skript för att generera favicon och pwa-ikoner samt uppdatera pwa-manifest"
@@ -93,10 +98,5 @@
     "hash": "1f7d5fe32d737d1de75aee915e56a07c7426eebb",
     "date": "2026-09-03 15:26:59 +0200",
     "message": "feat(data): add 100 new meal suggestions to mealSuggestions.json"
-  },
-  {
-    "hash": "53d2fb8a8fabbe4c93f759ada6fc95cbff4f27e4",
-    "date": "2026-09-03 15:10:42 +0200",
-    "message": "feat: update commits and add comprehensive meal suggestions data"
   }
 ]
