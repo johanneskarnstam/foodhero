@@ -45,12 +45,14 @@ function categorizeCommit(message: string): { emoji: string; label: string; rawM
 
 function formatDate(dateStr: string) {
     try {
-        // Simple fallback formatting, you might want to use your dateUtils here
         const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr.split(' ')[0] || dateStr; // fallback for strange formats
-        return d.toLocaleDateString();
+        if (isNaN(d.getTime())) return dateStr.split(' ')[0] || dateStr;
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
     } catch {
-        return dateStr;
+        return dateStr.split(' ')[0] || dateStr;
     }
 }
 
@@ -90,16 +92,20 @@ export const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ isOpen, commits, o
     }, {} as Record<string, Commit[]>);
 
     return (
-        <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div 
+            className="fixed inset-0 z-[101] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={onClose}
+        >
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="whats-new-title"
+                onClick={(e) => e.stopPropagation()}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
             >
                 <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
                     <h2 id="whats-new-title" className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                        {t('whatsNew.title', 'Nyheter')}
+                        {t('whatsNew.title', 'Nyheter sedan ditt senaste besök')}
                     </h2>
                     <button
                         onClick={onClose}

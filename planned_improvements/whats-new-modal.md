@@ -156,33 +156,33 @@ Lägg till i **både** `sv.json` och `en.json`:
 ## Implementationssteg (i ordning)
 
 ### Steg 1 — Typer
-- [ ] Lägg till `WhatsNewState` i `src/types/index.ts`
+- [x] Lägg till `WhatsNewState` i `src/types/index.ts`
 
 ### Steg 2 — Hook
-- [ ] Skapa `src/hooks/useWhatsNew.ts`
-- [ ] Skriv test `src/hooks/useWhatsNew.test.ts`
+- [x] Skapa `src/hooks/useWhatsNew.ts`
+- [x] Skriv test `src/hooks/useWhatsNew.test.ts`
   - Mocka `localStorage` och `commits.json`
   - Testa: första besök → ingen modal
   - Testa: nya commits sedan senaste besök → modal visas
   - Testa: dismiss sparar korrekt hash
 
 ### Steg 3 — Komponent
-- [ ] Skapa `src/components/WhatsNewModal.tsx`
-- [ ] Skriv test `src/components/WhatsNewModal.test.tsx`
+- [x] Skapa `src/components/WhatsNewModal.tsx`
+- [x] Skriv test `src/components/WhatsNewModal.test.tsx`
   - Testa att commits renderas
   - Testa Escape stänger modalen
   - Testa att `onClose` anropas vid klick på Stäng
 
 ### Steg 4 — i18n
-- [ ] Uppdatera `src/locales/sv.json`
-- [ ] Uppdatera `src/locales/en.json`
+- [x] Uppdatera `src/locales/sv.json`
+- [x] Uppdatera `src/locales/en.json`
 
 ### Steg 5 — Montering
-- [ ] Importera hook + komponent i `src/components/Layout.tsx`
-- [ ] Montera `<WhatsNewModal />` i returträdet
+- [x] Importera hook + komponent i `src/components/Layout.tsx`
+- [x] Montera `<WhatsNewModal />` i returträdet
 
 ### Steg 6 — Validering
-- [ ] Kör `npm run validate`
+- [x] Kör `npm run validate`
 
 ---
 

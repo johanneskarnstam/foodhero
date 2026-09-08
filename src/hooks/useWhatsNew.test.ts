@@ -38,6 +38,15 @@ describe('useWhatsNew', () => {
     expect(result.current.newCommits[1].hash).toBe('hash2');
   });
 
+  it('should show all commits if lastSeenHash is not found in commits list', () => {
+    localStorage.setItem(STORAGE_KEY, 'unknown-old-hash');
+    
+    const { result } = renderHook(() => useWhatsNew());
+    
+    expect(result.current.showModal).toBe(true);
+    expect(result.current.newCommits).toHaveLength(3);
+  });
+
   it('should not show modal if user has seen the latest commit', () => {
     localStorage.setItem(STORAGE_KEY, 'hash3'); // User saw latest commit
     
@@ -59,5 +68,17 @@ describe('useWhatsNew', () => {
     
     expect(result.current.showModal).toBe(false);
     expect(localStorage.getItem(STORAGE_KEY)).toBe('hash3'); // Updated to the latest unseen commit
+  });
+
+  it('should handle dismiss when there are no new commits gracefully', () => {
+    localStorage.setItem(STORAGE_KEY, 'hash3');
+    const { result } = renderHook(() => useWhatsNew());
+    
+    act(() => {
+      result.current.dismiss();
+    });
+    
+    expect(result.current.showModal).toBe(false);
+    expect(localStorage.getItem(STORAGE_KEY)).toBe('hash3');
   });
 });
