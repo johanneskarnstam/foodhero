@@ -27,6 +27,10 @@ Följande funktioner har tidigare planerats, implementerats och validerats i pro
    - Modal som automatiskt informerar användaren om nya funktioner och ändringar baserat på git-commits.
    - Implementerad i `src/components/WhatsNewModal.tsx` och `src/hooks/useWhatsNew.ts`.
 
+3. **Snabbaddition av varor från startsidan**
+   - Möjlighet att snabbt lägga till varor direkt från startsidan via ett inputfält med autocomplete-förslag.
+   - Implementerad i `src/components/HomeView.tsx`.
+
 3. **Ikon- och Favicon-generator**
    - Automatiserat skript för att generera favicon, apple-touch-icon och PWA-ikoner via sharp.
    - Implementerad i `scripts/generate-icons.js` (`npm run generate-icons`).
