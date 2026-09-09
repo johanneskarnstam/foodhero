@@ -3,11 +3,13 @@
 ## Overview
 This document provides a step-by-step guide for changing the name of the **BuyMilk** application to **FoodHero**. It is structured for both human and AI execution, with clear commands, file paths, and expected outcomes.
 
+✅ **Status**: Namnbytet är fullständigt genomfört i kodbasen. Återstående steg är extern migrering (GitHub, Firebase, etc.).
+
 ---
 
 ## 📌 Prerequisites
-- Access to the GitHub repository: `Jojjeboy/buymilk`
-- Access to Firebase project: `buymilk`
+- ✅ Access to the GitHub repository: `Jojjeboy/foodhero` (renamed)
+- ⚠️ Access to Firebase project: `buymilk` (awaiting migration to `foodhero`)
 - Admin access to social media accounts (if applicable)
 
 ---
@@ -177,16 +179,19 @@ This document provides a step-by-step guide for changing the name of the **BuyMi
 ## 📊 Verification Checklist
 Use this checklist to ensure all steps are completed successfully.
 
-- [ ] All instances of `BuyMilk` replaced with `FoodHero` in the codebase.
-- [ ] `package.json` updated with new name.
-- [ ] `public/manifest.json` updated with new name and metadata.
+- [x] All instances of `BuyMilk` replaced with `FoodHero` in the codebase (except legacy migration keys).
+- [x] `package.json` updated with new name.
+- [x] `index.html` updated with new title and metadata.
+- [x] `vite.config.ts` PWA manifest updated with new name.
+- [x] `public/404.html` updated to remove legacy redirect logic.
+- [x] `src/locales/sv.json` and `src/locales/en.json` updated with new app title.
+- [x] LocalStorage migration keys added for backward compatibility (`buymilk_language`, `buymilk:whats-new-last-seen`).
 - [ ] GitHub repository renamed to `foodhero`.
 - [ ] `README.md` updated with new name and links.
 - [ ] Firebase project created with the name `FoodHero`.
 - [ ] Firebase data migrated (if applicable).
 - [ ] Firebase Hosting configured for the new project.
 - [ ] GitHub Pages is enabled and configured for the new repository name.
-- [ ] 404.html redirect page is set up (optional).
 - [ ] In-app notification added for users.
 - [ ] Social media accounts updated or created.
 - [ ] All tests pass (`npm run validate`).

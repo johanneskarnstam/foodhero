@@ -1,6 +1,6 @@
-# BuyMilk - Förbättringslista
+# FoodHero - Förbättringslista
 
-Detta dokument spårar planerade och föreslagna förbättringar för **BuyMilk**. Använd kryssrutorna nedan för att följa framstegen när de implementeras.
+Detta dokument spårar planerade och föreslagna förbättringar för **FoodHero**. Använd kryssrutorna nedan för att följa framstegen när de implementeras.
 
 ## 🛒 Inköpslistan
 

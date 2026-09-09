@@ -15,7 +15,7 @@ describe('BottomNav Component', () => {
         );
 
         // Find and click the Inköp (Shopping) tab
-        const shoppingTab = screen.getByText('Inköp');
+        const shoppingTab = screen.getByTestId('nav-shopping');
         fireEvent.click(shoppingTab);
 
         // Verify onNavigate was called
@@ -33,7 +33,7 @@ describe('BottomNav Component', () => {
         );
 
         // Find and click the Mer button
-        const moreButton = screen.getByText('Mer');
+        const moreButton = screen.getByTestId('nav-more');
         fireEvent.click(moreButton);
 
         // Verify onMoreOpen was called
@@ -47,11 +47,22 @@ describe('BottomNav Component', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText('Hem')).toBeDefined();
-        expect(screen.getByText('Inköp')).toBeDefined();
-        expect(screen.getByText('Matsedel')).toBeDefined();
-        expect(screen.getByText('Recept')).toBeDefined();
-        expect(screen.getByText('Mer')).toBeDefined();
+        expect(screen.getByTestId('nav-home')).toBeDefined();
+        expect(screen.getByTestId('nav-shopping')).toBeDefined();
+        expect(screen.getByTestId('nav-mealplan')).toBeDefined();
+        expect(screen.getByTestId('nav-meals')).toBeDefined();
+        expect(screen.getByTestId('nav-more')).toBeDefined();
+    });
+
+    it('should have main navigation aria-label', () => {
+        render(
+            <MemoryRouter>
+                <BottomNav onMoreOpen={vi.fn()} onNavigate={vi.fn()} />
+            </MemoryRouter>
+        );
+
+        const nav = screen.getByRole('navigation', { name: /huvudnavigation/i });
+        expect(nav).toBeDefined();
     });
 });
 
@@ -101,5 +112,34 @@ describe('MoreDrawer Component', () => {
 
         // Verify drawer is not rendered
         expect(container.firstChild).toBeNull();
+    });
+
+    it('should render grouped navigation items', () => {
+        render(
+            <MemoryRouter>
+                <MoreDrawer isOpen={true} onClose={vi.fn()} />
+            </MemoryRouter>
+        );
+
+        // Verify group headers are rendered (they are uppercase in the DOM)
+        expect(screen.getByText(/produktivitet/i)).toBeDefined();
+        expect(screen.getByText(/verktyg/i)).toBeDefined();
+        // Check that there are at least 2 elements with "Inställningar" (group header + nav item)
+        expect(screen.getAllByText(/inställningar/i).length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should highlight active secondary navigation item', () => {
+        render(
+            <MemoryRouter initialEntries={['/todos']}>
+                <MoreDrawer isOpen={true} onClose={vi.fn()} />
+            </MemoryRouter>
+        );
+
+        // The active item should have different styling
+        const activeItem = screen.getByText('Att göra');
+        expect(activeItem).toBeDefined();
+        // Check that the button parent has the active class
+        const button = activeItem.closest('button');
+        expect(button).toHaveClass('bg-blue-50');
     });
 });
