@@ -1,5 +1,15 @@
 [
   {
+    "hash": "8b0a92bbe87eaeb84976adddc5f45fdb33d73be2",
+    "date": "2026-09-09 17:58:47 +0200",
+    "message": "fix: sammanfogar inköpslistan och snabbfältet på startsidan för att ta bort oönskat mellanrum"
+  },
+  {
+    "hash": "65ca27ea5181d78848571fa704d2968a84c41b63",
+    "date": "2026-09-09 17:50:00 +0200",
+    "message": "docs: uppdatera planned/README.md och README.md med drag-and-drop-funktionen"
+  },
+  {
     "hash": "a58b0fcf6bc84d966eca570345262b09fe6415b4",
     "date": "2026-09-09 17:42:54 +0200",
     "message": "feat: lägg till drag-and-drop för inköpslistan"
@@ -88,15 +98,5 @@
     "hash": "0a62d2e27fb5fc2f94b13869e5abdb5e60dc6cef",
     "date": "2026-09-09 12:18:10 +0200",
     "message": "update: replace GitHub references with GitLab in AGENTS.md"
-  },
-  {
-    "hash": "6958baf291cf9198511f615d903e788067af3bf9",
-    "date": "2026-09-09 12:16:47 +0200",
-    "message": "Firebase tool upgrade"
-  },
-  {
-    "hash": "a70026b3513b2a974adfa2d90b69420bb6b4361a",
-    "date": "2026-09-09 12:01:08 +0200",
-    "message": "MC"
   }
 ]

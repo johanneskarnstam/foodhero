@@ -210,7 +210,7 @@ export const HomeView: React.FC = () => {
             </div>
 
             {/* Sektion 1: Inköpslista med integrerat snabbfält */}
-            <div className="bg-white dark:bg-gray-800/90 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 shadow-sm">
+            <div className="bg-white dark:bg-gray-800/90 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 shadow-sm overflow-hidden">
                 {/* Klickbar del för inköpslistan */}
                 <div
                     role="button"
@@ -222,7 +222,7 @@ export const HomeView: React.FC = () => {
                             navigate('/shopping');
                         }
                     }}
-                    className="group relative p-5 md:p-6 hover:shadow-md hover:border-blue-500/50 dark:hover:border-blue-400/50 transition-all duration-200 cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+                    className="group relative p-5 md:p-6 hover:bg-gray-50/50 dark:hover:bg-gray-700/20 transition-all duration-200 cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
                 >
                     {/* Kortrubrik och räknare */}
                 <div className="flex items-center justify-between mb-4">
@@ -299,7 +299,7 @@ export const HomeView: React.FC = () => {
                 )}
                 </div>
                 {/* Snabbaddition - integrerat i inköpslistan */}
-                <div className="pt-4 border-t border-gray-100 dark:border-gray-700/60 mt-4">
+                <div className="p-4 bg-gray-50/50 dark:bg-gray-700/10 border-t border-gray-100 dark:border-gray-700/40">
                     <form onSubmit={handleQuickAdd} className="flex gap-2">
                         <div className="flex-1 relative">
                             <div className="flex items-center gap-2">
@@ -310,13 +310,13 @@ export const HomeView: React.FC = () => {
                                     onFocus={() => quickAddText.trim() && setShowSuggestions(true)}
                                     onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                                     placeholder={t('dashboard.quickAddPlaceholder', 'Lägg till matvara...')}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="flex-1 px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                                 {quickAddText && (
                                     <button
                                         type="button"
                                         onClick={handleClearInput}
-                                        className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                        className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                                         aria-label={t('common.clear', 'Rensa')}
                                     >
                                         <X size={18} />
@@ -324,7 +324,7 @@ export const HomeView: React.FC = () => {
                                 )}
                             </div>
                             {showSuggestions && suggestions.length > 0 && (
-                                <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                                <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-40 overflow-y-auto py-1">
                                     {suggestions.map((suggestion) => (
                                         <li
                                             key={suggestion.id}
@@ -332,7 +332,7 @@ export const HomeView: React.FC = () => {
                                                 setQuickAddText(suggestion.text);
                                                 handleQuickAdd(undefined, suggestion.text);
                                             }}
-                                            className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
+                                            className="px-4 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-900 dark:text-white transition-colors"
                                         >
                                             {suggestion.text}
                                         </li>
@@ -342,7 +342,7 @@ export const HomeView: React.FC = () => {
                         </div>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+                            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md"
                             aria-label={t('dashboard.quickAddButton', 'Lägg till')}
                         >
                             <Plus size={18} />
