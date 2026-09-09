@@ -1,9 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { HomeView } from './HomeView';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
+import { useToast } from '../context/ToastContext';
 
 const mockNavigate = vi.fn();
 
@@ -21,6 +22,10 @@ vi.mock('../context/AppContext', () => ({
 
 vi.mock('../hooks/useMealPlan', () => ({
     useMealPlan: vi.fn(),
+}));
+
+vi.mock('../context/ToastContext', () => ({
+    useToast: vi.fn(),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -44,6 +49,12 @@ vi.mock('react-i18next', () => ({
                 'dashboard.todayDinner': 'Dagens middag',
                 'dashboard.tomorrowDinner': 'Morgondagens middag',
                 'dashboard.noMealsPlannedPrompt': 'Hey, hittar inga planerade måltider, dags att planera matsedeln!',
+                'dashboard.quickAddPlaceholder': 'Lägg till matvara...',
+                'dashboard.quickAddButton': 'Lägg till',
+                'dashboard.itemAdded': 'Varan lades till i inköpslistan',
+                'errors.emptyItem': 'Du måste ange en vara',
+                'errors.failedToAddItem': 'Misslyckades att lägga till varan',
+                'common.clear': 'Rensa',
             };
             return translations[key] || key;
         },
@@ -54,6 +65,7 @@ describe('HomeView Component', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
+        vi.mocked(useToast).mockReturnValue({ showToast: vi.fn() });
         vi.mocked(useApp).mockReturnValue({
             lists: [
                 {
@@ -63,6 +75,8 @@ describe('HomeView Component', () => {
                 },
             ],
             defaultListId: 'default-list',
+            addItemsToList: vi.fn(),
+            itemHistory: [],
         } as unknown as ReturnType<typeof useApp>);
 
         vi.mocked(useMealPlan).mockReturnValue({
@@ -206,5 +220,150 @@ describe('HomeView Component', () => {
         const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
         fireEvent.keyDown(mealCard, { key: ' ' });
         expect(mockNavigate).toHaveBeenCalledWith('/mealplan');
+    });
+
+    describe('Quick Add Feature', () => {
+        const mockAddItemsToList = vi.fn();
+        const mockShowToast = vi.fn();
+
+        beforeEach(() => {
+            vi.clearAllMocks();
+            vi.mocked(useToast).mockReturnValue({ showToast: mockShowToast });
+            vi.mocked(useApp).mockReturnValue({
+                lists: [{ id: '1', items: [], settings: {} }],
+                defaultListId: '1',
+                addItemsToList: mockAddItemsToList,
+                itemHistory: [],
+            } as unknown as ReturnType<typeof useApp>);
+            vi.mocked(useMealPlan).mockReturnValue({
+                getPlanForDate: vi.fn().mockReturnValue(null),
+                mealPlans: [],
+            } as unknown as ReturnType<typeof useMealPlan>);
+        });
+
+        it('should render the quick add input field', () => {
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+            expect(screen.getByPlaceholderText('Lägg till matvara...')).toBeInTheDocument();
+        });
+
+        it('should show clear button when input is not empty', async () => {
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+            const input = screen.getByPlaceholderText('Lägg till matvara...');
+            fireEvent.change(input, { target: { value: 'Mjölk' } });
+            expect(screen.getByLabelText('Rensa')).toBeInTheDocument();
+        });
+
+        it('should clear input when clear button is clicked', async () => {
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+            const input = screen.getByPlaceholderText('Lägg till matvara...');
+            fireEvent.change(input, { target: { value: 'Mjölk' } });
+            fireEvent.click(screen.getByLabelText('Rensa'));
+            expect(input).toHaveValue('');
+        });
+
+        it('should show error toast when trying to add empty item', async () => {
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+            const input = screen.getByPlaceholderText('Lägg till matvara...');
+            fireEvent.submit(input);
+
+            await waitFor(() => {
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Du måste ange en vara',
+                    'error'
+                );
+            });
+        });
+
+        it('should add item and show success toast', async () => {
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+            const input = screen.getByPlaceholderText('Lägg till matvara...');
+            fireEvent.change(input, { target: { value: 'Mjölk' } });
+            fireEvent.submit(input);
+
+            await waitFor(() => {
+                expect(mockAddItemsToList).toHaveBeenCalledWith('1', [
+                    expect.objectContaining({ text: 'Mjölk', completed: false })
+                ]);
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Varan lades till i inköpslistan',
+                    'success'
+                );
+            });
+        });
+
+        it('should show autocomplete suggestions', async () => {
+            vi.mocked(useApp).mockReturnValue({
+                lists: [{ id: '1', items: [], settings: {} }],
+                defaultListId: '1',
+                addItemsToList: mockAddItemsToList,
+                itemHistory: [
+                    { id: '1', text: 'Mjölk', usageCount: 5, lastUsed: '' },
+                    { id: '2', text: 'Bröd', usageCount: 3, lastUsed: '' },
+                ],
+            } as unknown as ReturnType<typeof useApp>);
+
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+            const input = screen.getByPlaceholderText('Lägg till matvara...');
+            fireEvent.change(input, { target: { value: 'M' } });
+
+            await waitFor(() => {
+                const suggestion = screen.queryByText('Mjölk');
+                expect(suggestion).toBeInTheDocument();
+            });
+        });
+
+        it('should select suggestion and add item', async () => {
+            vi.mocked(useApp).mockReturnValue({
+                lists: [{ id: '1', items: [], settings: {} }],
+                defaultListId: '1',
+                addItemsToList: mockAddItemsToList,
+                itemHistory: [
+                    { id: '1', text: 'Mjölk', usageCount: 5, lastUsed: '' },
+                ],
+            } as unknown as ReturnType<typeof useApp>);
+
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+            const input = screen.getByPlaceholderText('Lägg till matvara...');
+            fireEvent.change(input, { target: { value: 'M' } });
+
+            await waitFor(() => {
+                const suggestion = screen.getByText('Mjölk');
+                fireEvent.click(suggestion);
+            });
+
+            await waitFor(() => {
+                expect(mockAddItemsToList).toHaveBeenCalledWith('1', [
+                    expect.objectContaining({ text: 'Mjölk', completed: false })
+                ]);
+            });
+        });
     });
 });

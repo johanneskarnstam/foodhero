@@ -1,22 +1,81 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, CalendarDays, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, Sparkles } from 'lucide-react';
+import { ShoppingCart, CalendarDays, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, Sparkles, Plus, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
+import { useToast } from '../context/ToastContext';
 import { formatDate } from '../utils/dateUtils';
-import type { List, Item, MealType } from '../types';
+import { v4 as uuidv4 } from 'uuid';
+import type { List, Item, MealType, HistoryItem } from '../types';
 
 export const HomeView: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { lists, defaultListId } = useApp();
+    const { lists, defaultListId, addItemsToList, itemHistory } = useApp();
     const { getPlanForDate, mealPlans, handleMealChange } = useMealPlan();
+    const { showToast } = useToast();
+
+    // State för snabbaddition
+    const [quickAddText, setQuickAddText] = useState('');
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [suggestions, setSuggestions] = useState<HistoryItem[]>([]);
 
     // 1. Inköpslista sammanfattning
     const list: List | undefined = useMemo(() => {
         return lists.find((l) => l.id === defaultListId);
     }, [lists, defaultListId]);
+
+    // Autocomplete-logik för snabbaddition
+    useEffect(() => {
+        if (!quickAddText.trim()) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+
+        const searchText = quickAddText.toLowerCase();
+        const matches = itemHistory
+            .filter(h => h.text.toLowerCase().includes(searchText))
+            .sort((a, b) => b.usageCount - a.usageCount)
+            .slice(0, 5);
+
+        setSuggestions(matches);
+        setShowSuggestions(matches.length > 0);
+    }, [quickAddText, itemHistory]);
+
+    // Funktion för att lägga till vara via snabbaddition
+    const handleQuickAdd = async (e?: React.FormEvent, textOverride?: string) => {
+        if (e) e.preventDefault();
+        const rawText = (textOverride || quickAddText).trim();
+
+        // Validering: Förhindra tomma varor
+        if (!defaultListId || !rawText) {
+            showToast(t('errors.emptyItem', 'Du måste ange en vara'), 'error');
+            return;
+        }
+
+        const newItem: Item = {
+            id: uuidv4(),
+            text: rawText,
+            completed: false,
+        };
+
+        try {
+            await addItemsToList(defaultListId, [newItem]);
+            setQuickAddText('');
+            setShowSuggestions(false);
+            showToast(t('dashboard.itemAdded', 'Varan lades till i inköpslistan'), 'success');
+        } catch {
+            showToast(t('errors.failedToAddItem', 'Misslyckades att lägga till varan'), 'error');
+        }
+    };
+
+    // Funktion för att rensa input-fältet
+    const handleClearInput = () => {
+        setQuickAddText('');
+        setShowSuggestions(false);
+    };
 
     const { uncompletedItems, completedCount, totalCount, previewItems, moreCount } = useMemo(() => {
         if (!list || !list.items) {
@@ -236,6 +295,58 @@ export const HomeView: React.FC = () => {
                         </span>
                     </div>
                 )}
+            </div>
+
+            {/* Snabbaddition */}
+            <div className="bg-white dark:bg-gray-800/90 rounded-2xl p-4 border border-gray-200/80 dark:border-gray-700/80 shadow-sm">
+                <form onSubmit={handleQuickAdd} className="flex gap-2">
+                    <div className="flex-1 relative">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="text"
+                                value={quickAddText}
+                                onChange={(e) => setQuickAddText(e.target.value)}
+                                onFocus={() => quickAddText.trim() && setShowSuggestions(true)}
+                                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                placeholder={t('dashboard.quickAddPlaceholder', 'Lägg till matvara...')}
+                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg dark:bg-gray-800 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            {quickAddText && (
+                                <button
+                                    type="button"
+                                    onClick={handleClearInput}
+                                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                    aria-label={t('common.clear', 'Rensa')}
+                                >
+                                    <X size={18} />
+                                </button>
+                            )}
+                        </div>
+                        {showSuggestions && suggestions.length > 0 && (
+                            <ul className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                                {suggestions.map((suggestion) => (
+                                    <li
+                                        key={suggestion.id}
+                                        onClick={() => {
+                                            setQuickAddText(suggestion.text);
+                                            handleQuickAdd(undefined, suggestion.text);
+                                        }}
+                                        className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
+                                    >
+                                        {suggestion.text}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+                        aria-label={t('dashboard.quickAddButton', 'Lägg till')}
+                    >
+                        <Plus size={18} />
+                    </button>
+                </form>
             </div>
 
             {/* Sektion 2: Måltidsplanering */}
