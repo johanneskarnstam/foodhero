@@ -27,7 +27,10 @@
     "noMealsPlannedPrompt": "Hey, hittar inga planerade måltider, dags att planera matsedeln!",
     "openMealPlan": "Öppna matsedeln",
     "today": "idag",
-    "tomorrow": "imorgon"
+    "tomorrow": "imorgon",
+    "quickAddPlaceholder": "Lägg till matvara...",
+    "quickAddButton": "Lägg till",
+    "itemAdded": "Varan lades till i inköpslistan"
   },
   "app": {
     "title": "FoodHero",
@@ -36,6 +39,13 @@
     "toggleTheme": "Växla tema",
     "notes": "Anteckningar",
     "lastUpdated": "Senast uppdaterad: 2025-11-21 12:45"
+  },
+  "errors": {
+    "emptyItem": "Du måste ange en vara",
+    "failedToAddItem": "Misslyckades att lägga till varan"
+  },
+  "common": {
+    "clear": "Rensa"
   },
   "update": {
     "title": "Uppdatering tillgänglig",
