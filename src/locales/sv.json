@@ -25,7 +25,9 @@
     "todayLunch": "Dagens lunch",
     "nextMeal": "Nästa måltid",
     "noMealsPlannedPrompt": "Hey, hittar inga planerade måltider, dags att planera matsedeln!",
-    "openMealPlan": "Öppna matsedeln"
+    "openMealPlan": "Öppna matsedeln",
+    "today": "idag",
+    "tomorrow": "imorgon"
   },
   "app": {
     "title": "FoodHero",

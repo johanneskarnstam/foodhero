@@ -5,13 +5,13 @@ import { ShoppingCart, CalendarDays, ArrowRight, CheckCircle2, Circle, UtensilsC
 import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
 import { formatDate } from '../utils/dateUtils';
-import type { List, Item } from '../types';
+import type { List, Item, MealType } from '../types';
 
 export const HomeView: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { lists, defaultListId } = useApp();
-    const { getPlanForDate, mealPlans } = useMealPlan();
+    const { getPlanForDate, mealPlans, handleMealChange } = useMealPlan();
 
     // 1. Inköpslista sammanfattning
     const list: List | undefined = useMemo(() => {
@@ -75,6 +75,18 @@ export const HomeView: React.FC = () => {
             return null;
         };
 
+        // Get missing meal types for target date
+        const getMissingMealTypes = (d: Date) => {
+            const plan = getPlanForDate(d);
+            const dateStr = formatDate(d);
+            const day = plan?.days.find((dayPlan) => dayPlan.date === dateStr);
+            const existingMealTypes = day?.meals.map((m) => m.type) || [];
+            const allMealTypes: MealType[] = ['lunch', 'dinner'];
+            return allMealTypes.filter((type) => !existingMealTypes.includes(type));
+        };
+
+        const missingMealTypes = getMissingMealTypes(targetDate);
+
         // 1. Kolla targetDate (idag eller imorgon beroende på klockslag)
         const primaryMatch = getMealForDay(targetDate);
         if (primaryMatch) {
@@ -82,6 +94,8 @@ export const HomeView: React.FC = () => {
                 hasMeal: true,
                 title: primaryMatch.meal.plannedMeal.customTitle,
                 label: isTomorrow ? t('dashboard.tomorrowDinner') : t('dashboard.todayDinner'),
+                targetDate,
+                missingMealTypes,
             };
         }
 
@@ -95,6 +109,8 @@ export const HomeView: React.FC = () => {
                     hasMeal: true,
                     title: tomorrowMatch.meal.plannedMeal.customTitle,
                     label: t('dashboard.tomorrowDinner'),
+                    targetDate: tomorrow,
+                    missingMealTypes: getMissingMealTypes(tomorrow),
                 };
             }
         }
@@ -111,11 +127,13 @@ export const HomeView: React.FC = () => {
                     hasMeal: true,
                     title: match.meal.plannedMeal.customTitle,
                     label: `${capitalizedDay} - ${t('dashboard.nextMeal')}`,
+                    targetDate: upcoming,
+                    missingMealTypes: getMissingMealTypes(upcoming),
                 };
             }
         }
 
-        return { hasMeal: false, title: '', label: '' };
+        return { hasMeal: false, title: '', label: '', targetDate, missingMealTypes };
     }, [getPlanForDate, mealPlans, t]);
 
     return (
@@ -270,11 +288,36 @@ export const HomeView: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="flex items-center gap-3 py-2 text-amber-700 dark:text-amber-300">
-                            <Sparkles size={18} className="text-amber-500 flex-shrink-0" />
-                            <span className="text-sm font-medium">
-                                {t('dashboard.noMealsPlannedPrompt', 'Hey, hittar inga planerade måltider, dags att planera matsedeln!')}
-                            </span>
+                        <div className="flex flex-col gap-3 py-2">
+                            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
+                                <Sparkles size={18} className="text-amber-500 flex-shrink-0" />
+                                <span className="text-sm font-medium">
+                                    {t('dashboard.noMealsPlannedPrompt', 'Hey, hittar inga planerade måltider, dags att planera matsedeln!')}
+                                </span>
+                            </div>
+                            {nextMealInfo.missingMealTypes.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    {nextMealInfo.missingMealTypes.map((type) => {
+                                        const isToday = formatDate(nextMealInfo.targetDate) === formatDate(new Date());
+                                        const dayLabel = isToday ? t('dashboard.today', 'idag') : t('dashboard.tomorrow', 'imorgon');
+                                        return (
+                                            <button
+                                                key={type}
+                                                onClick={async () => {
+                                                    await handleMealChange(
+                                                        nextMealInfo.targetDate,
+                                                        type,
+                                                        t(`mealTypes.${type}`, type)
+                                                    );
+                                                }}
+                                                className="px-3 py-1.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-lg text-xs font-medium hover:bg-amber-100 dark:hover:bg-amber-800/40 transition-colors"
+                                            >
+                                                + {t(`mealTypes.${type}`, type)} {dayLabel}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

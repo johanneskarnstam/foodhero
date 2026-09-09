@@ -1,5 +1,60 @@
 [
   {
+    "hash": "8235236841b92aa4ceaf7ef105ce8f3fb7a9528d",
+    "date": "2026-09-09 13:35:25 +0200",
+    "message": "fix(vite): update base and PWA paths to /foodhero/"
+  },
+  {
+    "hash": "aeddd5fad472ff5491a222c913c2a889ba571360",
+    "date": "2026-09-09 13:15:23 +0200",
+    "message": "chore: update PWA start_url in vite.config.ts to root"
+  },
+  {
+    "hash": "567954eae2e7d8630e33c3ff57ed1e3e47316c78",
+    "date": "2026-09-09 12:58:55 +0200",
+    "message": "fix(ci): correct npm command flag and clean up build script"
+  },
+  {
+    "hash": "e361a89063c361d64557d0a38f740fc405882cea",
+    "date": "2026-09-09 12:47:40 +0200",
+    "message": "feat: update deployment config and base path"
+  },
+  {
+    "hash": "9e1765b75a264168327472693fc058fefa28acab",
+    "date": "2026-09-09 12:35:59 +0200",
+    "message": "Package-lock.json"
+  },
+  {
+    "hash": "ecfa225c1994ff4a32ffda9886d536cd212afad6",
+    "date": "2026-09-09 12:31:42 +0200",
+    "message": "Removed Firebase Tools"
+  },
+  {
+    "hash": "0a62d2e27fb5fc2f94b13869e5abdb5e60dc6cef",
+    "date": "2026-09-09 12:18:10 +0200",
+    "message": "update: replace GitHub references with GitLab in AGENTS.md"
+  },
+  {
+    "hash": "6958baf291cf9198511f615d903e788067af3bf9",
+    "date": "2026-09-09 12:16:47 +0200",
+    "message": "Firebase tool upgrade"
+  },
+  {
+    "hash": "a70026b3513b2a974adfa2d90b69420bb6b4361a",
+    "date": "2026-09-09 12:01:08 +0200",
+    "message": "MC"
+  },
+  {
+    "hash": "e469bf50f82b4d91491f63f06cef4011e023c6dd",
+    "date": "2026-09-09 10:47:38 +0200",
+    "message": "Update .gitlab-ci.yml file"
+  },
+  {
+    "hash": "68d30201292107712013f630501c53996e8cf841",
+    "date": "2026-09-09 10:33:15 +0200",
+    "message": "Add .gitlab-ci.yml"
+  },
+  {
     "hash": "f0c08b419cdf2240a836a69f3f7b0238c238669d",
     "date": "2026-09-08 19:05:28 +0200",
     "message": "feat: byt namn från BuyMilk till FoodHero och uppdatera PWA-konfiguration"
@@ -43,60 +98,5 @@
     "hash": "393ce0a34e98a0fce227dc2e6a217f29fbb37364",
     "date": "2026-09-08 16:00:06 +0200",
     "message": "fix: ta bort e2e-jobb från CI, körs lokalt istället"
-  },
-  {
-    "hash": "26b78be21d7a95fc8782c1bdd21a829407dd59cb",
-    "date": "2026-09-08 15:42:59 +0200",
-    "message": "fix: lägg till väntan på UI-element i e2e-hjälpfunktioner"
-  },
-  {
-    "hash": "7930fe04d22be12a6a45854134db8ca0612c25bf",
-    "date": "2026-09-08 15:02:35 +0200",
-    "message": "fix: ta bort onödig firebase-emulator från e2e-jobb i CI"
-  },
-  {
-    "hash": "f9854fb47ce6e9173f00129893b79af8fdd069d2",
-    "date": "2026-09-08 14:49:12 +0200",
-    "message": "feat(ci): add test coverage upload, caching, and Firebase secret support"
-  },
-  {
-    "hash": "68bbbdfa46e2ffc4d0f96457dee518196b4e0d6e",
-    "date": "2026-09-08 14:40:23 +0200",
-    "message": "chore: update commits.json with latest commit and remove old entry"
-  },
-  {
-    "hash": "0f52bd5771f832adc7714be9a4b005a01ad0bae4",
-    "date": "2026-09-08 14:40:00 +0200",
-    "message": "refactor(e2e-tests): improve selectors and add beforeEach hooks"
-  },
-  {
-    "hash": "fca6ee01619712b3268bb42669e7c7762ca7d09e",
-    "date": "2026-09-08 13:52:42 +0200",
-    "message": "feat(test): improve BottomNav e2e test selectors and viewport setup"
-  },
-  {
-    "hash": "fef6be43ea8879a57327ba883bf9505ab71b125e",
-    "date": "2026-09-08 13:36:56 +0200",
-    "message": "feat(test): refactor e2e tests to use mock auth and improve selectors"
-  },
-  {
-    "hash": "7e2b5346d15bd214ab2be950ca9aa6a90dcd0e7d",
-    "date": "2026-09-08 12:44:05 +0200",
-    "message": "feat(test): enable Firebase Emulator tests and update gitignore"
-  },
-  {
-    "hash": "e742df781f393cf7906b72845422b1ee90607d1d",
-    "date": "2026-09-08 12:09:43 +0200",
-    "message": "feat(assets): update app icons and favicons, add commits.json entry"
-  },
-  {
-    "hash": "7da53bc1beae5e45481866f8b601afe882b06f1f",
-    "date": "2026-09-08 11:54:08 +0200",
-    "message": "chore: uppdatera commits.json"
-  },
-  {
-    "hash": "bad00035d5032f1474bef5924f63678430e0a1ba",
-    "date": "2026-09-08 11:48:25 +0200",
-    "message": "feat: lägg till skript för att generera favicon och pwa-ikoner samt uppdatera pwa-manifest"
   }
 ]

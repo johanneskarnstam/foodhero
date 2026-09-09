@@ -25,7 +25,9 @@
     "todayLunch": "Today's lunch",
     "nextMeal": "Next meal",
     "noMealsPlannedPrompt": "Hey, no planned meals found, time to plan the menu!",
-    "openMealPlan": "Open meal planner"
+    "openMealPlan": "Open meal planner",
+    "today": "today",
+    "tomorrow": "tomorrow"
   },
   "app": {
     "title": "FoodHero",
