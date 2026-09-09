@@ -3,7 +3,7 @@ import { useWhatsNew } from './useWhatsNew';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // Mock the commits json
-vi.mock('../commits.json', () => ({
+vi.mock('../../public/commits.json', () => ({
   default: [
     { hash: 'hash3', date: '2026-09-08 14:00', message: 'feat: new feature' },
     { hash: 'hash2', date: '2026-09-08 12:00', message: 'fix: a bug' },

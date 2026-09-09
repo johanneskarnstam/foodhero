@@ -1,5 +1,40 @@
 [
   {
+    "hash": "f0c08b419cdf2240a836a69f3f7b0238c238669d",
+    "date": "2026-09-08 19:05:28 +0200",
+    "message": "feat: byt namn från BuyMilk till FoodHero och uppdatera PWA-konfiguration"
+  },
+  {
+    "hash": "85943de9d41565af8d29040b2573b4732fa00417",
+    "date": "2026-09-08 18:48:26 +0200",
+    "message": "docs: uppdatera riktlinjer för versionshantering i AGENTS.md"
+  },
+  {
+    "hash": "48ace094766215aafccf2ff178ac33dbaf0747ba",
+    "date": "2026-09-08 18:46:09 +0200",
+    "message": "Ny version"
+  },
+  {
+    "hash": "9ef7c62315d0db0842e260322c7de9f24c264974",
+    "date": "2026-09-08 18:43:15 +0200",
+    "message": "feat: implementera första faserna av namnbytet till FoodHero"
+  },
+  {
+    "hash": "84cb40a779eff304f433c2b0912f86a2c589da57",
+    "date": "2026-09-08 18:38:54 +0200",
+    "message": "feat(planned): add README and rename implementation plan"
+  },
+  {
+    "hash": "31c6f997af08d1ebf9998f7e29c7977d2f6d4b86",
+    "date": "2026-09-08 18:32:09 +0200",
+    "message": "feat: färdigställ nyhetsmodal och bumpa version till 1.1.0"
+  },
+  {
+    "hash": "63213239f7fcf2ebe3663bb7db1771eb4fca9548",
+    "date": "2026-09-08 18:27:02 +0200",
+    "message": "docs: add versioning guidelines and remove Playwright from testing stack"
+  },
+  {
     "hash": "d547776c9633c7b7467b90f5b9cfe0d89efe4bb4",
     "date": "2026-09-08 16:04:32 +0200",
     "message": "chore(ci): update workflow name to be more descriptive"
@@ -63,40 +98,5 @@
     "hash": "bad00035d5032f1474bef5924f63678430e0a1ba",
     "date": "2026-09-08 11:48:25 +0200",
     "message": "feat: lägg till skript för att generera favicon och pwa-ikoner samt uppdatera pwa-manifest"
-  },
-  {
-    "hash": "d0fbbcb53e5868e17fac66c6c9b86e82edfbb57a",
-    "date": "2026-09-07 13:26:14 +0200",
-    "message": "feat: add name change guide for BuyMilk to FoodHero migration"
-  },
-  {
-    "hash": "ea1488c62989a9051af28ea1a3bf3ca3ceae6f66",
-    "date": "2026-09-07 13:08:00 +0200",
-    "message": "feat: lägg till ny startsida med översikt för inköp och måltidsplanering"
-  },
-  {
-    "hash": "a6c52e00a84eb10811531c79134b024adf8eace0",
-    "date": "2026-09-07 12:48:37 +0200",
-    "message": "feat: update validation and workflow rules, adjust package.json scripts, and add AGENTS.md"
-  },
-  {
-    "hash": "b41ec5f92d3e10acfff61b74c6ec80cff0dec60e",
-    "date": "2026-09-07 11:35:24 +0200",
-    "message": "feat: förbättra receptdetaljmodal och dölj inmatningsfält vid redigering"
-  },
-  {
-    "hash": "f8b4eaf06e952ef1fbebd4fd09e3a0e9e32fd0d5",
-    "date": "2026-09-07 09:50:24 +0200",
-    "message": "feat: rutt-medveten wake lock och inköpsliste-overlay"
-  },
-  {
-    "hash": "58dd545702c7599dfafb239e608fad51fa4866e6",
-    "date": "2026-09-03 21:00:54 +0200",
-    "message": "feat: add JSON import/export functionality to MealEditModal"
-  },
-  {
-    "hash": "235d8050afe3a37a113583005d9e073c018076b5",
-    "date": "2026-09-03 20:42:50 +0200",
-    "message": "feat: add meal deletion confirmation modal"
   }
 ]

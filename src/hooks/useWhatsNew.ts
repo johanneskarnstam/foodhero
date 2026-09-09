@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Commit } from '../types';
-import commitsJson from '../commits.json';
+import commitsJson from '../../public/commits.json';
 
 const STORAGE_KEY = 'foodhero:whats-new-last-seen';
 const LEGACY_STORAGE_KEY = 'buymilk:whats-new-last-seen';
