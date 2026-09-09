@@ -17,7 +17,7 @@ cache:
 # Förinställning för alla Node-jobb
 .node_template:
   before_script:
-    - npm ci --cache .npm --prefere-offline
+    - npm ci --cache .npm --prefer-offline
 
 # --- STAGE: VALIDATE ---
 
@@ -62,9 +62,8 @@ build:
 pages:
   stage: deploy
   script:
-    - npm run build
     - rm -rf public
-    - cp -r dist public # Eller motsvarande din build-mapp ( t.ex. build/ eller output/ )
+    - cp -r dist public
   artifacts:
     paths:
       - public
