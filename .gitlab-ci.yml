@@ -62,12 +62,11 @@ build:
 pages:
   stage: deploy
   script:
-    # GitLab Pages kräver att de statiska filerna ligger i mappen 'public'
-    - mkdir -p public
-    - cp -r dist/* public/
+    - npm run build
+    - rm -rf public
+    - cp -r dist public # Eller motsvarande din build-mapp ( t.ex. build/ eller output/ )
   artifacts:
     paths:
       - public
   rules:
-    # Körs endast när kod slås ihop eller pushas till main
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
