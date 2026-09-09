@@ -1,15 +1,73 @@
-# The Docker image that will be used to build your app
 image: node:22
-create-pages:
-  pages:
-    # The folder that contains the files to be exposed at the Page URL
-    publish: dist
-  rules:
-    # This ensures that only pushes to the default branch will trigger
-    # a pages deploy
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-  # Functions that should be executed before the build script is run
+
+# Steg i vår pipeline
+stages:
+  - validate
+  - build
+  - deploy
+
+# Cacha node_modules mellan jobb och körningar för snabbare pipelines
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm/
+
+# Förinställning för alla Node-jobb
+.node_template:
   before_script:
-    - npm ci
+    - npm ci --cache .npm --prefere-offline
+
+# --- STAGE: VALIDATE ---
+
+security_audit:
+  extends: .node_template
+  stage: validate
+  script:
+    - npm audit --audit-level=high
+
+lint_and_typecheck:
+  extends: .node_template
+  stage: validate
+  script:
+    - npm run lint
+    - npx tsc -b
+
+unit_tests:
+  extends: .node_template
+  stage: validate
+  script:
+    - npm run test
+  artifacts:
+    when: always
+    paths:
+      - coverage/
+    expire_in: 30 days
+
+# --- STAGE: BUILD ---
+
+build:
+  extends: .node_template
+  stage: build
   script:
     - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 day
+
+# --- STAGE: DEPLOY ---
+
+pages:
+  stage: deploy
+  script:
+    # GitLab Pages kräver att de statiska filerna ligger i mappen 'public'
+    - mkdir -p public
+    - cp -r dist/* public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    # Körs endast när kod slås ihop eller pushas till main
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
