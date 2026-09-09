@@ -1,82 +1,82 @@
 # FoodHero 🍲
 
-FoodHero is a modern, intuitive meal planning and grocery list application designed to make everyday meal preparation, recipe management, and grocery shopping efficient, organized, and data-driven. It combines real-time synchronization with intelligent automation to streamline your meals from recipe to table.
+FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor, designad för att göra matlagning, recepthantering och inköp effektivt, organiserat och datadrivet. Appen kombinerar realtidsynkronisering med intelligent automatisering för att förenkla dina måltider från recept till bord.
 
-## 🚀 Key Features
+## 🚀 Huvudfunktioner
 
-### 📅 Meal Planning & Recipes
+### 📅 Måltidsplanering och recept
 
-- **Interactive Meal Planner**: Plan weekly lunches and dinners with an intuitive visual interface.
-- **Recipe Management**: Save and organize your favorite recipes with ingredients, instructions, and tags.
-- **Recipe Parser**: Paste recipe text or web URLs, and FoodHero will intelligently extract ingredients directly into your shopping list.
-- **Ingredient Search**: Search recipes by ingredients you already have at home to reduce food waste.
-- **Calendar Export**: Export planned meals directly to your iCal/Google Calendar.
+- **Interaktiv måltidsplanerare**: Planera veckans luncher och middagar med ett intuitivt visuellt gränssnitt.
+- **Recepthantering**: Spara och organisera dina favoritrecept med ingredienser, instruktioner och taggar.
+- **Receptanalysator**: Klistra in recepttext eller webbadresser, så extraherar FoodHero automatiskt ingredienser direkt till din inköpslista.
+- **Ingredienssökning**: Sök recept baserat på ingredienser du redan har hemma för att minska matsvinnet.
+- **Kalenderexport**: Exportera planerade måltider direkt till din iCal/Google Calendar.
 
-### 🛒 Smart Grocery Lists
+### 🛒 Smarta inköpslistor
 
-- **Real-time Sync**: Seamlessly keep your lists updated across all devices using Firebase.
-- **Intelligent Auto-grouping**: Items are automatically sorted into aisles (categories) as you add them, reducing time spent wandering the store.
-- **Customizable Aisles**: Define your own categories and keywords to match your preferred store layout.
-- **Product History**: Smart autocomplete based on your most frequently added items.
-- **Offline Mode**: Continue shopping without internet; the app syncs your changes automatically once you're back online.
+- **Realtidssynkronisering**: Håll dina listor uppdaterade på alla enheter med hjälp av Firebase.
+- **Intelligent automatisk gruppering**: Varor sorteras automatiskt i kategorier (butiksgator) när du lägger till dem, vilket minskar tiden du spenderar i butiken.
+- **Anpassningsbara butiksgator**: Definiera egna kategorier och nyckelord för att matcha din föredragna butikslayout.
+- **Produkthistorik**: Smart autofyllning baserat på dina mest frekvent tillagda varor.
+- **Offline-läge**: Fortsätt handla utan internet; appen synkroniserar dina ändringar automatiskt när du är online igen.
 
-### 📥 Advanced Importing & Backups
+### 📥 Avancerad import och säkerhetskopiering
 
-- **JSON Import/Export**: Full backup and restore support for grocery lists, recipes, and meal plans.
+- **JSON Import/Export**: Fullständigt stöd för säkerhetskopiering och återställning av inköpslistor, recept och måltidsplaner.
 
-### ✅ Task Management
+### ✅ Uppgiftshantering
 
-- **Dedicated Todo View**: A separate space for general tasks and reminders.
-- **Priority System**: Organize tasks with High, Medium, and Low priority levels.
-- **Detailed Notes**: Add context and details to any todo item.
+- **Dedikerad att-göra-vy**: En separat plats för allmänna uppgifter och påminnelser.
+- **Prioritetssystem**: Organisera uppgifter med hög, medel och låg prioritet.
+- **Detaljerade anteckningar**: Lägg till sammanhang och detaljer till alla att-göra-postar.
 
-### 📊 Insights & Analytics
+### 📊 Insikter och analys
 
-- **Statistics Dashboard**: Visualize your shopping habits with completion rates and item metrics.
-- **Usage Trends**: See your most frequently purchased items through integrated charts.
-- **Activity Log**: Keep track of changes and updates made to your lists.
+- **Statistikdashboard**: Visualisera dina inköpsvanor med slutförandegrad och varumått.
+- **Användningstrender**: Se dina mest frekvent köpta varor genom integrerade diagram.
+- **Aktivitetslogg**: Håll koll på ändringar och uppdateringar som gjorts i dina listor.
 
-### 🛠️ Power User Tools
+### 🛠️ Avancerade verktyg
 
-- **Voice Input**: Add items to your list hands-free using voice-to-text.
-- **Wake Lock**: Keep your screen awake while you're in the store so you don't have to keep unlocking your phone.
-- **Settings Export/Import**: Easily back up or move your custom aisle configurations.
-- **Visual Polish**: Enjoy a clean, responsive UI with dark mode support and confetti celebrations when you finish your shopping.
+- **Röstinmatning**: Lägg till varor i din lista utan händer med hjälp av röst-till-text.
+- **Skärmlås**: Håll skärmen aktiv när du är i butiken så att du inte behöver låsa upp telefonen hela tiden.
+- **Inställningsimport/export**: Säkerhetskopiera eller flytta dina anpassade butiksgatukonfigurationer enkelt.
+- **Visuell design**: Njuta av ett rent, responsivt gränssnitt med stöd för mörkt läge och konfetti-firande när du slutför din inköpslista.
 
-## 🌍 General
+## 🌍 Allmänt
 
-- **Multi-language Support**: Full support for English and Swedish.
-- **PWA Ready**: Install as a Progressive Web App for a native-like experience on iOS and Android.
+- **Flerspråkigt stöd**: Fullständigt stöd för engelska och svenska.
+- **PWA-klart**: Installera som en Progressiv Web App för en inbyggd upplevelse på iOS och Android.
 
-## 🛠️ Technical Stack
+## 🛠️ Teknisk stack
 
 - **Frontend**: React, TypeScript, Tailwind CSS
 - **State Management**: React Context API
-- **Backend/Database**: Firebase (Firestore & Auth)
-- **Internationalization**: react-i18next
-- **Build Tool**: Vite
-- **Charts**: Recharts
+- **Backend/Databas**: Firebase (Firestore & Auth)
+- **Internationellisering**: react-i18next
+- **Byggverktyg**: Vite
+- **Diagram**: Recharts
 
-## 🏁 Getting Started
+## 🏁 Kom igång
 
-### Prerequisites
+### Förutsättningar
 
-- Node.js (Latest LTS recommended)
-- npm or pnpm
+- Node.js (Senaste LTS rekommenderas)
+- npm eller pnpm
 
 ### Installation
 
-1. Clone the repository:
+1. Klona repositoryt:
    ```bash
    git clone https://github.com/Jojjeboy/foodhero.git
    cd foodhero
    ```
-2. Install dependencies:
+2. Installera beroenden:
    ```bash
    npm install
    ```
-3. Start the development server:
+3. Starta utvecklingsservern:
    ```bash
    npm run dev
    ```
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+4. Öppna [http://localhost:5173](http://localhost:5173) i din webbläsare.

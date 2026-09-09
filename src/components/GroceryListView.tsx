@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import type { Item, List, Meal, PlannedMeal } from '../types';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { SortableItem } from './SortableItem';
 import { Plus, RotateCcw, ChevronDown, CloudUpload, Mic, Trash2, Utensils, Braces, ArrowRight } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
@@ -468,7 +469,7 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
 
                 return (
                     <>
-                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]}>
                             <SortableContext items={activeItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                                 <div className="space-y-2">
                                     {activeItems.map((item) => (
@@ -517,22 +518,26 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
                                 </div>
 
                                 {completedAccordionOpen && (
-                                    <div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
-                                        {completedItems.map(item => (
-                                            <div key={item.id} className="opacity-60 hover:opacity-100 transition-opacity">
-                                                <SortableItem
-                                                    item={{ ...item, isPending: item.isPending || list.isPending }}
-                                                    onToggle={handleToggle}
-                                                    onDelete={handleDelete}
-                                                    onEdit={handleEdit}
-                                                    onEditNote={handleEditNote}
-                                                    onTogglecheckIfExistAtHome={handleTogglecheckIfExistAtHome}
-                                                    onEditingChange={setIsEditingItem}
-                                                    disabled={true}
-                                                />
+                                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]}>
+                                        <SortableContext items={completedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                                            <div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
+                                                {completedItems.map(item => (
+                                                    <div key={item.id} className="opacity-60 hover:opacity-100 transition-opacity">
+                                                        <SortableItem
+                                                            item={{ ...item, isPending: item.isPending || list.isPending }}
+                                                            onToggle={handleToggle}
+                                                            onDelete={handleDelete}
+                                                            onEdit={handleEdit}
+                                                            onEditNote={handleEditNote}
+                                                            onTogglecheckIfExistAtHome={handleTogglecheckIfExistAtHome}
+                                                            onEditingChange={setIsEditingItem}
+                                                            disabled={false}
+                                                        />
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
+                                        </SortableContext>
+                                    </DndContext>
                                 )}
                             </div>
                         )}
