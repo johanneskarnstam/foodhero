@@ -4,14 +4,14 @@ Denna mapp innehåller planeringsdokument och implementationsplaner för funktio
 
 ---
 
-## 🚀 Aktuella implementationsplaner
+## ✅ Genomförda funktioner
 
 ### 🥑 1. Namnbyte: BuyMilk → FoodHero
 - **Beskrivning**: Övergång från den ursprungliga inköpslistan till FoodHero som en fullfjädrad måltidsplanerings- och inköpsapp.
 - **Prioritet**: Hög
 - **Omfattning**: UI/i18n, PWA-manifest, ikoner, sidtitlar, metadata, LocalStorage-migrering, paketnamn och GitHub Pages.
-- **Dokument**: [rename-to-foodhero.md](./rename-to-foodhero.md)
-- **Status**: Redo för genomförande
+- **Dokument**: [change_name.md](../change_name.md)
+- **Status**: ✅ Genomfört
 
 ---
 
