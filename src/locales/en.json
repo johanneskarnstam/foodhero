@@ -7,7 +7,11 @@
     "settings": "Settings",
     "shopping": "Shopping",
     "more": "More",
-    "viewMealPlan": "View meal plan"
+    "viewMealPlan": "View meal plan",
+    "mainNavigation": "Main Navigation",
+    "productivity": "Productivity",
+    "tools": "Tools",
+    "settingsGroup": "Settings"
   },
   "dashboard": {
     "title": "Home",
@@ -45,7 +49,11 @@
     "failedToAddItem": "Failed to add item"
   },
   "common": {
-    "clear": "Clear"
+    "clear": "Clear",
+    "close": "Close",
+    "syncing": "Syncing changes...",
+    "syncingWithCount": "Syncing {{count}} change...",
+    "syncingWithCount_plural": "Syncing {{count}} changes..."
   },
   "update": {
     "title": "Update Available",

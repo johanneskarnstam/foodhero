@@ -14,6 +14,18 @@ import {
 } from 'react-swipeable-list';
 import 'react-swipeable-list/dist/styles.css';
 
+// Haptic feedback utility for mobile devices
+const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        const durations = {
+            light: 20,
+            medium: 40,
+            heavy: 60,
+        };
+        navigator.vibrate(durations[type]);
+    }
+};
+
 interface SortableItemProps {
     item: Item;
     onToggle?: (id: string) => void;
@@ -119,6 +131,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
         <LeadingActions>
             <SwipeAction
                 onClick={() => {
+                    triggerHapticFeedback('medium');
                     if (onTogglecheckIfExistAtHome) {
                         onTogglecheckIfExistAtHome(item.id);
                     } else {
@@ -140,7 +153,10 @@ export const SortableItem: React.FC<SortableItemProps> = ({
         <TrailingActions>
             <SwipeAction
                 destructive={true}
-                onClick={() => onDelete && onDelete(item.id)}
+                onClick={() => {
+                    triggerHapticFeedback('heavy');
+                    if (onDelete) onDelete(item.id);
+                }}
             >
                 <div className="flex items-center justify-end px-4 bg-red-500 text-white h-full rounded-r-lg">
                     <Trash2 size={24} />
@@ -174,6 +190,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        triggerHapticFeedback('light');
                                         if (onToggle) onToggle(item.id);
                                     }}
                                     className={`flex-shrink-0 transition-colors ${isInteractionDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}

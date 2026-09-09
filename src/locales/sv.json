@@ -7,7 +7,11 @@
     "settings": "Inställningar",
     "shopping": "Inköp",
     "more": "Mer",
-    "viewMealPlan": "Visa matsedeln"
+    "viewMealPlan": "Visa matsedeln",
+    "mainNavigation": "Huvudnavigation",
+    "productivity": "Produktivitet",
+    "tools": "Verktyg",
+    "settingsGroup": "Inställningar"
   },
   "dashboard": {
     "title": "Hem",
@@ -45,7 +49,11 @@
     "failedToAddItem": "Misslyckades att lägga till varan"
   },
   "common": {
-    "clear": "Rensa"
+    "clear": "Rensa",
+    "close": "Stäng",
+    "syncing": "Synkroniserar ändringar...",
+    "syncingWithCount": "Synkroniserar {{count}} ändring...",
+    "syncingWithCount_plural": "Synkroniserar {{count}} ändringar..."
   },
   "update": {
     "title": "Uppdatering tillgänglig",
