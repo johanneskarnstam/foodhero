@@ -1,6 +1,6 @@
 # AGENTS.md — Global AI Agent Instructions & Guidelines
 
-> **Purpose:** This file defines the architecture, coding standards, git workflows, and validation rules for all AI coding assistants (Cline, Cursor, Windsurf, Claude Code, GitHub Copilot, etc.) working on this repository.
+> **Purpose:** This file defines the architecture, coding standards, git workflows, and validation rules for all AI coding assistants (Cline, Cursor, Windsurf, Claude Code, GitLab Copilot, etc.) working on this repository.
 
 ---
 
@@ -67,7 +67,7 @@ Always work on dedicated feature branches for new features or non-trivial fixes:
    git commit -m "feat: din beskrivning på svenska"
    git push origin feature/brief-description
    ```
-4. **CI Verification:** Verify remote build/CI pipeline using `gh run list` or via GitHub UI.
+4. **CI Verification:** Verify remote build/CI pipeline using GitLab CI/CD or via GitLab UI.
 5. **Merge to Main:**
    ```bash
    git checkout main
