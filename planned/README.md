@@ -69,6 +69,22 @@ Denna mapp innehåller planeringsdokument och implementationsplaner för funktio
 - **Implementering**: `src/components/BottomNav.tsx`
 - **Status**: ✅ Genomfört
 
+---
+
+### 🖱️ 10. Drag-and-drop för inköpslistan
+- **Beskrivning**: Användare kan dra och släppa varor för att organisera inköpslistan efter butikslayout (t.ex. "Mejeri", "Frukt & Grönt").
+- **Implementering**: 
+  - `src/components/GroceryListView.tsx` (DndContext, SortableContext, handleDragEnd)
+  - `src/components/SortableItem.tsx` (useSortable, drag handle, swipe actions)
+  - `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`, `@dnd-kit/modifiers` (beroenden)
+- **Funktioner**:
+  - Drag-and-drop för aktiva och slutförda varor.
+  - Tangentbordsnavigering (Space för att plocka upp, piltangenter för att flytta).
+  - Skärmbegränsning (`restrictToParentElement`).
+  - Swipe-åtgärder för snabb radering och markering.
+- **Testning**: `src/components/SortableItem.test.tsx` (10 tester).
+- **Status**: ✅ Genomfört
+
 ## 📌 Förenkling & Användbarhetsförbättringar
 
 Följande förslag syftar till att göra FoodHero **lättare, mer logisk och användbar** genom att förenkla flöden, automatisera processer och förbättra användarupplevelsen.
@@ -193,204 +209,11 @@ Följande förslag syftar till att göra FoodHero **lättare, mer logisk och anv
 
 ## 📅 Prioriteringsöversikt
 
-| **Funktion**                     | **Prioritet** | **Komplexitet** | **Användarvärde** |
-|----------------------------------|--------------|----------------|-------------------|
-| Snabbaddition från startsidan    | Hög          | Låg            | Hög               |
-| Bottom Navigation Bar            | Hög          | Medel          | Hög               |
-| Drag-and-drop för inköpslistan  | Medel        | Medel          | Hög               |
-| Automatisk kategorisering        | Medel        | Hög            | Medel             |
-| Veckans måltidsförslag           | Medel        | Hög            | Hög               |
-| Förbättra sökfunktionen          | Medel        | Medel          | Hög               |
-| UI/UX-förbättringar               | Medel        | Låg            | Hög               |
-| Butiksspecifika listor           | Låg          | Hög            | Medel             |
-| Användarstatistik                | Låg          | Hög            | Medel             |
-
----
-
-## 🚀 Nästa prioriterade funktion: Drag-and-drop för inköpslistan
-
-### 📌 Översikt
-- **Funktion**: Drag-and-drop för omordning av varor i inköpslistan.
-- **Mål**: Användare ska kunna organisera sin inköpslista efter butikslayout (t.ex. "Mejeri", "Frukt & Grönt").
-- **Prioritet**: Hög
-- **Komplexitet**: Medel
-- **Användarvärde**: Hög
-
----
-
-### 🎯 Implementationsplan
-
-#### 1. **Förberedelser**
-- **Beroenden**: Installera `@dnd-kit` (moderat och prestandaoptimerat bibliotek för drag-and-drop).
-  ```bash
-  npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
-  ```
-- **Filer att uppdatera**:
-  - `src/components/GroceryListView.tsx` (huvudvy för inköpslistan)
-  - `src/types/index.ts` (typer för drag-and-drop)
-
----
-
-#### 2. **Implementering**
-
-##### **Steg 1: Uppdatera typer**
-- Lägg till typer för drag-and-drop i `src/types/index.ts`:
-  ```typescript
-  export interface DraggableGroceryItem {
-    id: string;
-    index: number;
-  }
-  ```
-
-##### **Steg 2: Skapa `SortableItem`-komponent**
-- Skapa en ny fil `src/components/SortableGroceryItem.tsx`:
-  ```typescript
-  import { useSortable } from '@dnd-kit/sortable';
-  import { CSS } from '@dnd-kit/utilities';
-  import { GroceryItem } from '../types';
-  import GroceryItemComponent from './GroceryItem';
-
-  interface SortableGroceryItemProps {
-    id: string;
-    item: GroceryItem;
-    onTogglePurchased: (id: string) => void;
-    onDelete: (id: string) => void;
-  }
-
-  export const SortableGroceryItem = ({
-    id,
-    item,
-    onTogglePurchased,
-    onDelete,
-  }: SortableGroceryItemProps) => {
-    const {
-      attributes,
-      listeners,
-      setNodeRef,
-      transform,
-      transition,
-      isDragging,
-    } = useSortable({ id });
-
-    const style = {
-      transform: CSS.Transform.toString(transform),
-      transition,
-      opacity: isDragging ? 0.5 : 1,
-      cursor: 'grab',
-    };
-
-    return (
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-        <GroceryItemComponent
-          item={item}
-          onTogglePurchased={onTogglePurchased}
-          onDelete={onDelete}
-        />
-      </div>
-    );
-  };
-  ```
-
-##### **Steg 3: Uppdatera `GroceryListView.tsx`**
-- Importera nödvändiga moduler från `@dnd-kit`:
-  ```typescript
-  import {
-    DndContext,
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    DragEndEvent,
-  } from '@dnd-kit/core';
-  import {
-    SortableContext,
-    sortableKeyboardCoordinates,
-    verticalListSortingStrategy,
-  } from '@dnd-kit/sortable';
-  import { restrictToParentElement } from '@dnd-kit/modifiers';
-  import { arrayMove } from '@dnd-kit/sortable';
-  ```
-
-- Uppdatera `GroceryListView`-komponenten för att använda `DndContext` och `SortableContext`:
-  ```typescript
-  const GroceryListView = () => {
-    const { groceryItems, setGroceryItems } = useAppContext();
-    const sensors = useSensors(
-      useSensor(PointerSensor),
-      useSensor(KeyboardSensor, {
-        coordinateGetter: sortableKeyboardCoordinates,
-      })
-    );
-
-    const handleDragEnd = (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (over && active.id !== over.id) {
-        setGroceryItems((items) => {
-          const oldIndex = items.findIndex((item) => item.id === active.id);
-          const newIndex = items.findIndex((item) => item.id === over.id);
-          return arrayMove(items, oldIndex, newIndex);
-        });
-      }
-    };
-
-    return (
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToParentElement]}
-      >
-        <SortableContext items={groceryItems} strategy={verticalListSortingStrategy}>
-          {groceryItems.map((item) => (
-            <SortableGroceryItem
-              key={item.id}
-              id={item.id}
-              item={item}
-              onTogglePurchased={(id) => togglePurchased(id)}
-              onDelete={(id) => deleteItem(id)}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
-    );
-  };
-  ```
-
----
-
-#### 3. **Testning**
-- **Enhetstester**: Skapa tester för `SortableGroceryItem` och `GroceryListView` med drag-and-drop-funktionalitet.
-- **Manuell testning**: Testa på olika enheter (mobil, tablet, desktop) för att säkerställa att drag-and-drop fungerar smidigt.
-
----
-
-#### 4. **Validering**
-- Kör `npm run validate` för att säkerställa att all kod följer projektets standarder.
-- Uppdatera `planned/README.md` för att markera funktionen som ✅ när den är klar.
-
----
-
-### 📅 Tidsuppskattning
-| **Steg**               | **Tidsuppskattning** |
-|------------------------|----------------------|
-| Förberedelser          | 30 min               |
-| Uppdatera typer        | 15 min               |
-| Implementera `SortableGroceryItem` | 1 timme          |
-| Uppdatera `GroceryListView` | 2 timmar       |
-| Testning               | 1 timme              |
-| Validering             | 30 min               |
-| **Totalt**             | **5-6 timmar**       |
-
----
-
-## 📅 Prioriteringsöversikt
-
 | **Funktion**                     | **Prioritet** | **Komplexitet** | **Användarvärde** | **Status**       |
 |----------------------------------|--------------|----------------|-------------------|------------------|
 | Snabbaddition från startsidan    | Hög          | Låg            | Hög               | ✅ Genomfört     |
 | Bottom Navigation Bar            | Hög          | Medel          | Hög               | ✅ Genomfört     |
-| Drag-and-drop för inköpslistan  | Medel        | Medel          | Hög               | ⏳ Planerad       |
+| Drag-and-drop för inköpslistan  | Medel        | Medel          | Hög               | ✅ Genomfört     |
 | Automatisk kategorisering        | Medel        | Hög            | Medel             | ❌ Ej påbörjad    |
 | Veckans måltidsförslag           | Medel        | Hög            | Hög               | ❌ Ej påbörjad    |
 | Förbättra sökfunktionen          | Medel        | Medel          | Hög               | ❌ Ej påbörjad    |
@@ -401,8 +224,19 @@ Följande förslag syftar till att göra FoodHero **lättare, mer logisk och anv
 
 ---
 
+## 🚀 Nästa prioriterade funktion: Automatisk kategorisering
+
+### 📌 Översikt
+- **Funktion**: Automatisk kategorisering av varor i inköpslistan.
+- **Mål**: Användare ska kunna organisera sin inköpslista automatiskt baserat på fördefinierade regler (t.ex. "Mjölk" → "Mejeri").
+- **Prioritet**: Medel
+- **Komplexitet**: Hög
+- **Användarvärde**: Medel
+
+---
+
 ## 🚀 Rekommenderad implementeringsordning
-1. **Förenkla inköpslistans flöde** (Snabbaddition ✅, drag-and-drop, automatisk kategorisering).
+1. **Förenkla inköpslistans flöde** (Snabbaddition ✅, drag-and-drop ✅, automatisk kategorisering).
 2. **Förbättra mobilupplevelsen** (Bottom Navigation Bar ✅, swipe-åtgärder, offline-läge).
 3. **Smartare måltidsplanering** (Veckans förslag, ingrediensöverskridande varningar).
 4. **UI/UX-förbättringar** (Mörkt läge ✅, anpassningsbara teman, guidad tur).

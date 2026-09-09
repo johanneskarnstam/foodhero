@@ -1,5 +1,60 @@
 [
   {
+    "hash": "a58b0fcf6bc84d966eca570345262b09fe6415b4",
+    "date": "2026-09-09 17:42:54 +0200",
+    "message": "feat: lägg till drag-and-drop för inköpslistan"
+  },
+  {
+    "hash": "463c031d3635b4eac72e0ab911030b6e3b0402c6",
+    "date": "2026-09-09 17:09:39 +0200",
+    "message": "Merge branch 'feature/forbattrad-mobilupplevelse' into main"
+  },
+  {
+    "hash": "53cac9302ae71102f6e572a8b8bb6809b055e201",
+    "date": "2026-09-09 17:09:36 +0200",
+    "message": "chore: uppdatera konflikterande filer till senaste version från feature/forbattrad-mobilupplevelse"
+  },
+  {
+    "hash": "9a8abd56d891162be6273e14406a915705e27e36",
+    "date": "2026-09-09 17:05:57 +0200",
+    "message": "Merge branch 'main' of https://gitlab.com/jojjeboy/foodhero"
+  },
+  {
+    "hash": "4a140e31c5a1aac6cc1d9b408a3a6d69b1ee8932",
+    "date": "2026-09-09 15:40:31 +0200",
+    "message": "feat: förbättra mobilupplevelsen med bottom nav, swipe-aktioner och offline-stöd"
+  },
+  {
+    "hash": "86ad65356562c62cf1e04377fadaaa4b389f5c35",
+    "date": "2026-09-09 15:11:26 +0200",
+    "message": "feat: slutför namnbyte från BuyMilk till FoodHero och uppdatera dokumentation"
+  },
+  {
+    "hash": "c41c25eb736f9bb3b11f141fb2fa61eee82005dd",
+    "date": "2026-09-09 14:54:11 +0200",
+    "message": "docs: uppdatera genomförda funktioner i planned/README.md"
+  },
+  {
+    "hash": "c12cb8178df4314086bb25f5b4206cabd767c2f5",
+    "date": "2026-09-09 15:06:22 +0200",
+    "message": "docs: uppdatera genomförda funktioner i planned/README.md"
+  },
+  {
+    "hash": "1a4a1cce3fdff3b78f5841f96005704830ebd113",
+    "date": "2026-09-09 14:57:57 +0200",
+    "message": "Merge branch 'feature/snabbaddition-inkopslista' into 'main'"
+  },
+  {
+    "hash": "629a38433827e7102d32e207f3d64cfde458b6bd",
+    "date": "2026-09-09 14:54:11 +0200",
+    "message": "feat: lägg till snabbaddition av varor från startsidan"
+  },
+  {
+    "hash": "3582359066e43d7cd0c4d7317de32b5b6be1644c",
+    "date": "2026-09-09 13:59:09 +0200",
+    "message": "feat: lägg till snabblänkar för närmaste måltider i måltidsplaneringswidgeten"
+  },
+  {
     "hash": "8235236841b92aa4ceaf7ef105ce8f3fb7a9528d",
     "date": "2026-09-09 13:35:25 +0200",
     "message": "fix(vite): update base and PWA paths to /foodhero/"
@@ -43,60 +98,5 @@
     "hash": "a70026b3513b2a974adfa2d90b69420bb6b4361a",
     "date": "2026-09-09 12:01:08 +0200",
     "message": "MC"
-  },
-  {
-    "hash": "e469bf50f82b4d91491f63f06cef4011e023c6dd",
-    "date": "2026-09-09 10:47:38 +0200",
-    "message": "Update .gitlab-ci.yml file"
-  },
-  {
-    "hash": "68d30201292107712013f630501c53996e8cf841",
-    "date": "2026-09-09 10:33:15 +0200",
-    "message": "Add .gitlab-ci.yml"
-  },
-  {
-    "hash": "f0c08b419cdf2240a836a69f3f7b0238c238669d",
-    "date": "2026-09-08 19:05:28 +0200",
-    "message": "feat: byt namn från BuyMilk till FoodHero och uppdatera PWA-konfiguration"
-  },
-  {
-    "hash": "85943de9d41565af8d29040b2573b4732fa00417",
-    "date": "2026-09-08 18:48:26 +0200",
-    "message": "docs: uppdatera riktlinjer för versionshantering i AGENTS.md"
-  },
-  {
-    "hash": "48ace094766215aafccf2ff178ac33dbaf0747ba",
-    "date": "2026-09-08 18:46:09 +0200",
-    "message": "Ny version"
-  },
-  {
-    "hash": "9ef7c62315d0db0842e260322c7de9f24c264974",
-    "date": "2026-09-08 18:43:15 +0200",
-    "message": "feat: implementera första faserna av namnbytet till FoodHero"
-  },
-  {
-    "hash": "84cb40a779eff304f433c2b0912f86a2c589da57",
-    "date": "2026-09-08 18:38:54 +0200",
-    "message": "feat(planned): add README and rename implementation plan"
-  },
-  {
-    "hash": "31c6f997af08d1ebf9998f7e29c7977d2f6d4b86",
-    "date": "2026-09-08 18:32:09 +0200",
-    "message": "feat: färdigställ nyhetsmodal och bumpa version till 1.1.0"
-  },
-  {
-    "hash": "63213239f7fcf2ebe3663bb7db1771eb4fca9548",
-    "date": "2026-09-08 18:27:02 +0200",
-    "message": "docs: add versioning guidelines and remove Playwright from testing stack"
-  },
-  {
-    "hash": "d547776c9633c7b7467b90f5b9cfe0d89efe4bb4",
-    "date": "2026-09-08 16:04:32 +0200",
-    "message": "chore(ci): update workflow name to be more descriptive"
-  },
-  {
-    "hash": "393ce0a34e98a0fce227dc2e6a217f29fbb37364",
-    "date": "2026-09-08 16:00:06 +0200",
-    "message": "fix: ta bort e2e-jobb från CI, körs lokalt istället"
   }
 ]

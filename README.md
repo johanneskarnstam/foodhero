@@ -15,6 +15,7 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
 ### 🛒 Smarta inköpslistor
 
 - **Realtidssynkronisering**: Håll dina listor uppdaterade på alla enheter med hjälp av Firebase.
+- **Drag-and-drop**: Organisera din inköpslista genom att dra och släppa varor för att matcha butikslayouten (t.ex. "Mejeri", "Frukt & Grönt").
 - **Intelligent automatisk gruppering**: Varor sorteras automatiskt i kategorier (butiksgator) när du lägger till dem, vilket minskar tiden du spenderar i butiken.
 - **Anpassningsbara butiksgator**: Definiera egna kategorier och nyckelord för att matcha din föredragna butikslayout.
 - **Produkthistorik**: Smart autofyllning baserat på dina mest frekvent tillagda varor.
