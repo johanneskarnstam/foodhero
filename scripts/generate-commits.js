@@ -38,6 +38,39 @@ async function fetchCommitsFromGitHub() {
     }
 }
 
+async function fetchCommitsFromGitLab() {
+    const projectId = process.env.CI_PROJECT_ID;
+    const token = process.env.GITLAB_TOKEN || process.env.CI_JOB_TOKEN || '';
+    const apiUrl = process.env.CI_API_V4_URL || 'https://gitlab.com/api/v4';
+    
+    if (!projectId) {
+        console.error('GitLab CI_PROJECT_ID not set. Cannot fetch commits from GitLab API.');
+        return [];
+    }
+    
+    const url = `${apiUrl}/projects/${projectId}/repository/commits?per_page=20`;
+    const headers = {
+        'PRIVATE-TOKEN': token,
+    };
+    
+    try {
+        const response = await fetch(url, { headers });
+        if (!response.ok) {
+            throw new Error(`GitLab API error: ${response.status} ${response.statusText}`);
+        }
+        const commits = await response.json();
+        
+        return commits.map(commit => ({
+            hash: commit.id,
+            date: commit.committed_date,
+            message: commit.message.split('\n')[0],
+        }));
+    } catch (error) {
+        console.error('Error fetching commits from GitLab API:', error);
+        return [];
+    }
+}
+
 async function getCommitsFromGitLog() {
     try {
         const logOutput = execSync('git log -n 20 --pretty=format:"%H|%ad|%s" --date=iso', { encoding: 'utf-8' });
@@ -56,11 +89,16 @@ async function getCommitsFromGitLog() {
 async function generateCommits() {
     let commits;
     
-    // Use GitHub API in CI environments (e.g., GitHub Actions)
-    if (process.env.GITHUB_ACTIONS || process.env.CI) {
+    // Use GitLab API in GitLab CI environments
+    if (process.env.GITLAB_CI) {
+        commits = await fetchCommitsFromGitLab();
+    }
+    // Use GitHub API in GitHub Actions
+    else if (process.env.GITHUB_ACTIONS) {
         commits = await fetchCommitsFromGitHub();
-    } else {
-        // Use git log locally
+    }
+    // Use git log locally or in other CI environments
+    else {
         commits = await getCommitsFromGitLog();
     }
     
