@@ -589,6 +589,24 @@
       "refactor": "Improvement",
       "other": "Other"
     }
+  },
+  "ai": {
+    "generateRecipe": "Create with AI",
+    "recipePromptLabel": "Describe your meal",
+    "recipePromptPlaceholder": "E.g. salmon pasta with cream sauce for 4 people, quick and easy",
+    "generating": "Generating recipe...",
+    "enrichWithAi": "Fill in with AI",
+    "enriching": "Filling in...",
+    "saveRecipe": "Save recipe",
+    "regenerate": "Generate again",
+    "noApiKey": "No AI key configured",
+    "errorGeneric": "Could not generate recipe",
+    "preview": "Preview",
+    "servings": "servings",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "promptTitle": "Generate recipe with AI",
+    "generate": "Generate"
   }
 }
 

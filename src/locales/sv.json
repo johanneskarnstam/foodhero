@@ -584,6 +584,24 @@
       "refactor": "Förbättring",
       "other": "Övrigt"
     }
+  },
+  "ai": {
+    "generateRecipe": "Skapa med AI",
+    "recipePromptLabel": "Beskriv din måltid",
+    "recipePromptPlaceholder": "T.ex. laxpasta med gräddsås för 4 personer, snabbt och enkelt",
+    "generating": "Genererar recept...",
+    "enrichWithAi": "Fyll i med AI",
+    "enriching": "Fyller i...",
+    "saveRecipe": "Spara recept",
+    "regenerate": "Generera igen",
+    "noApiKey": "Ingen AI-nyckel konfigurerad",
+    "errorGeneric": "Kunde inte generera recept",
+    "preview": "Förhandsvisning",
+    "servings": "portioner",
+    "ingredients": "Ingredienser",
+    "instructions": "Instruktioner",
+    "promptTitle": "Generera recept med AI",
+    "generate": "Generera"
   }
 }
 
