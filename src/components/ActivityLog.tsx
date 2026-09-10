@@ -7,7 +7,7 @@ import { Commit } from '../types';
 
 const commits = commitsData as Commit[];
 
-const GITHUB_REPO = 'https://github.com/Jojjeboy/foodhero';
+const GITLAB_REPO = 'https://gitlab.com/jojjeboy/foodhero';
 
 export const ActivityLog: React.FC = () => {
     const { t } = useTranslation();
@@ -46,7 +46,7 @@ export const ActivityLog: React.FC = () => {
                                             {commit.message}
                                         </h3>
                                         <a
-                                            href={`${GITHUB_REPO}/commit/${commit.hash}`}
+                                            href={`${GITLAB_REPO}/-/commit/${commit.hash}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="group px-3 py-1 rounded-full text-[11px] font-bold bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 font-mono hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center gap-1.5 border border-gray-100 dark:border-gray-700 w-fit"
@@ -77,12 +77,12 @@ export const ActivityLog: React.FC = () => {
 
             <div className="pt-8 pb-12 flex justify-center">
                 <a
-                    href={`${GITHUB_REPO}/commits/master`}
+                    href={`${GITLAB_REPO}/-/commits/main`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all shadow-sm hover:shadow-md font-semibold text-sm group"
                 >
-                    <span>{t('activity.viewAllGithub', 'View all commits on GitHub')}</span>
+                    <span>{t('activity.viewAllGitlab', 'View all commits on GitLab')}</span>
                     <ExternalLink size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </a>
             </div>

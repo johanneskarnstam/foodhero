@@ -436,7 +436,8 @@
     "subtitle": "Senaste uppdateringar och ändringar i FoodHero",
     "show": "Visa",
     "filesChanged": "{{count}} fil ändrad",
-    "filesChanged_plural": "{{count}} filer ändrade"
+    "filesChanged_plural": "{{count}} filer ändrade",
+    "viewAllGitlab": "Visa alla commits på GitLab"
   },
   "time": {
     "justNow": "Just nu"

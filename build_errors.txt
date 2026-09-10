@@ -1,7 +1,0 @@
-src/components/ListDetail.tsx(27,103): error TS2339: Property 'archiveList' does not exist on type 'AppContextType'.
-src/components/SearchResults.tsx(7,20): error TS2339: Property 'categories' does not exist on type 'AppContextType'.
-src/components/SearchResults.tsx(14,50): error TS7006: Parameter 'category' implicitly has an 'any' type.
-src/components/SearchResults.tsx(28,49): error TS7006: Parameter 'category' implicitly has an 'any' type.
-src/components/SearchResults.tsx(60,61): error TS7006: Parameter 'c' implicitly has an 'any' type.
-src/components/SortableListCard.tsx(6,21): error TS2305: Module '"../types"' has no exported member 'Category'.
-src/hooks/useMigrateLocalStorage.ts(6,10): error TS2305: Module '"../types"' has no exported member 'Category'.

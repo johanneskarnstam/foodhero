@@ -69,7 +69,7 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
 
 1. Klona repositoryt:
    ```bash
-   git clone https://github.com/Jojjeboy/foodhero.git
+   git clone https://gitlab.com/jojjeboy/foodhero.git
    cd foodhero
    ```
 2. Installera beroenden:

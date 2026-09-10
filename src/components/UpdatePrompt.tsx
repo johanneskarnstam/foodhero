@@ -76,12 +76,12 @@ export const UpdatePrompt: React.FC = () => {
                                     </span>
                                 </div>
                                 <a
-                                    href="https://github.com/jojjeboy/foodhero/commits/main"
+                                    href="https://gitlab.com/Jojjeboy/foodhero/-/commits/main"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                                 >
-                                    GitHub <ExternalLink size={12} />
+                                    GitLab <ExternalLink size={12} />
                                 </a>
                             </div>
                             <div className="max-h-48 overflow-y-auto p-4 space-y-3">

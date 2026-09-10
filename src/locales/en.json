@@ -432,7 +432,8 @@
     "subtitle": "Recent updates and improvements to FoodHero",
     "show": "Show",
     "filesChanged": "{{count}} file changed",
-    "filesChanged_plural": "{{count}} files changed"
+    "filesChanged_plural": "{{count}} files changed",
+    "viewAllGitlab": "View all commits on GitLab"
   },
   "time": {
     "justNow": "Just now"
