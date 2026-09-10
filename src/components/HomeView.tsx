@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext';
 import { formatDate } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
 import type { List, Item, MealType, HistoryItem } from '../types';
+import { MealPlanEditModal } from './MealPlanEditModal';
 
 export const HomeView: React.FC = () => {
     const { t } = useTranslation();
@@ -76,6 +77,15 @@ export const HomeView: React.FC = () => {
         setQuickAddText('');
         setShowSuggestions(false);
     };
+
+    const { meals } = useMealPlan();
+
+    // State för måltidsplaneringsmodal
+    const [mealPlanModal, setMealPlanModal] = useState<{
+        isOpen: boolean;
+        date: Date | null;
+        type: MealType | null;
+    }>({ isOpen: false, date: null, type: null });
 
     const { uncompletedItems, completedCount, totalCount, previewItems, moreCount } = useMemo(() => {
         if (!list || !list.items) {
@@ -417,12 +427,12 @@ export const HomeView: React.FC = () => {
                                         return (
                                             <button
                                                 key={type}
-                                                onClick={async () => {
-                                                    await handleMealChange(
-                                                        nextMealInfo.targetDate,
-                                                        type,
-                                                        t(`mealTypes.${type}`, type)
-                                                    );
+                                                onClick={() => {
+                                                    setMealPlanModal({
+                                                        isOpen: true,
+                                                        date: nextMealInfo.targetDate,
+                                                        type: type
+                                                    });
                                                 }}
                                                 className="px-3 py-1.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-lg text-xs font-medium hover:bg-amber-100 dark:hover:bg-amber-800/40 transition-colors"
                                             >
@@ -436,6 +446,25 @@ export const HomeView: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            <MealPlanEditModal
+                isOpen={mealPlanModal.isOpen}
+                onClose={() => setMealPlanModal({ isOpen: false, date: null, type: null })}
+                initialValue=""
+                meals={meals}
+                mealPlans={mealPlans}
+                onSave={async (mealName) => {
+                    if (mealPlanModal.date && mealPlanModal.type) {
+                        await handleMealChange(
+                            mealPlanModal.date,
+                            mealPlanModal.type,
+                            mealName
+                        );
+                    }
+                    setMealPlanModal({ isOpen: false, date: null, type: null });
+                }}
+            />
+
         </div>
     );
 };
