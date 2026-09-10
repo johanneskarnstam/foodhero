@@ -14,13 +14,15 @@ import {
     Tag, 
     ChefHat,
     X,
-    Users
+    Users,
+    Sparkles
 } from 'lucide-react';
 import { MealEditModal } from './MealEditModal';
 import { MealDetailModal } from './MealDetailModal';
 import { PlanMealModal } from './PlanMealModal';
 import { IngredientSelectionModal } from './IngredientSelectionModal';
 import { ConfirmModal } from './ConfirmModal';
+import { AiRecipeModal } from './AiRecipeModal';
 import { v4 as uuidv4 } from 'uuid';
 import { Item, Meal, MealType } from '../types';
 import { useMealPlan } from '../hooks/useMealPlan';
@@ -41,6 +43,7 @@ export const MealsView: React.FC = () => {
     const [viewingMeal, setViewingMeal] = useState<Meal | null>(null);
     const [isPlanningOpen, setIsPlanningOpen] = useState(false);
     const [planningMeal, setPlanningMeal] = useState<Meal | null>(null);
+    const [isAiModalOpen, setIsAiModalOpen] = useState(false);
     
     // Delete confirmation modal state
     const [deleteConfirmMeal, setDeleteConfirmMeal] = useState<Meal | null>(null);
@@ -118,6 +121,15 @@ export const MealsView: React.FC = () => {
             }
             setIsEditModalOpen(false);
             setEditingMeal(null);
+        } catch {
+            showToast(t('toasts.error', 'Ett fel uppstod'), 'error');
+        }
+    };
+
+    const handleSaveAiRecipe = async (recipeData: Omit<Meal, 'id' | 'createdAt'>) => {
+        try {
+            await addMeal(recipeData.name, recipeData);
+            showToast(t('toasts.itemAdded', 'Recept skapat'), 'success');
         } catch {
             showToast(t('toasts.error', 'Ett fel uppstod'), 'error');
         }
@@ -217,6 +229,15 @@ export const MealsView: React.FC = () => {
                     >
                         <Dices className="w-4 h-4" />
                         <span>{t('views.randomMeal', 'Slumpa')}</span>
+                    </button>
+
+                    <button
+                        id="meals-create-with-ai-btn"
+                        onClick={() => setIsAiModalOpen(true)}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl shadow-md shadow-purple-600/20 transition-all cursor-pointer"
+                    >
+                        <Sparkles className="w-4 h-4" />
+                        <span>{t('ai.generateRecipe')}</span>
                     </button>
 
                     <button
@@ -482,6 +503,12 @@ export const MealsView: React.FC = () => {
                     ingredients: ingredientModalConfig.ingredients
                 }]}
                 onConfirm={handleConfirmTransfer}
+            />
+
+            <AiRecipeModal
+                isOpen={isAiModalOpen}
+                onClose={() => setIsAiModalOpen(false)}
+                onSave={handleSaveAiRecipe}
             />
         </div>
     );

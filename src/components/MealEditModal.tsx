@@ -13,11 +13,13 @@ import {
     Image,
     Users,
     Download,
-    Upload
+    Upload,
+    RefreshCw
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { JsonExportModal } from './JsonExportModal';
 import { JsonImportModal } from './JsonImportModal';
+import { useAiRecipe } from '../hooks/useAiRecipe';
 
 interface MealEditModalProps {
     isOpen: boolean;
@@ -59,6 +61,7 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'basic' | 'ingredients' | 'instructions'>('basic');
+    const { isLoading: isAiLoading, enrichMeal } = useAiRecipe();
     
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -165,6 +168,37 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
 
     const handleRemoveInstruction = (index: number) => {
         setInstructions(prev => prev.filter((_, i) => i !== index));
+    };
+
+    /**
+     * Berikar receptet med AI baserat på befintligt namn, beskrivning, taggar och portioner.
+     * Fyller i ingredienser och/eller instruktioner om de saknas.
+     */
+    const handleEnrichWithAi = async () => {
+        if (!name.trim() || isAiLoading) return;
+        const result = await enrichMeal({
+            name: name.trim(),
+            description: description.trim() || undefined,
+            tags: tagList.length > 0 ? tagList : undefined,
+            servings: servings ? parseInt(servings, 10) : undefined,
+            ingredients: ingredients.length > 0 ? ingredients : undefined,
+            instructions: instructions.length > 0 ? instructions : undefined,
+        });
+        if (result) {
+            if (result.ingredients.length > 0 && ingredients.length === 0) {
+                setIngredients(result.ingredients.map(i => ({
+                    text: i.text,
+                    amount: i.amount || undefined,
+                    checkIfExistAtHome: false,
+                })));
+            }
+            if (result.instructions.length > 0 && instructions.length === 0) {
+                setInstructions(result.instructions);
+            }
+            if (!description && result.description) {
+                setDescription(result.description);
+            }
+        }
     };
 
     // JSON Import/Export handlers
@@ -468,9 +502,23 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
                                 {ingredients.length === 0 ? (
                                     <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/40 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
                                         <Utensils className="w-8 h-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                                             {t('meals.noIngredients', 'Inga ingredienser tillagda än.')}
                                         </p>
+                                        {name.trim() && (
+                                            <button
+                                                id="meal-edit-enrich-ingredients-btn"
+                                                type="button"
+                                                onClick={handleEnrichWithAi}
+                                                disabled={isAiLoading}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50 rounded-lg transition-colors disabled:opacity-50"
+                                            >
+                                                {isAiLoading
+                                                    ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" />{t('ai.enriching')}</>
+                                                    : <><Sparkles className="w-3.5 h-3.5" />{t('ai.enrichWithAi')}</>
+                                                }
+                                            </button>
+                                        )}
                                     </div>
                                 ) : (
                                     ingredients.map((ing, index) => (
@@ -532,6 +580,20 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
                                 <span className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                     {t('meals.instructionsTab', 'Tillagningssteg')} ({instructions.length})
                                 </span>
+                                {instructions.length === 0 && name.trim() && (
+                                    <button
+                                        id="meal-edit-enrich-instructions-btn"
+                                        type="button"
+                                        onClick={handleEnrichWithAi}
+                                        disabled={isAiLoading}
+                                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50 px-2.5 py-1 rounded-lg transition-colors disabled:opacity-50"
+                                    >
+                                        {isAiLoading
+                                            ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" />{t('ai.enriching')}</>
+                                            : <><Sparkles className="w-3.5 h-3.5" />{t('ai.enrichWithAi')}</>
+                                        }
+                                    </button>
+                                )}
                             </div>
 
                             <div className="space-y-3">
