@@ -79,7 +79,7 @@ function toUserFriendlyError(error: unknown): string {
  * Hämtar och returnerar en konfigurerad Gemini-modell.
  */
 function getModel() {
-    const modelName = import.meta.env.VITE_GEMINI_MODEL || 'gemini-2.0-flash';
+    const modelName = import.meta.env.VITE_GEMINI_MODEL || 'gemini-3.6-flash';
     return genAI.getGenerativeModel({ model: modelName, systemInstruction: SYSTEM_INSTRUCTION });
 }
 
