@@ -1,5 +1,10 @@
 [
   {
+    "hash": "66d1d2b91f1f90f341d75a6be3ed558d77dc72dc",
+    "date": "2026-09-09 18:14:40 +0200",
+    "message": "feat: förbättrad design för inköpslista och snabbfält med rundade hörn och modernt utseende"
+  },
+  {
     "hash": "8b0a92bbe87eaeb84976adddc5f45fdb33d73be2",
     "date": "2026-09-09 17:58:47 +0200",
     "message": "fix: sammanfogar inköpslistan och snabbfältet på startsidan för att ta bort oönskat mellanrum"
@@ -93,10 +98,5 @@
     "hash": "ecfa225c1994ff4a32ffda9886d536cd212afad6",
     "date": "2026-09-09 12:31:42 +0200",
     "message": "Removed Firebase Tools"
-  },
-  {
-    "hash": "0a62d2e27fb5fc2f94b13869e5abdb5e60dc6cef",
-    "date": "2026-09-09 12:18:10 +0200",
-    "message": "update: replace GitHub references with GitLab in AGENTS.md"
   }
 ]

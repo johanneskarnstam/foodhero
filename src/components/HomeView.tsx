@@ -298,8 +298,9 @@ export const HomeView: React.FC = () => {
                     </div>
                 )}
                 </div>
-                {/* Snabbaddition - integrerat i inköpslistan */}
-                <div className="p-4 bg-gray-50/50 dark:bg-gray-700/10 border-t border-gray-100 dark:border-gray-700/40">
+                
+                {/* Snabbaddition - integrerat i inköpslistans container */}
+                <div className="border-t border-gray-200/80 dark:border-gray-700/80 p-4">
                     <form onSubmit={handleQuickAdd} className="flex gap-2">
                         <div className="flex-1 relative">
                             <div className="flex items-center gap-2">
