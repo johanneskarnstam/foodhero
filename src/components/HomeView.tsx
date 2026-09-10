@@ -427,7 +427,8 @@ export const HomeView: React.FC = () => {
                                         return (
                                             <button
                                                 key={type}
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     setMealPlanModal({
                                                         isOpen: true,
                                                         date: nextMealInfo.targetDate,
