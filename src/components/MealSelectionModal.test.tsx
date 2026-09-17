@@ -5,6 +5,22 @@ import { MealSelectionModal } from './MealSelectionModal';
 import { Meal, MealPlan } from '../types';
 import { describe, it, expect, vi } from 'vitest';
 
+// Mock i18next
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'mealSelection.title': 'Välj måltid',
+                'mealSelection.subtitle': 'Välj en måltid från dina favoriter eller skriv in en ny.',
+                'mealSelection.noMealsFound': 'Inga sparade måltider hittades.',
+                'mealSelection.plannedSoon': 'Planerad snart',
+                'common.close': 'Stäng'
+            };
+            return translations[key] || key;
+        }
+    })
+}));
+
 const mockMeals: Meal[] = [
     { id: '1', name: 'Pasta Carbonara', createdAt: '2023-01-01' },
     { id: '2', name: 'Tacos', createdAt: '2023-01-01' },

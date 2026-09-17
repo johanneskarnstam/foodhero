@@ -3,14 +3,17 @@ import { Calendar } from 'lucide-react';
 import { Meal, MealType, MealPlan } from '../types';
 import { useTranslation } from 'react-i18next';
 
-const formatDatePart = (date: Date, format: string): string => {
-    const dayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const formatDatePart = (date: Date, format: string, t: (key: string) => string): string => {
+    const dayIndex = date.getDay();
+    const monthIndex = date.getMonth();
+    
+    const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     
     switch (format) {
-        case 'EEE': return dayNamesShort[date.getDay()];
+        case 'EEE': return t(`daysShort.${dayKeys[dayIndex]}`);
         case 'd': return String(date.getDate());
-        case 'MMM': return monthNamesShort[date.getMonth()];
+        case 'MMM': return t(`monthsShort.${monthKeys[monthIndex]}`);
         default: return '';
     }
 };
@@ -117,7 +120,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
                             <div className="space-y-2">
                                 {next10Days.map((day) => {
                                     const dateStr = day.toISOString().split('T')[0];
-                                    const formattedDate = `${formatDatePart(day, 'EEE')} ${formatDatePart(day, 'd')}`;
+                                    const formattedDate = `${formatDatePart(day, 'EEE', t)} ${formatDatePart(day, 'd', t)}`;
 
                                     return (
                                         <div

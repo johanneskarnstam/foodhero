@@ -14,16 +14,16 @@ export const formatDate = (date: Date) => {
     return `${yyyy}-${mm}-${dd}`;
 };
 
-const dayNames = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
-export const getDayName = (date: Date) => {
+const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+export const getDayName = (date: Date, t: (key: string) => string) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
     const diff = Math.round((d.getTime() - today.getTime()) / 86400000);
     
-    let name = dayNames[date.getDay()];
-    if (diff === 0) name += ' (Idag)';
-    else if (diff === 1) name += ' (Imorgon)';
+    let name = t(`days.${dayNames[date.getDay()]}`);
+    if (diff === 0) name += ` ${t('days.today')}`;
+    else if (diff === 1) name += ` ${t('days.tomorrow')}`;
     return name;
 };

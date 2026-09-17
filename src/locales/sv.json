@@ -606,6 +606,67 @@
     "instructions": "Instruktioner",
     "promptTitle": "Generera recept med AI",
     "generate": "Generera"
+  },
+  "autocomplete": {
+    "tooltip": "Tryck på <kbd>Tab</kbd> eller klicka för att slutföra",
+    "tapToComplete": "Klicka för att slutföra"
+  },
+  "common": {
+    "clear": "Rensa",
+    "close": "Stäng",
+    "syncing": "Synkroniserar ändringar...",
+    "syncingWithCount": "Synkroniserar {{count}} ändring...",
+    "syncingWithCount_plural": "Synkroniserar {{count}} ändringar...",
+    "saving": "Sparar...",
+    "savingShort": "...",
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "delete": "Ta bort",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "select": "Välj",
+    "copy": "Kopiera",
+    "reset": "Återställ"
+  },
+  "mealSelection": {
+    "title": "Välj måltid",
+    "subtitle": "Välj en måltid från dina favoriter eller skriv in en ny.",
+    "noMealsFound": "Inga sparade måltider hittades.",
+    "plannedSoon": "Planerad snart"
+  },
+  "days": {
+    "sunday": "Söndag",
+    "monday": "Måndag",
+    "tuesday": "Tisdag",
+    "wednesday": "Onsdag",
+    "thursday": "Torsdag",
+    "friday": "Fredag",
+    "saturday": "Lördag",
+    "today": "(Idag)",
+    "tomorrow": "(Imorgon)"
+  },
+  "daysShort": {
+    "sunday": "Sön",
+    "monday": "Mån",
+    "tuesday": "Tis",
+    "wednesday": "Ons",
+    "thursday": "Tor",
+    "friday": "Fre",
+    "saturday": "Lör"
+  },
+  "monthsShort": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "Maj",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Okt",
+    "nov": "Nov",
+    "dec": "Dec"
   }
 }
 

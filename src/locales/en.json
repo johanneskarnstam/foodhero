@@ -611,6 +611,64 @@
     "instructions": "Instructions",
     "promptTitle": "Generate recipe with AI",
     "generate": "Generate"
+  },
+  "autocomplete": {
+    "tooltip": "Press <kbd>Tab</kbd> or tap to complete",
+    "tapToComplete": "Tap to complete"
+  },
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "select": "Select",
+    "save": "Save",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "delete": "Delete",
+    "close": "Close",
+    "saving": "Saving...",
+    "savingShort": "...",
+    "copy": "Copy",
+    "reset": "Reset"
+  },
+  "mealSelection": {
+    "title": "Select Meal",
+    "subtitle": "Select a meal from your favorites or type a new one.",
+    "noMealsFound": "No saved meals found.",
+    "plannedSoon": "Planned soon"
+  },
+  "days": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "today": "(Today)",
+    "tomorrow": "(Tomorrow)"
+  },
+  "daysShort": {
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednesday": "Wed",
+    "thursday": "Thu",
+    "friday": "Fri",
+    "saturday": "Sat"
+  },
+  "monthsShort": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec"
   }
 }
 

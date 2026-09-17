@@ -87,7 +87,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
     const formatDay = (dateStr: string) => {
         const date = new Date(dateStr);
-        return getDayName(date);
+        return getDayName(date, t);
     };
 
     if (!isOpen || !meal) return null;

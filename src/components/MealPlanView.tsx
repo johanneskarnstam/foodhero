@@ -293,7 +293,7 @@ export const MealPlanView: React.FC = () => {
         const exportData = displayDays.map(date => {
             return {
                 date: formatDate(date),
-                day: getDayName(date),
+                day: getDayName(date, t),
                 lunch: getMealText(date, 'lunch'),
                 dinner: getMealText(date, 'dinner')
             };
@@ -542,7 +542,7 @@ export const MealPlanView: React.FC = () => {
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <h3 className="font-bold text-base sm:text-lg text-gray-900 dark:text-white">
-                                                    {getDayName(date)}
+                                                    {getDayName(date, t)}
                                                 </h3>
                                             </div>
                                             <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">

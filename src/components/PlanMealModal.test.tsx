@@ -3,6 +3,43 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { PlanMealModal } from './PlanMealModal';
 import { Meal } from '../types';
 
+// Mock i18next
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'mealplan.planMealTitle': 'Planera in måltid',
+                'mealplan.planMealDescription': 'Välj dag och måltidstyp för {{mealName}}',
+                'mealplan.selectDayAndMeal': 'Välj dag och måltid',
+                'common.cancel': 'Avbryt',
+                'common.save': 'Spara',
+                'mealTypes.lunch': 'Lunch',
+                'mealTypes.dinner': 'Middag',
+                'daysShort.sunday': 'Sön',
+                'daysShort.monday': 'Mån',
+                'daysShort.tuesday': 'Tis',
+                'daysShort.wednesday': 'Ons',
+                'daysShort.thursday': 'Tor',
+                'daysShort.friday': 'Fre',
+                'daysShort.saturday': 'Lör',
+                'monthsShort.jan': 'Jan',
+                'monthsShort.feb': 'Feb',
+                'monthsShort.mar': 'Mar',
+                'monthsShort.apr': 'Apr',
+                'monthsShort.may': 'Maj',
+                'monthsShort.jun': 'Jun',
+                'monthsShort.jul': 'Jul',
+                'monthsShort.aug': 'Aug',
+                'monthsShort.sep': 'Sep',
+                'monthsShort.oct': 'Okt',
+                'monthsShort.nov': 'Nov',
+                'monthsShort.dec': 'Dec'
+            };
+            return translations[key] || key;
+        }
+    })
+}));
+
 const mockMeal: Meal = {
     id: '1',
     name: 'Pasta Carbonara',

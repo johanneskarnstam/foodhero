@@ -20,6 +20,7 @@ const WRAPPED_EXAMPLE = `{"items": [{"text": "Pajdeg", "note": "1st", "checkIfEx
 
 const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
     const [copied, setCopied] = useState(false);
+    const { t } = useTranslation();
 
     const handleCopy = async () => {
         try {
@@ -39,7 +40,7 @@ const CodeBlock: React.FC<{ code: string }> = ({ code }) => {
             <button
                 onClick={handleCopy}
                 className="absolute top-2 right-2 p-1 rounded text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
-                title="Copy"
+                title={t('common.copy')}
             >
                 {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
             </button>

@@ -22,7 +22,14 @@ vi.mock('../hooks/useAiRecipe', () => ({
 let mockHookOverrides: Record<string, unknown> = {};
 
 vi.mock('react-i18next', () => ({
-    useTranslation: () => ({ t: (key: string, fallback?: string) => fallback ?? key }),
+    useTranslation: () => ({
+        t: (key: string, fallback?: string) => {
+            const translations: Record<string, string> = {
+                'common.savingShort': '...'
+            };
+            return translations[key] || fallback || key;
+        }
+    }),
 }));
 
 function makeRecipe(overrides = {}) {

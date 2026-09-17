@@ -281,7 +281,7 @@ export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, o
                                 className="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                             >
                                 <Save className="w-4 h-4" />
-                                {isSaving ? '...' : t('ai.saveRecipe')}
+                                {isSaving ? t('common.savingShort') : t('ai.saveRecipe')}
                             </button>
                         )}
                     </div>

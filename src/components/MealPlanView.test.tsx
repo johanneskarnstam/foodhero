@@ -12,6 +12,39 @@ vi.mock('react-router-dom', () => ({
     useNavigate: () => vi.fn(),
 }));
 
+// Mock i18next
+vi.mock('react-i18next', () => ({
+    useTranslation: () => ({
+        t: (key: string) => {
+            const translations: Record<string, string> = {
+                'days.sunday': 'Söndag',
+                'days.monday': 'Måndag',
+                'days.tuesday': 'Tisdag',
+                'days.wednesday': 'Onsdag',
+                'days.thursday': 'Torsdag',
+                'days.friday': 'Fredag',
+                'days.saturday': 'Lördag',
+                'days.today': '(Idag)',
+                'days.tomorrow': '(Imorgon)',
+                'mealPlan.placeholder': 'Vad ska ätas?',
+                'mealplan.whatToEat': 'Vad ska ätas?',
+                'mealplan.deleteMeal': 'Ta bort måltid',
+                'mealplan.dayList': 'Lista',
+                'mealplan.savedToFavorites': 'Måltid sparad till favoriter',
+                'toasts.mealDeleted': 'Måltid borttagen',
+                'mealplan.noMealsMatch': 'Inga måltider matchar filtren',
+                'mealplan.saveNewMealTitle': 'Spara som ny måltid?',
+                'mealplan.saveNewMealPrompt': 'Vill du även spara "Lax med potatis" bland dina måltider?',
+                'ingredientSelection.subtitle': 'Bocka av varor du redan har hemma',
+                'ingredientSelection.transferToShoppingList': 'Lägg till {{count}} varor i inköpslistan',
+                'common.save': 'Spara',
+                'common.cancel': 'Avbryt'
+            };
+            return translations[key] || key;
+        }
+    })
+}));
+
 describe('MealPlanView', () => {
     const mockShowToast = vi.fn();
     const mockAddMealPlan = vi.fn();

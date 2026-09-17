@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Modal } from './Modal';
 import { Meal, MealPlan } from '../types';
 import { CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface MealSelectionModalProps {
     isOpen: boolean;
@@ -18,6 +19,7 @@ export const MealSelectionModal: React.FC<MealSelectionModalProps> = ({
     mealPlans, 
     onSelect 
 }) => {
+    const { t } = useTranslation();
     const plannedInNext7Days = useMemo(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -49,13 +51,13 @@ export const MealSelectionModal: React.FC<MealSelectionModalProps> = ({
             isOpen={isOpen} 
             onClose={onClose} 
             onConfirm={() => {}} 
-            title="Välj måltid" 
-            message="Välj en måltid från dina favoriter eller skriv in en ny."
-            confirmText="Stäng"
+            title={t('mealSelection.title')}
+            message={t('mealSelection.subtitle')}
+            confirmText={t('common.close')}
         >
             <div className="max-h-96 overflow-y-auto custom-scrollbar space-y-2 pr-2">
                 {meals.length === 0 ? (
-                    <p className="text-center text-gray-500 py-4">Inga sparade måltider hittades.</p>
+                    <p className="text-center text-gray-500 py-4">{t('mealSelection.noMealsFound')}</p>
                 ) : (
                     meals.map(meal => {
                         const isPlanned = plannedInNext7Days.has(meal.name.toLowerCase());
@@ -74,7 +76,7 @@ export const MealSelectionModal: React.FC<MealSelectionModalProps> = ({
                                 {isPlanned && (
                                     <div className="flex items-center gap-1 text-xs text-blue-500 font-medium">
                                         <CheckCircle2 className="w-3 h-3" />
-                                        Planerad snart
+                                        {t('mealSelection.plannedSoon')}
                                     </div>
                                 )}
                             </button>

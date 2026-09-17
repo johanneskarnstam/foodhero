@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface InlineAutocompleteInputProps {
     value: string;
@@ -23,6 +24,7 @@ export const InlineAutocompleteInput: React.FC<InlineAutocompleteInputProps> = (
     autoFocus = false,
     inputPaddingClass = 'px-4'
 }) => {
+    const { t } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
     const [showTooltip, setShowTooltip] = useState(false);
     
@@ -106,14 +108,14 @@ export const InlineAutocompleteInput: React.FC<InlineAutocompleteInputProps> = (
                         left: `${value.length * 0.6}em`, // Approximate character width
                         right: 0,
                     }}
-                    title="Tap to complete"
+                    title={t('autocomplete.tapToComplete')}
                 />
             )}
 
             {/* Tooltip hint (shows once) */}
             {showTooltip && shadowText && (
                 <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg shadow-lg z-10 whitespace-nowrap animate-in fade-in slide-in-from-top-2 duration-300">
-                    Press <kbd className="px-1.5 py-0.5 bg-gray-700 dark:bg-gray-600 rounded">Tab</kbd> or tap to complete
+                    {t('autocomplete.tooltip')}
                 </div>
             )}
         </div>
