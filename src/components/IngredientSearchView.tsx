@@ -27,6 +27,7 @@ export const IngredientSearchView: React.FC = () => {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
     const [planningMeal, setPlanningMeal] = useState<Meal | null>(null);
+    const [showCloseQuestion, setShowCloseQuestion] = useState(false);
     const [editingMeal, setEditingMeal] = useState<Meal | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [mealSuggestions, setMealSuggestions] = useState<Meal[]>([]);
@@ -283,6 +284,7 @@ export const IngredientSearchView: React.FC = () => {
             handleMealChange(date, type, planningMeal.name);
             setIsPlanModalOpen(false);
             setPlanningMeal(null);
+            setShowCloseQuestion(true);
         }
     };
 
@@ -599,12 +601,16 @@ export const IngredientSearchView: React.FC = () => {
                 <MealDetailModal
                     meal={selectedMeal}
                     isOpen={isDetailModalOpen}
-                    onClose={() => setIsDetailModalOpen(false)}
+                    onClose={() => {
+                        setIsDetailModalOpen(false);
+                        setShowCloseQuestion(false);
+                    }}
                     onEdit={handleStartEdit}
                     onPlanMeal={handlePlanMeal}
                     onAddToShoppingList={handleAddToShoppingList}
                     onDelete={handleDeleteMeal}
                     mealPlans={mealPlans}
+                    onPlanSuccess={showCloseQuestion}
                 />
             )}
 
@@ -637,6 +643,7 @@ export const IngredientSearchView: React.FC = () => {
                     onClose={() => {
                         setIsPlanModalOpen(false);
                         setPlanningMeal(null);
+                        setShowCloseQuestion(false);
                     }}
                     onSave={handleSavePlannedMeal}
                     meal={planningMeal}

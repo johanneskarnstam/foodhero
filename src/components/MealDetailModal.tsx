@@ -27,7 +27,7 @@ interface MealDetailModalProps {
     onAddToShoppingList?: (meal: Meal) => void;
     onRandomMeal?: () => void;
     onDelete?: (meal: Meal) => void;
-    onCloseRequest?: () => void;
+    onPlanSuccess?: () => void;
 }
 
 export const MealDetailModal: React.FC<MealDetailModalProps> = ({ 
@@ -39,7 +39,8 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     onPlanMeal, 
     onAddToShoppingList,
     onRandomMeal,
-    onDelete
+    onDelete,
+    onPlanSuccess
 }) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions'>('ingredients');
@@ -77,10 +78,10 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     }, [meal, mealPlans]);
 
     useEffect(() => {
-        if (getPlannedInfo.length > 0 && !showCloseQuestion) {
+        if (onPlanSuccess) {
             setShowCloseQuestion(true);
         }
-    }, [getPlannedInfo]);
+    }, [onPlanSuccess]);
 
     const formatDay = (dateStr: string) => {
         const date = new Date(dateStr);

@@ -43,6 +43,7 @@ export const MealsView: React.FC = () => {
     const [viewingMeal, setViewingMeal] = useState<Meal | null>(null);
     const [isPlanningOpen, setIsPlanningOpen] = useState(false);
     const [planningMeal, setPlanningMeal] = useState<Meal | null>(null);
+    const [showCloseQuestion, setShowCloseQuestion] = useState(false);
     const [isAiModalOpen, setIsAiModalOpen] = useState(false);
     
     // Delete confirmation modal state
@@ -169,6 +170,7 @@ export const MealsView: React.FC = () => {
         if (planningMeal) {
             handleMealChange(date, type, planningMeal.name);
             showToast(t('toasts.mealPlanned', 'Måltid planerad'), 'success');
+            setShowCloseQuestion(true);
         }
     };
 
@@ -466,7 +468,10 @@ export const MealsView: React.FC = () => {
 
             <MealDetailModal 
                 isOpen={!!viewingMeal}
-                onClose={() => setViewingMeal(null)}
+                onClose={() => {
+                    setViewingMeal(null);
+                    setShowCloseQuestion(false);
+                }}
                 onEdit={(meal) => {
                     setViewingMeal(null);
                     handleStartEdit(meal);
@@ -477,6 +482,7 @@ export const MealsView: React.FC = () => {
                 onDelete={handleDeleteMeal}
                 meal={viewingMeal}
                 mealPlans={mealPlans}
+                onPlanSuccess={showCloseQuestion}
             />
 
             <ConfirmModal
@@ -492,7 +498,11 @@ export const MealsView: React.FC = () => {
 
             <PlanMealModal
                 isOpen={isPlanningOpen}
-                onClose={() => setIsPlanningOpen(false)}
+                onClose={() => {
+                    setIsPlanningOpen(false);
+                    setPlanningMeal(null);
+                    setShowCloseQuestion(false);
+                }}
                 onSave={handleSavePlannedMeal}
                 meal={planningMeal}
             />
