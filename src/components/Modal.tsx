@@ -58,7 +58,7 @@ export const Modal: React.FC<ModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm">
-            <div role="dialog" aria-labelledby="modal-title" aria-describedby="modal-message" className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden transform transition-all">
+            <div role="dialog" aria-labelledby="modal-title" aria-describedby="modal-message" className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-lg md:max-w-[calc(100vw-2rem)] lg:max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden transform transition-all">
                 <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar">
                     <div className="flex items-center justify-between mb-4 flex-shrink-0">
                         <h3 id="modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">

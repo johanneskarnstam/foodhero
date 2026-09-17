@@ -99,6 +99,16 @@ export const IngredientSelectionModal: React.FC<IngredientSelectionModalProps> =
         return [...Array.from(itemMap.values()), ...customIngredients];
     }, [plannedMeals, customIngredients]);
 
+    // Handle body scroll lock
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
     // Initial check state on modal open
     useEffect(() => {
         if (isOpen) {
@@ -204,7 +214,7 @@ export const IngredientSelectionModal: React.FC<IngredientSelectionModalProps> =
             aria-labelledby="ingredient-selection-title"
         >
             <div
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-xl md:max-w-[calc(100vw-2rem)] lg:max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200"
             >
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700/80">

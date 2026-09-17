@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar } from 'lucide-react';
 import { Meal, MealType, MealPlan } from '../types';
 import { useTranslation } from 'react-i18next';
@@ -53,6 +53,16 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const [selectedSlots, setSelectedSlots] = useState<{ date: Date; type: MealType }[]>([]);
+
+    // Handle body scroll lock
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
 
     const next10Days = getNext10Days();
 
@@ -126,7 +136,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
             aria-labelledby="plan-meal-title"
         >
             <div
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden transform transition-all animate-in zoom-in-95 duration-200"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md md:max-w-[calc(100vw-2rem)] lg:max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden transform transition-all animate-in zoom-in-95 duration-200"
             >
                 <div className="p-6 overflow-y-auto">
                     <h2
