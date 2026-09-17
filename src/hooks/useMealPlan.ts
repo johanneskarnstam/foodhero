@@ -34,7 +34,7 @@ export const useMealPlan = () => {
             const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
             monday.setDate(diff);
             
-            const days: DayPlan[] = Array.from({ length: 7 }).map((_, idx) => {
+            const days: DayPlan[] = Array.from({ length: 10 }).map((_, idx) => {
                 const d = new Date(monday);
                 d.setDate(monday.getDate() + idx);
                 return {
@@ -127,7 +127,7 @@ export const useMealPlan = () => {
         const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
         monday.setDate(diff);
         
-        const days: DayPlan[] = Array.from({ length: 7 }).map((_, idx) => {
+        const days: DayPlan[] = Array.from({ length: 10 }).map((_, idx) => {
             const d = new Date(monday);
             d.setDate(monday.getDate() + idx);
             

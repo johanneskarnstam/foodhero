@@ -60,7 +60,7 @@ describe('MealSelectionModal', () => {
         expect(screen.getByText('Lax med potatis')).toBeInTheDocument();
     });
 
-    it('marks meals that are planned in the next 7 days', () => {
+    it('marks meals that are planned in the next 10 days', () => {
         render(
             <MealSelectionModal 
                 isOpen={true} 

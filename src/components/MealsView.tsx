@@ -46,6 +46,10 @@ export const MealsView: React.FC = () => {
     const [showCloseQuestion, setShowCloseQuestion] = useState(false);
     const [isAiModalOpen, setIsAiModalOpen] = useState(false);
     
+    // State for shopping cart icon flow
+    const [showPlanMealPrompt, setShowPlanMealPrompt] = useState(false);
+    const [mealToPlanAfterShopping, setMealToPlanAfterShopping] = useState<Meal | null>(null);
+    
     // Delete confirmation modal state
     const [deleteConfirmMeal, setDeleteConfirmMeal] = useState<Meal | null>(null);
 
@@ -166,10 +170,18 @@ export const MealsView: React.FC = () => {
         setIsPlanningOpen(true);
     };
 
-    const handleSavePlannedMeal = (date: Date, type: MealType) => {
+    const handleSavePlannedMeal = (selections: { date: Date; type: MealType }[]) => {
         if (planningMeal) {
-            handleMealChange(date, type, planningMeal.name);
-            showToast(t('toasts.mealPlanned', 'Måltid planerad'), 'success');
+            selections.forEach(selection => {
+                handleMealChange(selection.date, selection.type, planningMeal.name);
+            });
+            const count = selections.length;
+            showToast(
+                count === 1 
+                    ? t('toasts.mealPlanned') 
+                    : t('toasts.mealsPlanned', { count }),
+                'success'
+            );
         }
     };
 
@@ -185,6 +197,7 @@ export const MealsView: React.FC = () => {
             return;
         }
 
+        setMealToPlanAfterShopping(meal);
         setIngredientModalConfig({
             isOpen: true,
             mealName: meal.name,
@@ -209,6 +222,26 @@ export const MealsView: React.FC = () => {
         try {
             await addItemsToList(defaultListId, itemsToAdd);
             showToast(`${itemsToAdd.length} ${t('common.items', 'artiklar')} tillagda i inköpslistan`, 'success');
+            
+            // Check if the meal is already planned
+            if (mealToPlanAfterShopping) {
+                const isAlreadyPlanned = mealPlans.some(plan =>
+                    plan.days.some(day =>
+                        day.meals.some(m => m.plannedMeal.customTitle?.toLowerCase() === mealToPlanAfterShopping.name.toLowerCase())
+                    )
+                );
+                
+                if (!isAlreadyPlanned) {
+                    setShowPlanMealPrompt(true);
+                } else {
+                    // Close the ingredient modal and reset state
+                    setIngredientModalConfig({ isOpen: false, mealName: '', ingredients: [] });
+                    setMealToPlanAfterShopping(null);
+                }
+            } else {
+                // Close the ingredient modal if no meal to plan
+                setIngredientModalConfig({ isOpen: false, mealName: '', ingredients: [] });
+            }
         } catch {
             showToast(t('toasts.error', 'Ett fel uppstod'), 'error');
         }
@@ -504,16 +537,25 @@ export const MealsView: React.FC = () => {
                 onClose={() => {
                     setIsPlanningOpen(false);
                     setPlanningMeal(null);
+                    setMealToPlanAfterShopping(null);
                 }}
                 onSave={handleSavePlannedMeal}
-                onAfterSave={handlePlanSuccess}
+                onAfterSave={() => {
+                    handlePlanSuccess();
+                    setIngredientModalConfig({ isOpen: false, mealName: '', ingredients: [] });
+                    setMealToPlanAfterShopping(null);
+                }}
                 meal={planningMeal}
                 mealPlans={mealPlans}
+                allowMultiple={true}
             />
 
             <IngredientSelectionModal
                 isOpen={ingredientModalConfig.isOpen}
-                onClose={() => setIngredientModalConfig({ isOpen: false, mealName: '', ingredients: [] })}
+                onClose={() => {
+                    setIngredientModalConfig({ isOpen: false, mealName: '', ingredients: [] });
+                    setMealToPlanAfterShopping(null);
+                }}
                 title={`Handla till ${ingredientModalConfig.mealName}`}
                 plannedMeals={[{
                     name: ingredientModalConfig.mealName,
@@ -521,6 +563,42 @@ export const MealsView: React.FC = () => {
                 }]}
                 onConfirm={handleConfirmTransfer}
             />
+
+            {/* Plan Meal Prompt Modal (shown after adding ingredients from shopping cart icon) */}
+            {showPlanMealPrompt && mealToPlanAfterShopping && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm w-full">
+                        <p className="text-sm text-gray-800 dark:text-gray-200 mb-1 text-center">
+                            {t('meals.addToShoppingListPrompt', 'Vill du också planera in denna måltid?')}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-4 text-center">
+                            {t('meals.addToShoppingListPromptDescription', 'Ingredienserna har lagts till i inköpslistan. Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?')}
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowPlanMealPrompt(false);
+                                    setIsPlanningOpen(true);
+                                    setPlanningMeal(mealToPlanAfterShopping);
+                                }}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                {t('common.yes', 'Ja')}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowPlanMealPrompt(false);
+                                    setMealToPlanAfterShopping(null);
+                                    setIngredientModalConfig({ isOpen: false, mealName: '', ingredients: [] });
+                                }}
+                                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            >
+                                {t('common.no', 'Nej')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <AiRecipeModal
                 isOpen={isAiModalOpen}

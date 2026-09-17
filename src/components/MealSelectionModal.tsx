@@ -20,20 +20,20 @@ export const MealSelectionModal: React.FC<MealSelectionModalProps> = ({
     onSelect 
 }) => {
     const { t } = useTranslation();
-    const plannedInNext7Days = useMemo(() => {
+    const plannedInNext10Days = useMemo(() => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
-        const sevenDaysLater = new Date(today);
-        sevenDaysLater.setDate(today.getDate() + 6);
-        sevenDaysLater.setHours(23, 59, 59, 999);
+        const tenDaysLater = new Date(today);
+        tenDaysLater.setDate(today.getDate() + 9);
+        tenDaysLater.setHours(23, 59, 59, 999);
 
         const plannedMeals = new Set<string>();
         
         mealPlans.forEach(plan => {
             plan.days.forEach(day => {
                 const dayDate = new Date(day.date);
-                if (dayDate >= today && dayDate <= sevenDaysLater) {
+                if (dayDate >= today && dayDate <= tenDaysLater) {
                     day.meals.forEach(m => {
                         if (m.plannedMeal.customTitle) {
                             plannedMeals.add(m.plannedMeal.customTitle.toLowerCase());
@@ -60,7 +60,7 @@ export const MealSelectionModal: React.FC<MealSelectionModalProps> = ({
                     <p className="text-center text-gray-500 py-4">{t('mealSelection.noMealsFound')}</p>
                 ) : (
                     meals.map(meal => {
-                        const isPlanned = plannedInNext7Days.has(meal.name.toLowerCase());
+                        const isPlanned = plannedInNext10Days.has(meal.name.toLowerCase());
                         return (
                             <button
                                 key={meal.id}

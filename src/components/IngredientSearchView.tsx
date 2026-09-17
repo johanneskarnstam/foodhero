@@ -279,9 +279,11 @@ export const IngredientSearchView: React.FC = () => {
         setIsPlanModalOpen(true);
     };
 
-    const handleSavePlannedMeal = (date: Date, type: MealType) => {
+    const handleSavePlannedMeal = (selections: { date: Date; type: MealType }[]) => {
         if (planningMeal) {
-            handleMealChange(date, type, planningMeal.name);
+            selections.forEach(selection => {
+                handleMealChange(selection.date, selection.type, planningMeal.name);
+            });
             setIsPlanModalOpen(false);
             setPlanningMeal(null);
         }

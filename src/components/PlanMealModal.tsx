@@ -21,10 +21,11 @@ const formatDatePart = (date: Date, format: string, t: (key: string) => string):
 interface PlanMealModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (date: Date, type: MealType) => void;
+    onSave: (selections: { date: Date; type: MealType }[]) => void;
     meal: Meal | null;
     mealPlans?: MealPlan[];
     onAfterSave?: () => void;
+    allowMultiple?: boolean;
 }
 
 const getNext10Days = (): Date[] => {
@@ -47,11 +48,11 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     onSave,
     meal,
     mealPlans,
-    onAfterSave
+    onAfterSave,
+    allowMultiple = false
 }) => {
     const { t } = useTranslation();
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedType, setSelectedType] = useState<MealType>('dinner');
+    const [selectedSlots, setSelectedSlots] = useState<{ date: Date; type: MealType }[]>([]);
 
     const next10Days = getNext10Days();
 
@@ -73,9 +74,37 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
         return null;
     };
 
+    const isSlotSelected = (date: Date, type: MealType): boolean => {
+        return selectedSlots.some(slot => 
+            slot.date.toISOString().split('T')[0] === date.toISOString().split('T')[0] && 
+            slot.type === type
+        );
+    };
+
+    const toggleSlotSelection = (date: Date, type: MealType) => {
+        const dateStr = date.toISOString().split('T')[0];
+        const existingIndex = selectedSlots.findIndex(slot => 
+            slot.date.toISOString().split('T')[0] === dateStr && 
+            slot.type === type
+        );
+        
+        if (existingIndex >= 0) {
+            // Remove the slot
+            setSelectedSlots(selectedSlots.filter((_, index) => index !== existingIndex));
+        } else {
+            // Add the slot
+            if (allowMultiple) {
+                setSelectedSlots([...selectedSlots, { date, type }]);
+            } else {
+                // Single selection mode - replace any existing selection
+                setSelectedSlots([{ date, type }]);
+            }
+        }
+    };
+
     const handleSave = () => {
-        if (!selectedDate) return;
-        onSave(selectedDate, selectedType);
+        if (selectedSlots.length === 0) return;
+        onSave(selectedSlots);
         onAfterSave?.();
         onClose();
     };
@@ -113,6 +142,31 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
                     )}
 
                     <div className="space-y-4">
+                        {allowMultiple && selectedSlots.length > 0 && (
+                            <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                                <label className="block text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">
+                                    {t('mealplan.selectedSlots', 'Valda tillfällen')}
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedSlots.map((slot, index) => (
+                                        <span
+                                            key={`${slot.date.toISOString()}-${slot.type}-${index}`}
+                                            className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                                        >
+                                            {formatDatePart(slot.date, 'EEE', t)} {formatDatePart(slot.date, 'd', t)} - {t(`mealTypes.${slot.type}`)}
+                                            <button
+                                                onClick={() => toggleSlotSelection(slot.date, slot.type)}
+                                                className="text-blue-500 hover:text-blue-700 ml-1"
+                                                aria-label={t('common.remove', 'Ta bort')}
+                                            >
+                                                ×
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 {t('mealplan.selectDayAndMeal', 'Välj dag och måltid')}
@@ -133,16 +187,13 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
                                             
                                             {(['lunch', 'dinner'] as MealType[]).map(type => {
                                                 const plannedMeal = getPlannedMealForSlot(day, type);
-                                                const isSelected = selectedDate?.toISOString().split('T')[0] === dateStr && selectedType === type;
+                                                const isSelected = isSlotSelected(day, type);
                                                 const isDisabled = !!plannedMeal;
 
                                                 return (
                                                     <button
                                                         key={`${dateStr}-${type}`}
-                                                        onClick={() => {
-                                                            setSelectedDate(day);
-                                                            setSelectedType(type);
-                                                        }}
+                                                        onClick={() => toggleSlotSelection(day, type)}
                                                         disabled={isDisabled}
                                                         className={`flex-1 p-2 rounded-lg text-sm font-medium transition-all ${
                                                             isSelected
@@ -172,11 +223,13 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
                         </button>
                         <button
                             onClick={handleSave}
-                            disabled={!selectedDate}
+                            disabled={selectedSlots.length === 0}
                             className="flex items-center gap-2 px-6 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <Calendar className="w-4 h-4" />
-                            {t('common.save', 'Spara')}
+                            {allowMultiple && selectedSlots.length > 1
+                                ? t('mealplan.planMultipleMeals', { count: selectedSlots.length })
+                                : t('common.save', 'Spara')}
                         </button>
                     </div>
                 </div>

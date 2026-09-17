@@ -86,7 +86,7 @@ export const MealPlanView: React.FC = () => {
 
     const navigateDays = (direction: 'prev' | 'next') => {
         const newDate = new Date(startDate);
-        newDate.setDate(startDate.getDate() + (direction === 'prev' ? -7 : 7));
+        newDate.setDate(startDate.getDate() + (direction === 'prev' ? -10 : 10));
         setStartDate(newDate);
     };
 
@@ -97,7 +97,7 @@ export const MealPlanView: React.FC = () => {
     };
 
     const displayDays = useMemo(() => {
-        return Array.from({ length: 7 }).map((_, i) => {
+        return Array.from({ length: 10 }).map((_, i) => {
             const d = new Date(startDate);
             d.setDate(startDate.getDate() + i);
             return d;
@@ -157,7 +157,7 @@ export const MealPlanView: React.FC = () => {
     const handleRandomMealSelect = (meal: Meal) => {
         if (randomMealModal.date && randomMealModal.type) {
             handleMealChange(randomMealModal.date, randomMealModal.type, meal.name);
-            showToast(t('toasts.mealPlanned', 'Måltid planerad'), 'success');
+            showToast(t('toasts.mealPlanned'), 'success');
         }
         setRandomMealModal({ isOpen: false, date: null, type: null });
     };
@@ -449,7 +449,7 @@ export const MealPlanView: React.FC = () => {
                         <button 
                             onClick={() => navigateDays('prev')}
                             className="p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 hover:shadow-xs transition-all"
-                            title="Backa 7 dagar"
+                            title={t('mealplan.navigateBack', 'Backa 10 dagar')}
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </button>
@@ -462,7 +462,7 @@ export const MealPlanView: React.FC = () => {
                         <button 
                             onClick={() => navigateDays('next')}
                             className="p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 hover:shadow-xs transition-all"
-                            title="Framåt 7 dagar"
+                            title={t('mealplan.navigateForward', 'Framåt 10 dagar')}
                         >
                             <ChevronRight className="w-4 h-4" />
                         </button>
