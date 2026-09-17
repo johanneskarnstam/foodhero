@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
     Utensils, 
     Plus, 
@@ -33,9 +33,10 @@ export const MealsView: React.FC = () => {
     const { t } = useTranslation();
     const { mealPlans, handleMealChange } = useMealPlan();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [selectedTag, setSelectedTag] = useState<string | null>(() => searchParams.get('tag'));
     
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingMeal, setEditingMeal] = useState<Meal | null>(null);
@@ -78,21 +79,34 @@ export const MealsView: React.FC = () => {
         loadMealSuggestions();
     }, []);
 
+    useEffect(() => {
+        setSelectedTag(searchParams.get('tag'));
+    }, [searchParams.toString()]);
+
+    const allMeals = useMemo(() => {
+        const savedNames = new Set(meals.map(meal => meal.name.trim().toLowerCase()));
+        return [
+            ...meals,
+            ...mealSuggestions.filter(meal => !savedNames.has(meal.name.trim().toLowerCase()))
+        ];
+    }, [meals, mealSuggestions]);
+
     // Extract all unique tags across saved meals
     const allTags = useMemo(() => {
         const tagSet = new Set<string>();
-        meals.forEach(m => {
+        allMeals.forEach(m => {
             m.tags?.forEach(tag => {
                 if (tag.trim()) tagSet.add(tag.trim());
             });
         });
         return Array.from(tagSet);
-    }, [meals]);
+    }, [allMeals]);
 
     // Filter meals based on search query and selected tag
     const filteredMeals = useMemo(() => {
         const query = searchQuery.trim().toLowerCase();
-        return meals.filter(meal => {
+        const mealsToFilter = selectedTag ? allMeals : meals;
+        return mealsToFilter.filter(meal => {
             const matchesQuery = !query 
                 || meal.name.toLowerCase().includes(query)
                 || (meal.description && meal.description.toLowerCase().includes(query))
@@ -103,7 +117,23 @@ export const MealsView: React.FC = () => {
 
             return matchesQuery && matchesTag;
         });
-    }, [meals, searchQuery, selectedTag]);
+    }, [allMeals, meals, searchQuery, selectedTag]);
+
+    const handleTagSelect = (tag: string | null) => {
+        setSelectedTag(tag);
+        const nextParams = new URLSearchParams(searchParams);
+        if (tag) {
+            nextParams.set('tag', tag);
+        } else {
+            nextParams.delete('tag');
+        }
+        setSearchParams(nextParams);
+    };
+
+    const handleMealTagClick = (tag: string) => {
+        setViewingMeal(null);
+        navigate(`/meals?tag=${encodeURIComponent(tag)}`);
+    };
 
     const handleCreateNewRecipe = () => {
         setEditingMeal(null);
@@ -324,7 +354,7 @@ export const MealsView: React.FC = () => {
                     <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
                         <button
                             type="button"
-                            onClick={() => setSelectedTag(null)}
+                            onClick={() => handleTagSelect(null)}
                             className={`px-2.5 py-1 rounded-full font-medium transition-all flex-shrink-0 ${
                                 selectedTag === null
                                     ? 'bg-blue-600 text-white shadow-xs'
@@ -337,7 +367,7 @@ export const MealsView: React.FC = () => {
                             <button
                                 key={tag}
                                 type="button"
-                                onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                                onClick={() => handleTagSelect(selectedTag === tag ? null : tag)}
                                 className={`px-2.5 py-1 rounded-full font-medium transition-all flex-shrink-0 flex items-center gap-1 ${
                                     selectedTag === tag
                                         ? 'bg-blue-600 text-white shadow-xs'
@@ -369,7 +399,9 @@ export const MealsView: React.FC = () => {
                         </p>
                     </div>
                 ) : (
-                    filteredMeals.map((meal) => (
+                    filteredMeals.map((meal) => {
+                        const isSuggestion = meal.id?.startsWith('sug-') ?? false;
+                        return (
                         <div 
                             key={meal.id} 
                             onClick={() => setViewingMeal(meal)}
@@ -391,7 +423,7 @@ export const MealsView: React.FC = () => {
                                 )}
                                 
                                 <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button 
+                                    {!isSuggestion && <button 
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleStartEdit(meal);
@@ -400,8 +432,8 @@ export const MealsView: React.FC = () => {
                                         title={t('common.edit', 'Redigera')}
                                     >
                                         <Edit2 className="w-3.5 h-3.5" />
-                                    </button>
-                                    <button 
+                                    </button>}
+                                    {!isSuggestion && <button 
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleDeleteMeal(meal);
@@ -410,7 +442,7 @@ export const MealsView: React.FC = () => {
                                         title={t('common.delete', 'Ta bort')}
                                     >
                                         <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
+                                    </button>}
                                 </div>
                             </div>
 
@@ -450,7 +482,7 @@ export const MealsView: React.FC = () => {
 
                                     {/* Card Action Buttons */}
                                     <div className="flex items-center justify-between gap-2 pt-1">
-                                        <button 
+                                        {!isSuggestion && <button 
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handlePlanMeal(meal);
@@ -458,7 +490,7 @@ export const MealsView: React.FC = () => {
                                             className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-xl transition-colors"
                                         >
                                             {t('meals.planInMealPlan', 'Planera')}
-                                        </button>
+                                        </button>}
                                         
                                         {meal.ingredients && meal.ingredients.length > 0 && (
                                             <button 
@@ -473,7 +505,7 @@ export const MealsView: React.FC = () => {
                                             </button>
                                         )}
                                         
-                                        <button 
+                                        {!isSuggestion && <button 
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleDeleteMeal(meal);
@@ -482,12 +514,13 @@ export const MealsView: React.FC = () => {
                                             title={t('common.delete', 'Ta bort')}
                                         >
                                             <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        </button>}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
 
@@ -518,6 +551,7 @@ export const MealsView: React.FC = () => {
                 onDelete={handleDeleteMeal}
                 meal={viewingMeal}
                 mealPlans={mealPlans}
+                onTagClick={handleMealTagClick}
                 onPlanSuccess={showCloseQuestion ? () => setShowCloseQuestion(false) : undefined}
             />
 

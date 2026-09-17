@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 import { Search, X, Utensils, Eye, Calendar, ShoppingCart, Tag, Users, Dices } from 'lucide-react';
 import { Meal, MealType } from '../types';
@@ -18,6 +19,7 @@ export const IngredientSearchView: React.FC = () => {
     const { meals, addItemsToList, defaultListId, updateMeal, deleteMeal } = useApp();
     const { t } = useTranslation();
     const { showToast } = useToast();
+    const navigate = useNavigate();
 
     const { mealPlans, handleMealChange } = useMealPlan();
 
@@ -263,6 +265,11 @@ export const IngredientSearchView: React.FC = () => {
     const handleViewMealDetails = (meal: Meal) => {
         setSelectedMeal(meal);
         setIsDetailModalOpen(true);
+    };
+
+    const handleMealTagClick = (tag: string) => {
+        setIsDetailModalOpen(false);
+        navigate(`/meals?tag=${encodeURIComponent(tag)}`);
     };
 
     const handleOpenRandomMealDetails = (meal: Meal) => {
@@ -617,6 +624,7 @@ export const IngredientSearchView: React.FC = () => {
                     onAddToShoppingList={handleAddToShoppingList}
                     onDelete={handleDeleteMeal}
                     mealPlans={mealPlans}
+                    onTagClick={handleMealTagClick}
                     onPlanSuccess={showCloseQuestion ? () => setShowCloseQuestion(false) : undefined}
                 />
             )}

@@ -25,6 +25,7 @@ interface MealDetailModalProps {
     onEdit?: (meal: Meal) => void;
     onPlanMeal?: (meal: Meal) => void;
     onAddToShoppingList?: (meal: Meal) => void;
+    onTagClick?: (tag: string) => void;
     onRandomMeal?: () => void;
     onDelete?: (meal: Meal) => void;
     onPlanSuccess?: () => void;
@@ -38,6 +39,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     onEdit, 
     onPlanMeal, 
     onAddToShoppingList,
+    onTagClick,
     onRandomMeal,
     onDelete,
     onPlanSuccess
@@ -190,13 +192,16 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                         )}
 
                         {meal.tags && meal.tags.length > 0 && meal.tags.map(tag => (
-                            <span 
+                            <button
+                                type="button"
                                 key={tag} 
-                                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium text-xs"
+                                onClick={() => onTagClick?.(tag)}
+                                disabled={!onTagClick}
+                                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium text-xs disabled:cursor-default hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                             >
                                 <Tag size={11} />
                                 {tag}
-                            </span>
+                            </button>
                         ))}
                     </div>
 

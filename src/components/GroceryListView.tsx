@@ -433,6 +433,10 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
             <MealDetailModal 
                 isOpen={!!viewingMeal}
                 onClose={() => setViewingMeal(null)}
+                onTagClick={(tag) => {
+                    setViewingMeal(null);
+                    navigate(`/meals?tag=${encodeURIComponent(tag)}`);
+                }}
                 onEdit={(meal) => {
                     setViewingMeal(null);
                     setEditingMeal(meal);

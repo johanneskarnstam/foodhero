@@ -101,6 +101,23 @@ describe('MealDetailModal', () => {
         expect(screen.getByText('Baka i ugnen i 20 minuter')).toBeInTheDocument();
     });
 
+    it('calls onTagClick when a meal tag is clicked', () => {
+        const mockOnTagClick = vi.fn();
+
+        render(
+            <MealDetailModal
+                isOpen={true}
+                onClose={mockOnClose}
+                meal={mockMeal}
+                onTagClick={mockOnTagClick}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: 'Fisk' }));
+
+        expect(mockOnTagClick).toHaveBeenCalledWith('Fisk');
+    });
+
     it('triggers action callbacks when action buttons are clicked', async () => {
         render(
             <MealDetailModal

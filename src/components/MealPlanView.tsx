@@ -644,6 +644,10 @@ export const MealPlanView: React.FC = () => {
             <RecipeDetailModal 
                 isOpen={!!recipeViewMeal} 
                 onClose={() => setRecipeViewMeal(null)} 
+                onTagClick={(tag) => {
+                    setRecipeViewMeal(null);
+                    navigate(`/meals?tag=${encodeURIComponent(tag)}`);
+                }}
                 onDelete={handleDeleteMeal}
                 meal={recipeViewMeal} 
             />

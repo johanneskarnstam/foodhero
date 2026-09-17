@@ -9,6 +9,7 @@ interface RecipeDetailModalProps {
     onEdit?: (meal: Meal) => void;
     onPlanMeal?: (meal: Meal) => void;
     onAddToShoppingList?: (meal: Meal) => void;
+    onTagClick?: (tag: string) => void;
     onDelete?: (meal: Meal) => void;
 }
 

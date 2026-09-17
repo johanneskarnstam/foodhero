@@ -9,8 +9,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../context/AppContext');
 vi.mock('../context/ToastContext');
+const mockUseSearchParams = vi.hoisted(() => vi.fn(() => [new URLSearchParams(), vi.fn()] as const));
 vi.mock('react-router-dom', () => ({
     useNavigate: () => vi.fn(),
+    useSearchParams: () => mockUseSearchParams(),
 }));
 
 const mockMeals: Meal[] = [
@@ -47,6 +49,7 @@ describe('MealsView', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        mockUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
 
         vi.mocked(useToast).mockReturnValue({
             showToast: mockShowToast,
@@ -91,6 +94,15 @@ describe('MealsView', () => {
 
         expect(screen.getByText('Köttfärssås & Spaghetti')).toBeInTheDocument();
         expect(screen.queryByText('Vegetarisk Lasagne')).not.toBeInTheDocument();
+    });
+
+    it('filters meals by a tag from the URL', () => {
+        mockUseSearchParams.mockReturnValue([new URLSearchParams('tag=Pasta'), vi.fn()]);
+
+        render(<MealsView />);
+
+        expect(screen.getByText('Köttfärssås & Spaghetti')).toBeInTheDocument();
+        expect(screen.getByText('Vegetarisk Lasagne')).toBeInTheDocument();
     });
 
     it('opens MealEditModal when clicking "Skapa recept"', () => {

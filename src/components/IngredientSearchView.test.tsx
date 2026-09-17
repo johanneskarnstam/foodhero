@@ -73,6 +73,10 @@ vi.mock('../hooks/useMealPlan', () => ({
     useMealPlan: () => mockUseMealPlan
 }));
 
+vi.mock('react-router-dom', () => ({
+    useNavigate: () => vi.fn(),
+}));
+
 // Mock the useToast hook
 vi.mock('../context/ToastContext', () => ({
     useToast: () => ({
