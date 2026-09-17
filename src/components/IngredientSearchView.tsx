@@ -428,22 +428,23 @@ export const IngredientSearchView: React.FC = () => {
                                         : ''
                                 }`}
                             >
-                                <div className="flex items-start gap-4">
-                                    {/* Recipe Icon */}
-                                    <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
-                                        {meal.imageUrl ? (
-                                            <img 
-                                                src={meal.imageUrl} 
-                                                alt={meal.name}
-                                                className="w-10 h-10 rounded-lg object-cover"
-                                            />
-                                        ) : (
-                                            <Utensils className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                                        )}
-                                    </div>
-                                    
-                                    {/* Recipe Info */}
-                                    <div className="flex-1 min-w-0">
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                                    <div className="flex min-w-0 flex-1 items-start gap-4">
+                                        {/* Recipe Icon */}
+                                        <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
+                                            {meal.imageUrl ? (
+                                                <img 
+                                                    src={meal.imageUrl} 
+                                                    alt={meal.name}
+                                                    className="w-10 h-10 rounded-lg object-cover"
+                                                />
+                                            ) : (
+                                                <Utensils className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                                            )}
+                                        </div>
+                                        
+                                        {/* Recipe Info */}
+                                        <div className="flex-1 min-w-0">
                                         <h3 className="font-semibold text-gray-900 dark:text-white break-words">
                                             {meal.name}
                                         </h3>
@@ -493,16 +494,17 @@ export const IngredientSearchView: React.FC = () => {
                                                 </p>
                                             </div>
                                         )}
+                                        </div>
                                     </div>
 
                                     {/* Action Buttons */}
-                                    <div className="flex items-center justify-end gap-2 px-4 pb-4">
+                                    <div className="flex w-full items-center justify-end gap-2 sm:w-auto sm:flex-shrink-0">
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleAddToShoppingList(meal);
                                             }}
-                                            className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
+                                            className="flex-1 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors sm:flex-none"
                                             title={t('ingredientSearch.addToShoppingList')}
                                             aria-label={t('ingredientSearch.addToShoppingList')}
                                         >
@@ -513,7 +515,7 @@ export const IngredientSearchView: React.FC = () => {
                                                 e.stopPropagation();
                                                 handlePlanMeal(meal);
                                             }}
-                                            className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                            className="flex-1 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors sm:flex-none"
                                             title={t('ingredientSearch.planMeal')}
                                             aria-label={t('ingredientSearch.planMeal')}
                                         >
@@ -524,7 +526,7 @@ export const IngredientSearchView: React.FC = () => {
                                                 e.stopPropagation();
                                                 handleViewMealDetails(meal);
                                             }}
-                                            className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
+                                            className="flex-1 p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors sm:flex-none"
                                             title={t('ingredientSearch.viewDetails')}
                                             aria-label={t('ingredientSearch.viewDetails')}
                                         >
