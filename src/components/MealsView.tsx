@@ -508,6 +508,7 @@ export const MealsView: React.FC = () => {
                 onSave={handleSavePlannedMeal}
                 onAfterSave={handlePlanSuccess}
                 meal={planningMeal}
+                mealPlans={mealPlans}
             />
 
             <IngredientSelectionModal

@@ -60,7 +60,7 @@ describe('PlanMealModal', () => {
         expect(screen.getByText('Planera in måltid')).toBeInTheDocument();
     });
 
-    it('should display day selection label', () => {
+    it('should display day and meal selection label', () => {
         render(
             <PlanMealModal
                 isOpen={true}
@@ -70,20 +70,7 @@ describe('PlanMealModal', () => {
             />
         );
 
-        expect(screen.getByText('Välj dag')).toBeInTheDocument();
-    });
-
-    it('should display meal type selection label', () => {
-        render(
-            <PlanMealModal
-                isOpen={true}
-                onClose={mockOnClose}
-                onSave={mockOnSave}
-                meal={mockMeal}
-            />
-        );
-
-        expect(screen.getByText('Välj måltidstyp')).toBeInTheDocument();
+        expect(screen.getByText('Välj dag och måltid')).toBeInTheDocument();
     });
 
     it('should call onClose when cancel button is clicked', () => {

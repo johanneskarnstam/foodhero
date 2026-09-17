@@ -365,6 +365,7 @@
     "planMealDescription": "Välj dag och måltidstyp för {{mealName}}",
     "selectDay": "Välj dag",
     "selectMealType": "Välj måltidstyp",
+    "selectDayAndMeal": "Välj dag och måltid",
     "noMealsMatch": "Inga måltider matchar filtren.",
     "saveNewMealTitle": "Spara som ny måltid?",
     "saveNewMealPrompt": "Vill du även spara \"{{mealName}}\" bland dina måltider?",

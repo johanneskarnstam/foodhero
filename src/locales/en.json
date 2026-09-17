@@ -361,6 +361,7 @@
     "planMealDescription": "Select day and meal type for {{mealName}}",
     "selectDay": "Select Day",
     "selectMealType": "Select Meal Type",
+    "selectDayAndMeal": "Select day and meal",
     "noMealsMatch": "No meals match the filters.",
     "saveNewMealTitle": "Save as new meal?",
     "saveNewMealPrompt": "Would you also like to save \"{{mealName}}\" to your meal library?",

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Calendar, Utensils } from 'lucide-react';
-import { Meal, MealType } from '../types';
+import { Calendar } from 'lucide-react';
+import { Meal, MealType, MealPlan } from '../types';
 import { useTranslation } from 'react-i18next';
 
 const formatDatePart = (date: Date, format: string): string => {
@@ -20,15 +20,16 @@ interface PlanMealModalProps {
     onClose: () => void;
     onSave: (date: Date, type: MealType) => void;
     meal: Meal | null;
+    mealPlans?: MealPlan[];
     onAfterSave?: () => void;
 }
 
-const getNext7Days = (): Date[] => {
+const getNext10Days = (): Date[] => {
     const days: Date[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 10; i++) {
         const day = new Date(today);
         day.setDate(today.getDate() + i);
         days.push(day);
@@ -42,13 +43,32 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     onClose,
     onSave,
     meal,
+    mealPlans,
     onAfterSave
 }) => {
     const { t } = useTranslation();
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedType, setSelectedType] = useState<MealType>('dinner');
 
-    const next7Days = getNext7Days();
+    const next10Days = getNext10Days();
+
+    const getPlannedMealForSlot = (date: Date, type: MealType): string | null => {
+        if (!mealPlans) return null;
+
+        const dateStr = date.toISOString().split('T')[0];
+        for (const plan of mealPlans) {
+            for (const day of plan.days) {
+                if (day.date === dateStr) {
+                    for (const meal of day.meals) {
+                        if (meal.type === type) {
+                            return meal.plannedMeal.customTitle || null;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    };
 
     const handleSave = () => {
         if (!selectedDate) return;
@@ -92,58 +112,48 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {t('mealplan.selectDay', 'Välj dag')}
+                                {t('mealplan.selectDayAndMeal', 'Välj dag och måltid')}
                             </label>
-                            <div className="grid grid-cols-3 gap-2">
-                                {next7Days.map(day => {
-                                    const isSelected = selectedDate?.toDateString() === day.toDateString();
-                                    const isToday = day.toDateString() === new Date().toDateString();
-                                    
-                                    return (
-                                        <button
-                                            key={day.toDateString()}
-                                            onClick={() => setSelectedDate(day)}
-                                            className={`px-3 py-2 rounded-lg text-sm transition-colors ${
-                                                isSelected
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
-                                            }`}
-                                        >
-                                            <div className="text-xs opacity-70">
-                                                {formatDatePart(day, 'EEE')}
-                                            </div>
-                                            <div className={`font-medium ${isToday ? 'underline' : ''}`}>
-                                                {formatDatePart(day, 'd')}
-                                            </div>
-                                            <div className="text-xs opacity-70">
-                                                {formatDatePart(day, 'MMM')}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                            <div className="space-y-2">
+                                {next10Days.map((day) => {
+                                    const dateStr = day.toISOString().split('T')[0];
+                                    const formattedDate = `${formatDatePart(day, 'EEE')} ${formatDatePart(day, 'd')}`;
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {t('mealplan.selectMealType', 'Välj måltidstyp')}
-                            </label>
-                            <div className="flex gap-2">
-                                {(['lunch', 'dinner'] as MealType[]).map(type => {
-                                    const isSelected = selectedType === type;
                                     return (
-                                        <button
-                                            key={type}
-                                            onClick={() => setSelectedType(type)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                                                isSelected
-                                                    ? 'bg-blue-500 text-white'
-                                                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
-                                            }`}
+                                        <div
+                                            key={dateStr}
+                                            className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
                                         >
-                                            <Utensils className="w-4 h-4" />
-                                            {t(`mealTypes.${type}`, type)}
-                                        </button>
+                                            <div className="w-16 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                {formattedDate}
+                                            </div>
+                                            
+                                            {(['lunch', 'dinner'] as MealType[]).map(type => {
+                                                const plannedMeal = getPlannedMealForSlot(day, type);
+                                                const isSelected = selectedDate?.toISOString().split('T')[0] === dateStr && selectedType === type;
+                                                const isDisabled = !!plannedMeal;
+
+                                                return (
+                                                    <button
+                                                        key={`${dateStr}-${type}`}
+                                                        onClick={() => {
+                                                            setSelectedDate(day);
+                                                            setSelectedType(type);
+                                                        }}
+                                                        disabled={isDisabled}
+                                                        className={`flex-1 p-2 rounded-lg text-sm font-medium transition-all ${
+                                                            isSelected
+                                                                ? 'bg-blue-500 text-white'
+                                                                : isDisabled
+                                                                    ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 cursor-default'
+                                                                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'
+                                                        }`}
+                                                    >
+                                                        {plannedMeal || t(`mealTypes.${type}`)}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     );
                                 })}
                             </div>

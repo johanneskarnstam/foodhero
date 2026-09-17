@@ -650,6 +650,7 @@ export const IngredientSearchView: React.FC = () => {
                     onSave={handleSavePlannedMeal}
                     onAfterSave={handlePlanSuccess}
                     meal={planningMeal}
+                    mealPlans={mealPlans}
                 />
             )}
         </div>
