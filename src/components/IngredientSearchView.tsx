@@ -28,7 +28,6 @@ export const IngredientSearchView: React.FC = () => {
     const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
     const [planningMeal, setPlanningMeal] = useState<Meal | null>(null);
     const [editingMeal, setEditingMeal] = useState<Meal | null>(null);
-    const [showCloseConfirm, setShowCloseConfirm] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [mealSuggestions, setMealSuggestions] = useState<Meal[]>([]);
     const [deleteConfirmMeal, setDeleteConfirmMeal] = useState<Meal | null>(null);
@@ -287,10 +286,7 @@ export const IngredientSearchView: React.FC = () => {
         }
     };
 
-    const handleCloseRequest = () => {
-        setIsDetailModalOpen(false);
-        setShowCloseConfirm(false);
-    };
+
 
     const handleAddToShoppingList = async (meal: Meal) => {
         if (!defaultListId) return;
@@ -609,7 +605,6 @@ export const IngredientSearchView: React.FC = () => {
                     onAddToShoppingList={handleAddToShoppingList}
                     onDelete={handleDeleteMeal}
                     mealPlans={mealPlans}
-                    onCloseRequest={() => setShowCloseConfirm(true)}
                 />
             )}
 
@@ -622,16 +617,6 @@ export const IngredientSearchView: React.FC = () => {
                 confirmText={t('common.delete', 'Ta bort')}
                 cancelText={t('common.cancel', 'Avbryt')}
                 isDestructive={true}
-            />
-
-            <ConfirmModal
-                isOpen={showCloseConfirm}
-                onClose={() => setShowCloseConfirm(false)}
-                onConfirm={handleCloseRequest}
-                title={t('meals.closeModalAfterPlanning', 'Vill du stänga receptmodalen?')}
-                message={t('meals.closeModalAfterPlanningDescription', 'Måltiden är nu planerad i ditt matschema.')}
-                confirmText={t('common.close', 'Stäng')}
-                cancelText={t('common.cancel', 'Avbryt')}
             />
 
             {editingMeal && (
@@ -654,7 +639,6 @@ export const IngredientSearchView: React.FC = () => {
                         setPlanningMeal(null);
                     }}
                     onSave={handleSavePlannedMeal}
-                    onAfterSave={() => setShowCloseConfirm(true)}
                     meal={planningMeal}
                 />
             )}

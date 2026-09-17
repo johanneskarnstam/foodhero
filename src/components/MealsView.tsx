@@ -44,7 +44,6 @@ export const MealsView: React.FC = () => {
     const [isPlanningOpen, setIsPlanningOpen] = useState(false);
     const [planningMeal, setPlanningMeal] = useState<Meal | null>(null);
     const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-    const [showCloseConfirm, setShowCloseConfirm] = useState(false);
     
     // Delete confirmation modal state
     const [deleteConfirmMeal, setDeleteConfirmMeal] = useState<Meal | null>(null);
@@ -173,10 +172,7 @@ export const MealsView: React.FC = () => {
         }
     };
 
-    const handleCloseRequest = () => {
-        setViewingMeal(null);
-        setShowCloseConfirm(false);
-    };
+
 
     const handleOpenIngredientTransfer = (meal: Meal) => {
         if (!meal.ingredients || meal.ingredients.length === 0) {
@@ -481,7 +477,6 @@ export const MealsView: React.FC = () => {
                 onDelete={handleDeleteMeal}
                 meal={viewingMeal}
                 mealPlans={mealPlans}
-                onCloseRequest={() => setShowCloseConfirm(true)}
             />
 
             <ConfirmModal
@@ -495,21 +490,10 @@ export const MealsView: React.FC = () => {
                 isDestructive={true}
             />
 
-            <ConfirmModal
-                isOpen={showCloseConfirm}
-                onClose={() => setShowCloseConfirm(false)}
-                onConfirm={handleCloseRequest}
-                title={t('meals.closeModalAfterPlanning', 'Vill du stänga receptmodalen?')}
-                message={t('meals.closeModalAfterPlanningDescription', 'Måltiden är nu planerad i ditt matschema.')}
-                confirmText={t('common.close', 'Stäng')}
-                cancelText={t('common.cancel', 'Avbryt')}
-            />
-
             <PlanMealModal
                 isOpen={isPlanningOpen}
                 onClose={() => setIsPlanningOpen(false)}
                 onSave={handleSavePlannedMeal}
-                onAfterSave={() => setShowCloseConfirm(true)}
                 meal={planningMeal}
             />
 

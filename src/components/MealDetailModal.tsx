@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
     X, 
     Utensils, 
@@ -44,6 +44,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions'>('ingredients');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showCloseQuestion, setShowCloseQuestion] = useState(false);
 
     const handleDelete = () => {
         if (meal && onDelete) {
@@ -74,6 +75,12 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
         });
         return plannedInfo;
     }, [meal, mealPlans]);
+
+    useEffect(() => {
+        if (getPlannedInfo.length > 0 && !showCloseQuestion) {
+            setShowCloseQuestion(true);
+        }
+    }, [getPlannedInfo]);
 
     const formatDay = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -323,6 +330,31 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                 cancelText={t('common.cancel', 'Avbryt')}
                 isDestructive={true}
             />
+
+            {showCloseQuestion && (
+                <div className="fixed top-4 right-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[200] max-w-xs">
+                    <p className="text-sm text-gray-800 dark:text-gray-200 mb-1">
+                        {t('meals.closeModalAfterPlanning', 'Vill du stänga receptmodalen?')}
+                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                        {t('meals.closeModalAfterPlanningDescription', 'Måltiden är nu planerad i ditt matschema.')}
+                    </p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={onClose}
+                            className="flex-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            {t('common.close', 'Stäng')}
+                        </button>
+                        <button
+                            onClick={() => setShowCloseQuestion(false)}
+                            className="flex-1 px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        >
+                            {t('common.cancel', 'Nej')}
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
