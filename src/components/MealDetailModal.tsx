@@ -335,26 +335,28 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
             />
 
             {showCloseQuestion && (
-                <div className="fixed top-4 right-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[200] max-w-xs">
-                    <p className="text-sm text-gray-800 dark:text-gray-200 mb-1">
-                        {t('meals.closeModalAfterPlanning', 'Vill du stänga receptmodalen?')}
-                    </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                        {t('meals.closeModalAfterPlanningDescription', 'Måltiden är nu planerad i ditt matschema.')}
-                    </p>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={onClose}
-                            className="flex-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            {t('common.close', 'Stäng')}
-                        </button>
-                        <button
-                            onClick={() => setShowCloseQuestion(false)}
-                            className="flex-1 px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                        >
-                            {t('common.cancel', 'Nej')}
-                        </button>
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm w-full">
+                        <p className="text-sm text-gray-800 dark:text-gray-200 mb-1 text-center">
+                            {t('meals.closeModalAfterPlanning', 'Vill du stänga receptmodalen?')}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-4 text-center">
+                            {t('meals.closeModalAfterPlanningDescription', 'Måltiden är nu planerad i ditt matschema.')}
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={onClose}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                {t('common.close', 'Stäng')}
+                            </button>
+                            <button
+                                onClick={() => setShowCloseQuestion(false)}
+                                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            >
+                                {t('common.cancel', 'Nej')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
