@@ -624,6 +624,8 @@
     "syncing": "Synkroniserar ändringar...",
     "syncingWithCount": "Synkroniserar {{count}} ändring...",
     "syncingWithCount_plural": "Synkroniserar {{count}} ändringar...",
+    "offlineMode": "Du är offline. Ändringar sparas lokalt och synkroniseras när du återansluter.",
+    "unsyncedChanges": "{{count}} osynkade ändringar.",
     "saving": "Sparar...",
     "savingShort": "...",
     "save": "Spara",

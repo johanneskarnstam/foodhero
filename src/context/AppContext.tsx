@@ -45,6 +45,7 @@ interface AppContextType {
     // Loading & Sync
     loading: boolean;
     isSyncing: boolean;
+    pendingChanges: number;
     
     // Access
     updateListAccess: (id: string) => Promise<void>;
@@ -471,12 +472,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const defaultListId = listsSync.data.length > 0 ? listsSync.data[0].id : undefined;
 
-    const isSyncing = 
-        listsSync.data.some(l => (l as { isPending?: boolean }).isPending) || 
-        todosSync.data.some(t => (t as { isPending?: boolean }).isPending) || 
-        categoriesSync.data.some(c => (c as { isPending?: boolean }).isPending) || 
-        historySync.data.some(h => (h as { isPending?: boolean }).isPending) ||
-        mealPlansSync.data.some(m => (m as { isPending?: boolean }).isPending);
+    const pendingChanges = [
+        ...listsSync.data,
+        ...todosSync.data,
+        ...categoriesSync.data,
+        ...historySync.data,
+        ...mealPlansSync.data,
+        ...mealsSync.data,
+        ...quickItemsSync.data
+    ].filter(item => (item as { isPending?: boolean }).isPending).length;
+    const isSyncing = pendingChanges > 0;
 
     return (
         <AppContext.Provider
@@ -501,6 +506,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 deleteTodo,
                 loading: listsSync.loading || todosSync.loading || isCreatingDefault,
                 isSyncing,
+                pendingChanges,
                 updateListAccess,
                 addSection,
                 updateSection,

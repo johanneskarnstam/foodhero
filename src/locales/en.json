@@ -53,7 +53,9 @@
     "close": "Close",
     "syncing": "Syncing changes...",
     "syncingWithCount": "Syncing {{count}} change...",
-    "syncingWithCount_plural": "Syncing {{count}} changes..."
+    "syncingWithCount_plural": "Syncing {{count}} changes...",
+    "offlineMode": "You are offline. Changes will be saved locally and synced when you reconnect.",
+    "unsyncedChanges": "{{count}} unsynced changes."
   },
   "update": {
     "title": "Update Available",
@@ -635,7 +637,12 @@
     "saving": "Saving...",
     "savingShort": "...",
     "copy": "Copy",
-    "reset": "Reset"
+    "reset": "Reset",
+    "syncing": "Syncing changes...",
+    "syncingWithCount": "Syncing {{count}} change...",
+    "syncingWithCount_plural": "Syncing {{count}} changes...",
+    "offlineMode": "You are offline. Changes will be saved locally and synced when you reconnect.",
+    "unsyncedChanges": "{{count}} unsynced changes."
   },
   "mealSelection": {
     "title": "Select Meal",

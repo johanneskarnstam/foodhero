@@ -98,6 +98,10 @@ export function useFirestoreSync<T extends { id: string }>(
         if (!userId) throw new Error('User not authenticated');
         const path = collectionPath.replace('{uid}', userId);
         const docRef = doc(db, path, item.id);
+        setData(current => [
+            ...current.filter(existing => existing.id !== item.id),
+            { ...item, isPending: true } as T
+        ]);
         try {
             await setDoc(docRef, stripUndefined(item));
         } catch (err: unknown) {
@@ -112,6 +116,10 @@ export function useFirestoreSync<T extends { id: string }>(
         if (!userId) throw new Error('User not authenticated');
         const path = collectionPath.replace('{uid}', userId);
         const docRef = doc(db, path, id);
+        setData(current => current.map(item => item.id === id
+            ? { ...item, ...updates, isPending: true } as T
+            : item
+        ));
         try {
             await setDoc(docRef, stripUndefined(updates), { merge: true });
         } catch (err: unknown) {
@@ -126,6 +134,7 @@ export function useFirestoreSync<T extends { id: string }>(
         if (!userId) throw new Error('User not authenticated');
         const path = collectionPath.replace('{uid}', userId);
         const docRef = doc(db, path, id);
+        setData(current => current.filter(item => item.id !== id));
         try {
             await deleteDoc(docRef);
         } catch (err: unknown) {
