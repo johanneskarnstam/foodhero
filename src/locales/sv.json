@@ -322,7 +322,7 @@
     "closeModalAfterPlanning": "Vill du stänga receptmodalen?",
     "closeModalAfterPlanningDescription": "Måltiden är nu planerad i ditt matschema.",
     "addToShoppingListPrompt": "Vill du också planera in denna måltid?",
-    "addToShoppingListPromptDescription": "Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?",
+    "addToShoppingListPromptDescription": "Ingredienserna har lagts till i inköpslistan. Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?",
     "jsonExportTitle": "Exportera recept som JSON",
     "jsonExportDescription": "Kopiera denna JSON för att spara eller dela ditt recept.",
     "jsonImportTitle": "Importera recept från JSON",

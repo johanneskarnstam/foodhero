@@ -16,8 +16,10 @@ vi.mock('react-i18next', () => ({
                 'common.close': 'Stäng',
                 'common.cancel': 'Nej',
                 'common.save': 'Ja',
+                'common.yes': 'Ja',
+                'common.no': 'Nej',
                 'meals.addToShoppingListPrompt': 'Vill du också planera in denna måltid?',
-                'meals.addToShoppingListPromptDescription': 'Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?',
+                'meals.addToShoppingListPromptDescription': 'Ingredienserna har lagts till i inköpslistan. Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?',
                 'meals.closeModalAfterPlanning': 'Vill du stänga receptmodalen?',
                 'meals.closeModalAfterPlanningDescription': 'Måltiden är nu planerad i ditt matschema.',
                 'meals.deleteMeal': 'Ta bort måltid',
@@ -99,7 +101,7 @@ describe('MealDetailModal', () => {
         expect(screen.getByText('Baka i ugnen i 20 minuter')).toBeInTheDocument();
     });
 
-    it('triggers action callbacks when action buttons are clicked', () => {
+    it('triggers action callbacks when action buttons are clicked', async () => {
         render(
             <MealDetailModal
                 isOpen={true}
@@ -122,15 +124,19 @@ describe('MealDetailModal', () => {
         fireEvent.click(planBtn);
         expect(mockOnPlanMeal).toHaveBeenCalledWith(mockMeal);
 
-        // Click Handla (Shopping list) - will show prompt since meal is not planned
+        // Click Handla (Shopping list) - will add to shopping list first, then show prompt
         const shopBtn = screen.getByRole('button', { name: /Handla/i });
         fireEvent.click(shopBtn);
         
-        // Since meal is not planned, it shows the prompt
-        // Click "Nej" to skip planning and only add to shopping list
-        const noBtn = screen.getByText('Nej');
-        fireEvent.click(noBtn);
+        // Should have called onAddToShoppingList immediately
         expect(mockOnAddToShoppingList).toHaveBeenCalledWith(mockMeal);
+        
+        // Then shows the prompt since meal is not planned (async due to state update)
+        expect(await screen.findByText('Vill du också planera in denna måltid?')).toBeInTheDocument();
+        
+        // Click "Nej" to close the prompt
+        const noBtn = await screen.findByText('Nej');
+        fireEvent.click(noBtn);
 
         // Click Random
         const randomBtn = screen.getByRole('button', { name: /Slumpa ny/i });
@@ -138,7 +144,7 @@ describe('MealDetailModal', () => {
         expect(mockOnRandomMeal).toHaveBeenCalledTimes(1);
     });
 
-    it('shows plan meal prompt when clicking shopping list and meal is not planned', () => {
+    it('shows plan meal prompt after adding to shopping list when meal is not planned', async () => {
         render(
             <MealDetailModal
                 isOpen={true}
@@ -152,22 +158,24 @@ describe('MealDetailModal', () => {
             />
         );
 
-        // Click Handla (Shopping list) - should show prompt
+        // Click Handla (Shopping list) - should add to shopping list first
         const shopBtn = screen.getByRole('button', { name: /Handla/i });
         fireEvent.click(shopBtn);
         
-        // Should show the prompt
-        expect(screen.getByText('Vill du också planera in denna måltid?')).toBeInTheDocument();
-        expect(screen.getByText('Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?')).toBeInTheDocument();
-        
-        // Click "Nej" - should only add to shopping list
-        const noBtn = screen.getByText('Nej');
-        fireEvent.click(noBtn);
+        // Should have added to shopping list
         expect(mockOnAddToShoppingList).toHaveBeenCalledWith(mockMeal);
+        
+        // Then should show the prompt (async due to state update)
+        expect(await screen.findByText('Vill du också planera in denna måltid?')).toBeInTheDocument();
+        expect(screen.getByText(/Ingredienserna har lagts till i inköpslistan/)).toBeInTheDocument();
+        
+        // Click "Nej" - should only close the prompt
+        const noBtn = await screen.findByText('Nej');
+        fireEvent.click(noBtn);
         expect(mockOnPlanMeal).not.toHaveBeenCalled();
     });
 
-    it('plans meal when clicking "Ja" on the prompt', () => {
+    it('plans meal when clicking "Ja" on the prompt', async () => {
         render(
             <MealDetailModal
                 isOpen={true}
@@ -181,18 +189,20 @@ describe('MealDetailModal', () => {
             />
         );
 
-        // Click Handla (Shopping list) - should show prompt
+        // Click Handla (Shopping list) - should add to shopping list first, then show prompt
         const shopBtn = screen.getByRole('button', { name: /Handla/i });
         fireEvent.click(shopBtn);
         
-        // Click "Ja" - should plan the meal
-        const yesBtn = screen.getByText('Ja');
+        // Should have added to shopping list
+        expect(mockOnAddToShoppingList).toHaveBeenCalledWith(mockMeal);
+        
+        // Click "Ja" - should plan the meal (async due to state update)
+        const yesBtn = await screen.findByText('Ja');
         fireEvent.click(yesBtn);
         expect(mockOnPlanMeal).toHaveBeenCalledWith(mockMeal);
-        expect(mockOnAddToShoppingList).not.toHaveBeenCalled();
     });
 
-    it('directly adds to shopping list when meal is already planned', () => {
+    it('does not show prompt when meal is already planned', () => {
         const mockMealPlans: MealPlan[] = [{
             id: 'mp-1',
             name: 'Vecka 1',
@@ -218,15 +228,15 @@ describe('MealDetailModal', () => {
             />
         );
 
-        // Click Handla (Shopping list) - should NOT show prompt
+        // Click Handla (Shopping list) - should add to shopping list and NOT show prompt
         const shopBtn = screen.getByRole('button', { name: /Handla/i });
         fireEvent.click(shopBtn);
         
-        // Should NOT show the prompt
-        expect(screen.queryByText('Vill du också planera in denna måltid?')).not.toBeInTheDocument();
-        
-        // Should directly add to shopping list
+        // Should have added to shopping list
         expect(mockOnAddToShoppingList).toHaveBeenCalledWith(mockMeal);
+        
+        // Should NOT show the prompt since meal is already planned
+        expect(screen.queryByText('Vill du också planera in denna måltid?')).not.toBeInTheDocument();
         expect(mockOnPlanMeal).not.toHaveBeenCalled();
     });
 });

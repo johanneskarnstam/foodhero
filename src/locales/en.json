@@ -318,7 +318,7 @@
     "closeModalAfterPlanning": "Do you want to close the recipe modal?",
     "closeModalAfterPlanningDescription": "The meal is now planned in your meal schedule.",
     "addToShoppingListPrompt": "Do you also want to plan this meal?",
-    "addToShoppingListPromptDescription": "The meal is not yet planned. Would you like to add it to your meal schedule?",
+    "addToShoppingListPromptDescription": "The ingredients have been added to the shopping list. The meal is not yet planned. Would you like to add it to your meal schedule?",
     "jsonExportTitle": "Export Recipe as JSON",
     "jsonExportDescription": "Copy this JSON to save or share your recipe.",
     "jsonImportTitle": "Import Recipe from JSON",

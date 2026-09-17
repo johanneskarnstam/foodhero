@@ -82,12 +82,12 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
         return getPlannedInfo.length > 0;
     }, [getPlannedInfo]);
 
-    const handleAddToShoppingList = () => {
+    const handleAddToShoppingList = async () => {
         if (!meal || !onAddToShoppingList) return;
         
-        if (isMealPlanned) {
-            onAddToShoppingList(meal);
-        } else {
+        await onAddToShoppingList(meal);
+        
+        if (!isMealPlanned) {
             setShowPlanMealPrompt(true);
         }
     };
@@ -100,9 +100,6 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     };
 
     const handleSkipPlanMeal = () => {
-        if (meal && onAddToShoppingList) {
-            onAddToShoppingList(meal);
-        }
         setShowPlanMealPrompt(false);
     };
 
