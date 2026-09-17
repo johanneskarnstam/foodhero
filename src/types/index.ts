@@ -158,3 +158,32 @@ export interface QuickItemsSettings {
 export interface WhatsNewState {
     lastSeenHash: string;
 }
+
+export interface SavedDebugInfo {
+    id: string;
+    userId: string;
+    title: string;
+    deviceInfo: {
+        screenWidth: number;
+        screenHeight: number;
+        windowWidth: number;
+        windowHeight: number;
+        devicePixelRatio: number;
+        userAgent: string;
+        platform: string;
+        isMobile: boolean;
+        isTablet: boolean;
+        browserName: string;
+        browserVersion: string;
+        osName: string;
+        osVersion: string;
+        modelName: string;
+        manufacturer: string;
+        timeZone: string;
+        language: string;
+        cpuCores: number | null;
+        touchSupport: boolean;
+        isOnline: boolean;
+    };
+    createdAt: string;
+}

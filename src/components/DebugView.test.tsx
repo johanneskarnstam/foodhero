@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { DebugView } from './DebugView';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
+import { AuthProvider } from '../context/AuthContext';
 
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
@@ -12,6 +13,10 @@ vi.mock('lucide-react', () => ({
     Globe: () => <svg data-testid="globe-icon" />,
     Cpu: () => <svg data-testid="cpu-icon" />,
     Chrome: () => <svg data-testid="chrome-icon" />,
+    Save: () => <svg data-testid="save-icon" />,
+    Trash2: () => <svg data-testid="trash-icon" />,
+    X: () => <svg data-testid="x-icon" />,
+    Clock: () => <svg data-testid="clock-icon" />,
 }));
 
 // Mock useTranslation
@@ -46,7 +51,12 @@ const mockT = (key: string) => {
         'debug.isOnline': 'Online',
         'debug.notAvailable': 'Not available',
         'debug.yes': 'Yes',
-        'debug.no': 'No'
+        'debug.no': 'No',
+        'debug.saveDebugInfo': 'Save Device Info',
+        'debug.savedDebugInfos': 'Saved Device Infos',
+        'common.loading': 'Loading...',
+        'debug.noSavedInfos': 'No saved device infos yet.',
+        'common.cancel': 'Cancel'
     };
     return translations[key] || key;
 };
@@ -54,6 +64,17 @@ const mockT = (key: string) => {
 // Mock useTranslation hook
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({ t: mockT }),
+}));
+
+// Mock useSavedDebugInfo hook
+vi.mock('../hooks/useSavedDebugInfo', () => ({
+    useSavedDebugInfo: () => ({
+        savedDebugInfos: [],
+        loading: false,
+        error: null,
+        saveDebugInfo: vi.fn(),
+        deleteSavedDebugInfo: vi.fn()
+    })
 }));
 
 describe('DebugView', () => {
@@ -78,7 +99,9 @@ describe('DebugView', () => {
     it('should render loading state initially', () => {
         render(
             <MemoryRouter>
-                <DebugView />
+                <AuthProvider>
+                    <DebugView />
+                </AuthProvider>
             </MemoryRouter>
         );
         
@@ -88,7 +111,9 @@ describe('DebugView', () => {
     it('should render the main title', () => {
         render(
             <MemoryRouter>
-                <DebugView />
+                <AuthProvider>
+                    <DebugView />
+                </AuthProvider>
             </MemoryRouter>
         );
         
@@ -98,7 +123,9 @@ describe('DebugView', () => {
     it('should have proper heading structure', () => {
         render(
             <MemoryRouter>
-                <DebugView />
+                <AuthProvider>
+                    <DebugView />
+                </AuthProvider>
             </MemoryRouter>
         );
         

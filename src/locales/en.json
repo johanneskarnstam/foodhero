@@ -676,7 +676,18 @@
     "isOnline": "Online",
     "notAvailable": "Not available",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "saveDebugInfo": "Save Device Info",
+    "savedDebugInfos": "Saved Device Infos",
+    "saveTitle": "Save as",
+    "saveTitlePlaceholder": "Enter a title...",
+    "saveButton": "Save",
+    "cancelButton": "Cancel",
+    "deleteTitle": "Delete Saved Info",
+    "deleteMessage": "Are you sure you want to delete this saved device info?",
+    "deleteConfirm": "Delete",
+    "noSavedInfos": "No saved device infos yet.",
+    "createdAt": "Saved on"
   },
   "mealSelection": {
     "title": "Select Meal",

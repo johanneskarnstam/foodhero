@@ -669,7 +669,18 @@
     "isOnline": "Online",
     "notAvailable": "Ej tillgänglig",
     "yes": "Ja",
-    "no": "Nej"
+    "no": "Nej",
+    "saveDebugInfo": "Spara enhetsinfo",
+    "savedDebugInfos": "Sparade enhetsinfon",
+    "saveTitle": "Spara som",
+    "saveTitlePlaceholder": "Ange en titel...",
+    "saveButton": "Spara",
+    "cancelButton": "Avbryt",
+    "deleteTitle": "Ta bort sparad info",
+    "deleteMessage": "Är du säker på att du vill ta bort denna sparade enhetsinfo?",
+    "deleteConfirm": "Ta bort",
+    "noSavedInfos": "Inga sparade enhetsinfon än.",
+    "createdAt": "Sparad den"
   },
   "mealSelection": {
     "title": "Välj måltid",
