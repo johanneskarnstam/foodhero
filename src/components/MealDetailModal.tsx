@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
     X, 
     Utensils, 
@@ -9,27 +9,32 @@ import {
     Dices, 
     ShoppingCart, 
     Users,
-    Trash2
+    Trash2,
+    CheckCircle2
 } from 'lucide-react';
-import { Meal } from '../types';
+import { Meal, MealPlan, MealType } from '../types';
 import { useTranslation } from 'react-i18next';
 import { ConfirmModal } from './ConfirmModal';
+import { getDayName } from '../utils/dateUtils';
 
 interface MealDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
     meal: Meal | null;
+    mealPlans?: MealPlan[];
     onEdit?: (meal: Meal) => void;
     onPlanMeal?: (meal: Meal) => void;
     onAddToShoppingList?: (meal: Meal) => void;
     onRandomMeal?: () => void;
     onDelete?: (meal: Meal) => void;
+    onCloseRequest?: () => void;
 }
 
 export const MealDetailModal: React.FC<MealDetailModalProps> = ({ 
     isOpen, 
     onClose, 
     meal, 
+    mealPlans,
     onEdit, 
     onPlanMeal, 
     onAddToShoppingList,
@@ -51,6 +56,28 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
             onDelete(meal);
         }
         setShowDeleteConfirm(false);
+    };
+
+    const getPlannedInfo = useMemo(() => {
+        if (!meal || !mealPlans) return [];
+        const plannedInfo: { date: string; type: MealType }[] = [];
+        const mealNameLower = meal.name.toLowerCase();
+
+        mealPlans.forEach(plan => {
+            plan.days.forEach(day => {
+                day.meals.forEach(m => {
+                    if (m.plannedMeal.customTitle?.toLowerCase() === mealNameLower) {
+                        plannedInfo.push({ date: day.date, type: m.type });
+                    }
+                });
+            });
+        });
+        return plannedInfo;
+    }, [meal, mealPlans]);
+
+    const formatDay = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return getDayName(date);
     };
 
     if (!isOpen || !meal) return null;
@@ -96,6 +123,19 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                         <h2 id="meal-detail-title" className="text-2xl font-black text-gray-900 dark:text-gray-100 tracking-tight">
                             {meal.name}
                         </h2>
+                        
+                        {getPlannedInfo.length > 0 && (
+                            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 mt-1.5">
+                                <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                                <span>
+                                    {t('meals.plannedInfo', 'Planerad: {{dates}}', {
+                                        dates: getPlannedInfo
+                                            .map(info => `${formatDay(info.date)} (${t(`mealTypes.${info.type}`)})`)
+                                            .join(', ')
+                                    })}
+                                </span>
+                            </div>
+                        )}
                         
                         {meal.description && (
                             <p className="text-sm text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">

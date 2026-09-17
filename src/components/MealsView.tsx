@@ -31,7 +31,7 @@ export const MealsView: React.FC = () => {
     const { meals, addMeal, updateMeal, deleteMeal, addItemsToList, defaultListId } = useApp();
     const { showToast } = useToast();
     const { t } = useTranslation();
-    const { handleMealChange } = useMealPlan();
+    const { mealPlans, handleMealChange } = useMealPlan();
     const navigate = useNavigate();
     
     const [searchQuery, setSearchQuery] = useState('');
@@ -44,6 +44,7 @@ export const MealsView: React.FC = () => {
     const [isPlanningOpen, setIsPlanningOpen] = useState(false);
     const [planningMeal, setPlanningMeal] = useState<Meal | null>(null);
     const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+    const [showCloseConfirm, setShowCloseConfirm] = useState(false);
     
     // Delete confirmation modal state
     const [deleteConfirmMeal, setDeleteConfirmMeal] = useState<Meal | null>(null);
@@ -170,6 +171,11 @@ export const MealsView: React.FC = () => {
             handleMealChange(date, type, planningMeal.name);
             showToast(t('toasts.mealPlanned', 'Måltid planerad'), 'success');
         }
+    };
+
+    const handleCloseRequest = () => {
+        setViewingMeal(null);
+        setShowCloseConfirm(false);
     };
 
     const handleOpenIngredientTransfer = (meal: Meal) => {
@@ -474,6 +480,8 @@ export const MealsView: React.FC = () => {
                 onRandomMeal={handleRandomMeal}
                 onDelete={handleDeleteMeal}
                 meal={viewingMeal}
+                mealPlans={mealPlans}
+                onCloseRequest={() => setShowCloseConfirm(true)}
             />
 
             <ConfirmModal
@@ -487,10 +495,21 @@ export const MealsView: React.FC = () => {
                 isDestructive={true}
             />
 
+            <ConfirmModal
+                isOpen={showCloseConfirm}
+                onClose={() => setShowCloseConfirm(false)}
+                onConfirm={handleCloseRequest}
+                title={t('meals.closeModalAfterPlanning', 'Vill du stänga receptmodalen?')}
+                message={t('meals.closeModalAfterPlanningDescription', 'Måltiden är nu planerad i ditt matschema.')}
+                confirmText={t('common.close', 'Stäng')}
+                cancelText={t('common.cancel', 'Avbryt')}
+            />
+
             <PlanMealModal
                 isOpen={isPlanningOpen}
                 onClose={() => setIsPlanningOpen(false)}
                 onSave={handleSavePlannedMeal}
+                onAfterSave={() => setShowCloseConfirm(true)}
                 meal={planningMeal}
             />
 
