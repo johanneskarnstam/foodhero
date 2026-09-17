@@ -99,7 +99,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
             <div
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden transform transition-all animate-in zoom-in-95 duration-200"
             >
-                <div className="p-6">
+                <div className="p-6 overflow-y-auto">
                     <h2
                         id="plan-meal-title"
                         className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2"
