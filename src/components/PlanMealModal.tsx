@@ -20,6 +20,7 @@ interface PlanMealModalProps {
     onClose: () => void;
     onSave: (date: Date, type: MealType) => void;
     meal: Meal | null;
+    onAfterSave?: () => void;
 }
 
 const getNext7Days = (): Date[] => {
@@ -40,7 +41,8 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     isOpen,
     onClose,
     onSave,
-    meal
+    meal,
+    onAfterSave
 }) => {
     const { t } = useTranslation();
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -51,6 +53,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     const handleSave = () => {
         if (!selectedDate) return;
         onSave(selectedDate, selectedType);
+        onAfterSave?.();
         onClose();
     };
 

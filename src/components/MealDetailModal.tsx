@@ -80,6 +80,8 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     useEffect(() => {
         if (onPlanSuccess) {
             setShowCloseQuestion(true);
+        } else {
+            setShowCloseQuestion(false);
         }
     }, [onPlanSuccess]);
 

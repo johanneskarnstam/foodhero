@@ -284,8 +284,11 @@ export const IngredientSearchView: React.FC = () => {
             handleMealChange(date, type, planningMeal.name);
             setIsPlanModalOpen(false);
             setPlanningMeal(null);
-            setShowCloseQuestion(true);
         }
+    };
+
+    const handlePlanSuccess = () => {
+        setShowCloseQuestion(true);
     };
 
 
@@ -610,7 +613,7 @@ export const IngredientSearchView: React.FC = () => {
                     onAddToShoppingList={handleAddToShoppingList}
                     onDelete={handleDeleteMeal}
                     mealPlans={mealPlans}
-                    onPlanSuccess={showCloseQuestion}
+                    onPlanSuccess={showCloseQuestion ? () => setShowCloseQuestion(false) : undefined}
                 />
             )}
 
@@ -643,9 +646,9 @@ export const IngredientSearchView: React.FC = () => {
                     onClose={() => {
                         setIsPlanModalOpen(false);
                         setPlanningMeal(null);
-                        setShowCloseQuestion(false);
                     }}
                     onSave={handleSavePlannedMeal}
+                    onAfterSave={handlePlanSuccess}
                     meal={planningMeal}
                 />
             )}

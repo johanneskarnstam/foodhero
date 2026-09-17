@@ -170,8 +170,11 @@ export const MealsView: React.FC = () => {
         if (planningMeal) {
             handleMealChange(date, type, planningMeal.name);
             showToast(t('toasts.mealPlanned', 'Måltid planerad'), 'success');
-            setShowCloseQuestion(true);
         }
+    };
+
+    const handlePlanSuccess = () => {
+        setShowCloseQuestion(true);
     };
 
 
@@ -482,7 +485,7 @@ export const MealsView: React.FC = () => {
                 onDelete={handleDeleteMeal}
                 meal={viewingMeal}
                 mealPlans={mealPlans}
-                onPlanSuccess={showCloseQuestion}
+                onPlanSuccess={showCloseQuestion ? () => setShowCloseQuestion(false) : undefined}
             />
 
             <ConfirmModal
@@ -501,9 +504,9 @@ export const MealsView: React.FC = () => {
                 onClose={() => {
                     setIsPlanningOpen(false);
                     setPlanningMeal(null);
-                    setShowCloseQuestion(false);
                 }}
                 onSave={handleSavePlannedMeal}
+                onAfterSave={handlePlanSuccess}
                 meal={planningMeal}
             />
 
