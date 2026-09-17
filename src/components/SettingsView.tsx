@@ -2,7 +2,7 @@ import React from 'react';
 import {
     LogOut, SortAsc, Calendar, ChevronDown, Settings, Eye, EyeOff,
     Globe, Sliders, Database, Trash2, Edit3, X, History, User,
-    Download, Copy, Check, Zap
+    Download, Copy, Check, Zap, Bug
 } from 'lucide-react';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { useAuth } from '../context/AuthContext';
@@ -792,6 +792,13 @@ export const SettingsView: React.FC = () => {
                     >
                         <LogOut size={18} />
                         {t('common.logout')}
+                    </button>
+                    <button
+                        onClick={() => window.location.href = '#/debug'}
+                        className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-900/20 hover:bg-gray-100 dark:hover:bg-gray-900/40 text-gray-600 dark:text-gray-400 rounded-2xl font-bold transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    >
+                        <Bug size={18} />
+                        {t('debug.debugPage')}
                     </button>
                 </div>
             </div>

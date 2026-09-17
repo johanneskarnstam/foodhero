@@ -1,102 +1,102 @@
 [
   {
+    "hash": "ad16b5e4fa86adb79a5c796236ef2cfc9b3861b1",
+    "date": "2026-09-17 15:34:04 +0200",
+    "message": "feat: lägg till debug-sida med enhetsinformation"
+  },
+  {
+    "hash": "360358f025332992178c6f85556ed2c5cc006559",
+    "date": "2026-09-17 14:20:24 +0200",
+    "message": "feat(modal): improve modal responsiveness and lock body scroll"
+  },
+  {
+    "hash": "2d69fe3b0c6015f22f8613b500c41ccd08acbb00",
+    "date": "2026-09-17 14:02:08 +0200",
+    "message": "Taggar med klick"
+  },
+  {
+    "hash": "447485b703287bf2acdc7f444cca841cc6a49b1f",
+    "date": "2026-09-17 13:49:56 +0200",
+    "message": "Offline hantering är nu bättre"
+  },
+  {
+    "hash": "a62af338864ef12bd652659d6336b58ed2df4840",
+    "date": "2026-09-17 13:42:51 +0200",
+    "message": "fix: justera responsiv layout för IngredientSearchView på mobilen"
+  },
+  {
+    "hash": "e1ff571282c68d7513a94dfbd5eb345da42a0f26",
+    "date": "2026-09-17 13:30:34 +0200",
+    "message": "feat: lägg till planeringsprompt för shopping-ikonen och möjlighet att planera flera tillfällen"
+  },
+  {
+    "hash": "ac3b38042c80d3d6e0fa6da2d47cd68dde12bfcc",
+    "date": "2026-09-17 13:01:14 +0200",
+    "message": "fix: korrigera flöde för måltidsplanerings-prompt efter inköpslista"
+  },
+  {
+    "hash": "8d331a9377338d049ae87cfcafcac35c31880d6f",
+    "date": "2026-09-17 11:23:04 +0200",
+    "message": "feat: fråga om att planera måltid när ingredienser läggs till inköpslistan"
+  },
+  {
+    "hash": "7bbdbf8782da586f55d03e07012fe277cde5bd17",
+    "date": "2026-09-17 11:13:04 +0200",
+    "message": "fix: möjliggör skrollning av modalinnehåll i PlanMealModal"
+  },
+  {
+    "hash": "fbaf247b481354d09930bd4ba2ce59f08c1df9a7",
+    "date": "2026-09-17 11:08:40 +0200",
+    "message": "feat: lägg till i18n-stöd för förkortade veckodagar och månader"
+  },
+  {
+    "hash": "6bf780ee273a6c1fbe9feef614cb93723fefbb0c",
+    "date": "2026-09-17 09:57:44 +0200",
+    "message": "feat: visa planerade måltider i PlanMealModal för 10 dagar med lunch och middag"
+  },
+  {
+    "hash": "166d33bc4710f1f023083033db142a9356bea897",
+    "date": "2026-09-17 09:34:40 +0200",
+    "message": "fix: centrera modalen för fråga om att stänga receptmodalen"
+  },
+  {
+    "hash": "1c5e94fccca2e42077e69d226cc899130e0d2f84",
+    "date": "2026-09-17 09:28:38 +0200",
+    "message": "fix: visa fråga om att stänga modalen när PlanMealModal stängs efter lyckad planering"
+  },
+  {
+    "hash": "c74a86e111990a357ca3cc055c984fbdde9ae35c",
+    "date": "2026-09-17 09:21:21 +0200",
+    "message": "fix: visa fråga om att stänga modalen endast när måltiden precis planerats"
+  },
+  {
+    "hash": "c6a26b22344c30583286afb4d622bf83766201b5",
+    "date": "2026-09-17 06:58:28 +0200",
+    "message": "feat: lägg till fråga om att stänga modalen direkt i receptkortet istället för ConfirmModal"
+  },
+  {
+    "hash": "b753ab4ccdff32d5a231ff4977e98fbc294dc6ba",
+    "date": "2026-09-17 06:51:05 +0200",
+    "message": "fix: öka z-index på ConfirmModal till z-[200] för att säkerställa att den visas ovanför alla modaler"
+  },
+  {
+    "hash": "f3e03630767827eebc58c06ba98fdd6f5ad03fc9",
+    "date": "2026-09-17 06:49:29 +0200",
+    "message": "fix: åtgärda z-index för ConfirmModal så den visas ovanför MealDetailModal"
+  },
+  {
+    "hash": "9ca97fb77b8a38198f385fc74aedb8edd603e905",
+    "date": "2026-09-17 06:39:05 +0200",
+    "message": "feat: visa planeringsinfo i receptmodal och fråga om att stänga modalen efter planering"
+  },
+  {
+    "hash": "5d6edf46f511de2a13ee7ac8dbde6bebec1dc3f6",
+    "date": "2026-09-17 06:23:43 +0200",
+    "message": "fix: åtgärda z-index problem för PlanMealModal så den visas ovanför RecipeDetailModal"
+  },
+  {
     "hash": "4d030db80073132ed0c723d93da22f36cdecbfdc",
     "date": "2026-09-10 16:00:30 +0200",
     "message": "fix: uppdatera standardmodell för Gemini till gemini-3.6-flash"
-  },
-  {
-    "hash": "3272614fd59da7f7956ffcb2daaf9acf1b28bbcd",
-    "date": "2026-09-10 15:56:00 +0200",
-    "message": "feat: integrera AI-receptgenerering i MealsView och MealEditModal"
-  },
-  {
-    "hash": "a3cd9c0604f6184ae113cebe2b1fd5948ff563bc",
-    "date": "2026-09-10 15:53:09 +0200",
-    "message": "feat: lägg till AiRecipeModal-komponent och i18n-nycklar"
-  },
-  {
-    "hash": "f44635e68e8ed2801a5c1a3883eb9182ee627138",
-    "date": "2026-09-10 15:47:33 +0200",
-    "message": "feat: lägg till useAiRecipe-hook med loading/error-hantering"
-  },
-  {
-    "hash": "6b8f4adfee938c47752ea99eb647f8f97f8f8ced",
-    "date": "2026-09-10 15:42:36 +0200",
-    "message": "feat: lägg till AI-service för receptgenerering med Gemini"
-  },
-  {
-    "hash": "4b6472419b958858f9ec256763008f5953f96c7d",
-    "date": "2026-09-10 15:32:53 +0200",
-    "message": "feat: add cleanup step to remove existing GitLab variables before update"
-  },
-  {
-    "hash": "cd66e11ad439594b2654ba46d1d22c44386f1427",
-    "date": "2026-09-10 14:48:20 +0200",
-    "message": "chore: migrate repository from GitHub to GitLab"
-  },
-  {
-    "hash": "8f55e2eeedc70f5842f1d21a932bf8ba0980770c",
-    "date": "2026-09-10 14:34:02 +0200",
-    "message": "fix: uppdatera generate-commits.js för att stödja GitLab API"
-  },
-  {
-    "hash": "4f6691699d3f0c27e67508671a41c7cbdeca0c7c",
-    "date": "2026-09-10 14:27:20 +0200",
-    "message": "fix: stoppa event propagation för måltidsplaneringsknappar i HomeView"
-  },
-  {
-    "hash": "a628f4b06adc6213a25704f42599d3e86db0324d",
-    "date": "2026-09-10 14:12:49 +0200",
-    "message": "fix: öppna måltidsmodal vid klick på + Lunch/Middag idag istället för att fylla i måltidstypen"
-  },
-  {
-    "hash": "e5525cfe91322433cf26d29ca989fa7510b61a5a",
-    "date": "2026-09-10 14:02:44 +0200",
-    "message": "feat: update commits.json and enhance HomeView quick-add styling"
-  },
-  {
-    "hash": "66d1d2b91f1f90f341d75a6be3ed558d77dc72dc",
-    "date": "2026-09-09 18:14:40 +0200",
-    "message": "feat: förbättrad design för inköpslista och snabbfält med rundade hörn och modernt utseende"
-  },
-  {
-    "hash": "8b0a92bbe87eaeb84976adddc5f45fdb33d73be2",
-    "date": "2026-09-09 17:58:47 +0200",
-    "message": "fix: sammanfogar inköpslistan och snabbfältet på startsidan för att ta bort oönskat mellanrum"
-  },
-  {
-    "hash": "65ca27ea5181d78848571fa704d2968a84c41b63",
-    "date": "2026-09-09 17:50:00 +0200",
-    "message": "docs: uppdatera planned/README.md och README.md med drag-and-drop-funktionen"
-  },
-  {
-    "hash": "a58b0fcf6bc84d966eca570345262b09fe6415b4",
-    "date": "2026-09-09 17:42:54 +0200",
-    "message": "feat: lägg till drag-and-drop för inköpslistan"
-  },
-  {
-    "hash": "463c031d3635b4eac72e0ab911030b6e3b0402c6",
-    "date": "2026-09-09 17:09:39 +0200",
-    "message": "Merge branch 'feature/forbattrad-mobilupplevelse' into main"
-  },
-  {
-    "hash": "53cac9302ae71102f6e572a8b8bb6809b055e201",
-    "date": "2026-09-09 17:09:36 +0200",
-    "message": "chore: uppdatera konflikterande filer till senaste version från feature/forbattrad-mobilupplevelse"
-  },
-  {
-    "hash": "9a8abd56d891162be6273e14406a915705e27e36",
-    "date": "2026-09-09 17:05:57 +0200",
-    "message": "Merge branch 'main' of https://gitlab.com/jojjeboy/foodhero"
-  },
-  {
-    "hash": "4a140e31c5a1aac6cc1d9b408a3a6d69b1ee8932",
-    "date": "2026-09-09 15:40:31 +0200",
-    "message": "feat: förbättra mobilupplevelsen med bottom nav, swipe-aktioner och offline-stöd"
-  },
-  {
-    "hash": "86ad65356562c62cf1e04377fadaaa4b389f5c35",
-    "date": "2026-09-09 15:11:26 +0200",
-    "message": "feat: slutför namnbyte från BuyMilk till FoodHero och uppdatera dokumentation"
   }
 ]

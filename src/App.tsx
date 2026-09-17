@@ -11,6 +11,7 @@ import { SettingsView } from './components/SettingsView'
 import { HistoryView } from './components/HistoryView'
 import { MealsView } from './components/MealsView'
 import { IngredientSearchView } from './components/IngredientSearchView'
+import { DebugView } from './components/DebugView'
 import { ToastProvider } from './context/ToastContext'
 import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
@@ -64,6 +65,10 @@ const router = createHashRouter([
             {
                 path: "/settings",
                 element: <SettingsView />,
+            },
+            {
+                path: "/debug",
+                element: <DebugView />,
             },
         ],
     },
