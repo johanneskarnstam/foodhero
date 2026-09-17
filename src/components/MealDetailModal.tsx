@@ -46,6 +46,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions'>('ingredients');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showCloseQuestion, setShowCloseQuestion] = useState(false);
+    const [showPlanMealPrompt, setShowPlanMealPrompt] = useState(false);
 
     const handleDelete = () => {
         if (meal && onDelete) {
@@ -76,6 +77,34 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
         });
         return plannedInfo;
     }, [meal, mealPlans]);
+
+    const isMealPlanned = useMemo(() => {
+        return getPlannedInfo.length > 0;
+    }, [getPlannedInfo]);
+
+    const handleAddToShoppingList = () => {
+        if (!meal || !onAddToShoppingList) return;
+        
+        if (isMealPlanned) {
+            onAddToShoppingList(meal);
+        } else {
+            setShowPlanMealPrompt(true);
+        }
+    };
+
+    const handlePlanMealFromPrompt = () => {
+        if (meal && onPlanMeal) {
+            onPlanMeal(meal);
+        }
+        setShowPlanMealPrompt(false);
+    };
+
+    const handleSkipPlanMeal = () => {
+        if (meal && onAddToShoppingList) {
+            onAddToShoppingList(meal);
+        }
+        setShowPlanMealPrompt(false);
+    };
 
     useEffect(() => {
         if (onPlanSuccess) {
@@ -301,7 +330,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                         {onAddToShoppingList && hasIngredients && (
                             <button
                                 type="button"
-                                onClick={() => onAddToShoppingList(meal)}
+                                onClick={handleAddToShoppingList}
                                 className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/40 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
                             >
                                 <ShoppingCart size={13} />
@@ -333,6 +362,33 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                 cancelText={t('common.cancel', 'Avbryt')}
                 isDestructive={true}
             />
+
+            {showPlanMealPrompt && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-w-sm w-full">
+                        <p className="text-sm text-gray-800 dark:text-gray-200 mb-1 text-center">
+                            {t('meals.addToShoppingListPrompt', 'Vill du också planera in denna måltid?')}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-4 text-center">
+                            {t('meals.addToShoppingListPromptDescription', 'Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?')}
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={handlePlanMealFromPrompt}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                {t('common.save', 'Ja')}
+                            </button>
+                            <button
+                                onClick={handleSkipPlanMeal}
+                                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            >
+                                {t('common.cancel', 'Nej')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {showCloseQuestion && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
