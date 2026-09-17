@@ -7,13 +7,14 @@ import { useMealPlan } from '../hooks/useMealPlan';
 import { useToast } from '../context/ToastContext';
 import { formatDate } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
-import type { List, Item, MealType, HistoryItem } from '../types';
+import type { List, Item, MealType, HistoryItem, Meal } from '../types';
 import { MealPlanEditModal } from './MealPlanEditModal';
+import { MealDetailModal } from './MealDetailModal';
 
 export const HomeView: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { lists, defaultListId, addItemsToList, itemHistory } = useApp();
+    const { lists, defaultListId, addItemsToList, itemHistory, meals } = useApp();
     const { getPlanForDate, mealPlans, handleMealChange } = useMealPlan();
     const { showToast } = useToast();
 
@@ -78,14 +79,16 @@ export const HomeView: React.FC = () => {
         setShowSuggestions(false);
     };
 
-    const { meals } = useMealPlan();
-
     // State för måltidsplaneringsmodal
     const [mealPlanModal, setMealPlanModal] = useState<{
         isOpen: boolean;
         date: Date | null;
         type: MealType | null;
     }>({ isOpen: false, date: null, type: null });
+
+    // State för receptmodal
+    const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+    const [showMealDetailModal, setShowMealDetailModal] = useState(false);
 
     const { uncompletedItems, completedCount, totalCount, previewItems, moreCount } = useMemo(() => {
         if (!list || !list.items) {
@@ -154,17 +157,27 @@ export const HomeView: React.FC = () => {
             return allMealTypes.filter((type) => !existingMealTypes.includes(type));
         };
 
+        // Funktion för att hitta fullständigt Meal-objekt baserat på customTitle
+        const findMealByTitle = (title: string): Meal | null => {
+            if (!title) return null;
+            return meals.find(meal => meal.name.toLowerCase() === title.toLowerCase()) || null;
+        };
+
         const missingMealTypes = getMissingMealTypes(targetDate);
 
         // 1. Kolla targetDate (idag eller imorgon beroende på klockslag)
         const primaryMatch = getMealForDay(targetDate);
         if (primaryMatch) {
+            const mealObj = findMealByTitle(primaryMatch.meal.plannedMeal.customTitle || '');
             return {
                 hasMeal: true,
                 title: primaryMatch.meal.plannedMeal.customTitle,
                 label: isTomorrow ? t('dashboard.tomorrowDinner') : t('dashboard.todayDinner'),
                 targetDate,
                 missingMealTypes,
+                mealId: primaryMatch.meal.plannedMeal.id,
+                meal: mealObj,
+                mealType: primaryMatch.mealType,
             };
         }
 
@@ -174,12 +187,16 @@ export const HomeView: React.FC = () => {
             tomorrow.setDate(tomorrow.getDate() + 1);
             const tomorrowMatch = getMealForDay(tomorrow);
             if (tomorrowMatch) {
+                const mealObj = findMealByTitle(tomorrowMatch.meal.plannedMeal.customTitle || '');
                 return {
                     hasMeal: true,
                     title: tomorrowMatch.meal.plannedMeal.customTitle,
                     label: t('dashboard.tomorrowDinner'),
                     targetDate: tomorrow,
                     missingMealTypes: getMissingMealTypes(tomorrow),
+                    mealId: tomorrowMatch.meal.plannedMeal.id,
+                    meal: mealObj,
+                    mealType: tomorrowMatch.mealType,
                 };
             }
         }
@@ -192,18 +209,22 @@ export const HomeView: React.FC = () => {
             if (match) {
                 const dayName = upcoming.toLocaleDateString(undefined, { weekday: 'long' });
                 const capitalizedDay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                const mealObj = findMealByTitle(match.meal.plannedMeal.customTitle || '');
                 return {
                     hasMeal: true,
                     title: match.meal.plannedMeal.customTitle,
                     label: `${capitalizedDay} - ${t('dashboard.nextMeal')}`,
                     targetDate: upcoming,
                     missingMealTypes: getMissingMealTypes(upcoming),
+                    mealId: match.meal.plannedMeal.id,
+                    meal: mealObj,
+                    mealType: match.mealType,
                 };
             }
         }
 
-        return { hasMeal: false, title: '', label: '', targetDate, missingMealTypes };
-    }, [getPlanForDate, mealPlans, t]);
+        return { hasMeal: false, title: '', label: '', targetDate, missingMealTypes, mealId: null, meal: null, mealType: null };
+    }, [getPlanForDate, mealPlans, meals, t]);
 
     return (
         <div className="max-w-3xl mx-auto space-y-6 pb-6">
@@ -366,11 +387,40 @@ export const HomeView: React.FC = () => {
             <div
                 role="button"
                 tabIndex={0}
-                onClick={() => navigate('/mealplan')}
+                onClick={() => {
+                    if (nextMealInfo.hasMeal && nextMealInfo.meal) {
+                        setSelectedMeal(nextMealInfo.meal);
+                        setShowMealDetailModal(true);
+                    } else if (nextMealInfo.hasMeal && !nextMealInfo.meal) {
+                        // Skapa ett temporärt Meal-objekt för måltider utan recept
+                        const tempMeal: Meal = {
+                            id: nextMealInfo.mealId || uuidv4(),
+                            name: nextMealInfo.title || t('meals.unknownMeal'),
+                            createdAt: new Date().toISOString(),
+                        };
+                        setSelectedMeal(tempMeal);
+                        setShowMealDetailModal(true);
+                    } else {
+                        navigate('/mealplan');
+                    }
+                }}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        navigate('/mealplan');
+                        if (nextMealInfo.hasMeal && nextMealInfo.meal) {
+                            setSelectedMeal(nextMealInfo.meal);
+                            setShowMealDetailModal(true);
+                        } else if (nextMealInfo.hasMeal && !nextMealInfo.meal) {
+                            const tempMeal: Meal = {
+                                id: nextMealInfo.mealId || uuidv4(),
+                                name: nextMealInfo.title || t('meals.unknownMeal'),
+                                createdAt: new Date().toISOString(),
+                            };
+                            setSelectedMeal(tempMeal);
+                            setShowMealDetailModal(true);
+                        } else {
+                            navigate('/mealplan');
+                        }
                     }
                 }}
                 className="group relative bg-white dark:bg-gray-800/90 rounded-2xl p-5 md:p-6 border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md hover:border-amber-500/50 dark:hover:border-amber-400/50 transition-all duration-200 cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
@@ -463,6 +513,36 @@ export const HomeView: React.FC = () => {
                         );
                     }
                     setMealPlanModal({ isOpen: false, date: null, type: null });
+                }}
+            />
+
+            <MealDetailModal
+                isOpen={showMealDetailModal}
+                onClose={() => setShowMealDetailModal(false)}
+                meal={selectedMeal}
+                mealPlans={mealPlans}
+                onEdit={() => {
+                    // Hantera redigering av måltid
+                    navigate('/meals');
+                }}
+                onPlanMeal={(meal) => {
+                    // Hantera planering av måltid
+                    if (nextMealInfo.targetDate && nextMealInfo.mealType) {
+                        handleMealChange(nextMealInfo.targetDate, nextMealInfo.mealType, meal.name);
+                    }
+                }}
+                onAddToShoppingList={(meal) => {
+                    // Hantera lägg till i inköpslistan
+                    if (!defaultListId) return;
+                    if (meal.ingredients && meal.ingredients.length > 0) {
+                        const newItems: Item[] = meal.ingredients.map(ing => ({
+                            id: uuidv4(),
+                            text: ing.text,
+                            completed: false,
+                        }));
+                        addItemsToList(defaultListId, newItems);
+                        showToast(t('meals.addedToShoppingList'), 'success');
+                    }
                 }}
             />
 

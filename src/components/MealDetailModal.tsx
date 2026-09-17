@@ -132,6 +132,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
     const hasIngredients = meal.ingredients && meal.ingredients.length > 0;
     const hasInstructions = meal.instructions && meal.instructions.length > 0;
+    const hasRecipeData = hasIngredients || hasInstructions || meal.description || meal.servings || (meal.tags && meal.tags.length > 0);
 
     return (
         <div 
@@ -214,6 +215,17 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                             </button>
                         ))}
                     </div>
+
+                    {!hasRecipeData && (
+                        <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-4 text-center">
+                            <p className="text-sm text-amber-800 dark:text-amber-200">
+                                {t('meals.noRecipeFound')}
+                            </p>
+                            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+                                {t('meals.fetchRecipeWithAI')}
+                            </p>
+                        </div>
+                    )}
 
                     {/* Tabs (Ingredients / Instructions) */}
                     <div className="flex p-1 bg-gray-100 dark:bg-gray-700/50 rounded-xl text-xs font-semibold">

@@ -324,6 +324,10 @@
     "closeModalAfterPlanningDescription": "Måltiden är nu planerad i ditt matschema.",
     "addToShoppingListPrompt": "Vill du också planera in denna måltid?",
     "addToShoppingListPromptDescription": "Ingredienserna har lagts till i inköpslistan. Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?",
+    "addedToShoppingList": "Ingredienser lades till i inköpslistan",
+    "noRecipeFound": "Ingen receptinformation hittades för denna måltid.",
+    "fetchRecipeWithAI": "Vill du hämta och komplettera receptet med hjälp av AI?",
+    "unknownMeal": "Okänd måltid",
     "jsonExportTitle": "Exportera recept som JSON",
     "jsonExportDescription": "Kopiera denna JSON för att spara eller dela ditt recept.",
     "jsonImportTitle": "Importera recept från JSON",
@@ -635,7 +639,8 @@
     "next": "Nästa",
     "select": "Välj",
     "copy": "Kopiera",
-    "reset": "Återställ"
+    "reset": "Återställ",
+    "logout": "Logga ut"
   },
   "debug": {
     "title": "Debug-info",

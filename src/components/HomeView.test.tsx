@@ -28,6 +28,10 @@ vi.mock('../context/ToastContext', () => ({
     useToast: vi.fn(),
 }));
 
+vi.mock('./MealDetailModal', () => ({
+    MealDetailModal: () => null,
+}));
+
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
         t: (key: string, options?: Record<string, unknown> | string) => {
@@ -55,6 +59,28 @@ vi.mock('react-i18next', () => ({
                 'errors.emptyItem': 'Du måste ange en vara',
                 'errors.failedToAddItem': 'Misslyckades att lägga till varan',
                 'common.clear': 'Rensa',
+                'common.close': 'Stäng',
+                'common.servings': 'portioner',
+                'meals.ingredients': 'Ingredienser',
+                'meals.preparation': 'Tillagning',
+                'meals.noIngredients': 'Inga ingredienser listade.',
+                'meals.noInstructions': 'Inga tillagningssteg listade.',
+                'meals.unknownMeal': 'Okänd måltid',
+                'meals.noRecipeFound': 'Ingen receptinformation hittades för denna måltid.',
+                'meals.fetchRecipeWithAI': 'Vill du hämta och komplettera receptet med hjälp av AI?',
+                'meals.addedToShoppingList': 'Ingredienser lades till i inköpslistan',
+                'mealTypes.dinner': 'middag',
+                'mealTypes.lunch': 'lunch',
+                'meals.plannedInfo': 'Planerad: {{dates}}',
+                'days.sunday': 'söndag',
+                'days.monday': 'måndag',
+                'days.tuesday': 'tisdag',
+                'days.wednesday': 'onsdag',
+                'days.thursday': 'torsdag',
+                'days.friday': 'fredag',
+                'days.saturday': 'lördag',
+                'days.today': 'idag',
+                'days.tomorrow': 'imorgon',
             };
             return translations[key] || key;
         },
@@ -77,6 +103,7 @@ describe('HomeView Component', () => {
             defaultListId: 'default-list',
             addItemsToList: vi.fn(),
             itemHistory: [],
+            meals: [],
         } as unknown as ReturnType<typeof useApp>);
 
         vi.mocked(useMealPlan).mockReturnValue({
@@ -117,6 +144,7 @@ describe('HomeView Component', () => {
                 },
             ],
             defaultListId: 'default-list',
+            meals: [],
         } as unknown as ReturnType<typeof useApp>);
 
         render(
@@ -155,6 +183,7 @@ describe('HomeView Component', () => {
                 },
             ],
             defaultListId: 'default-list',
+            meals: [],
         } as unknown as ReturnType<typeof useApp>);
 
         render(
@@ -166,7 +195,7 @@ describe('HomeView Component', () => {
         expect(screen.getAllByText('Allt är inhandlat! 🎉').length).toBeGreaterThan(0);
     });
 
-    it('renders planned meal and navigates to /mealplan on click', () => {
+    it('renders planned meal and opens meal detail modal on click', () => {
         const mockGetPlan = vi.fn().mockReturnValue({
             id: 'plan-1',
             weekNumber: 1,
@@ -187,6 +216,14 @@ describe('HomeView Component', () => {
             ],
         });
 
+        vi.mocked(useApp).mockReturnValue({
+            lists: [{ id: 'default-list', items: [], settings: {} }],
+            defaultListId: 'default-list',
+            addItemsToList: vi.fn(),
+            itemHistory: [],
+            meals: [],
+        } as unknown as ReturnType<typeof useApp>);
+
         vi.mocked(useMealPlan).mockReturnValue({
             getPlanForDate: mockGetPlan,
             mealPlans: [],
@@ -200,10 +237,11 @@ describe('HomeView Component', () => {
 
         expect(screen.getByText('Lasagne al Forno')).toBeDefined();
 
-        // Click meal plan card
+        // Click meal plan card - should open modal, not navigate
         const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
         fireEvent.click(mealCard);
-        expect(mockNavigate).toHaveBeenCalledWith('/mealplan');
+        // Since MealDetailModal is mocked, we just verify that navigation did not occur
+        expect(mockNavigate).not.toHaveBeenCalled();
     });
 
     it('supports keyboard navigation via Enter and Space keys', () => {
@@ -217,6 +255,7 @@ describe('HomeView Component', () => {
         fireEvent.keyDown(shoppingCard, { key: 'Enter' });
         expect(mockNavigate).toHaveBeenCalledWith('/shopping');
 
+        // For meal plan card without a planned meal, it should navigate to /mealplan
         const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
         fireEvent.keyDown(mealCard, { key: ' ' });
         expect(mockNavigate).toHaveBeenCalledWith('/mealplan');
@@ -234,6 +273,7 @@ describe('HomeView Component', () => {
                 defaultListId: '1',
                 addItemsToList: mockAddItemsToList,
                 itemHistory: [],
+                meals: [],
             } as unknown as ReturnType<typeof useApp>);
             vi.mocked(useMealPlan).mockReturnValue({
                 getPlanForDate: vi.fn().mockReturnValue(null),
@@ -320,6 +360,7 @@ describe('HomeView Component', () => {
                     { id: '1', text: 'Mjölk', usageCount: 5, lastUsed: '' },
                     { id: '2', text: 'Bröd', usageCount: 3, lastUsed: '' },
                 ],
+                meals: [],
             } as unknown as ReturnType<typeof useApp>);
 
             render(
@@ -344,6 +385,7 @@ describe('HomeView Component', () => {
                 itemHistory: [
                     { id: '1', text: 'Mjölk', usageCount: 5, lastUsed: '' },
                 ],
+                meals: [],
             } as unknown as ReturnType<typeof useApp>);
 
             render(
