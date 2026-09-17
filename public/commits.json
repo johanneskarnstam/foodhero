@@ -1,5 +1,60 @@
 [
   {
+    "hash": "4d030db80073132ed0c723d93da22f36cdecbfdc",
+    "date": "2026-09-10 16:00:30 +0200",
+    "message": "fix: uppdatera standardmodell för Gemini till gemini-3.6-flash"
+  },
+  {
+    "hash": "3272614fd59da7f7956ffcb2daaf9acf1b28bbcd",
+    "date": "2026-09-10 15:56:00 +0200",
+    "message": "feat: integrera AI-receptgenerering i MealsView och MealEditModal"
+  },
+  {
+    "hash": "a3cd9c0604f6184ae113cebe2b1fd5948ff563bc",
+    "date": "2026-09-10 15:53:09 +0200",
+    "message": "feat: lägg till AiRecipeModal-komponent och i18n-nycklar"
+  },
+  {
+    "hash": "f44635e68e8ed2801a5c1a3883eb9182ee627138",
+    "date": "2026-09-10 15:47:33 +0200",
+    "message": "feat: lägg till useAiRecipe-hook med loading/error-hantering"
+  },
+  {
+    "hash": "6b8f4adfee938c47752ea99eb647f8f97f8f8ced",
+    "date": "2026-09-10 15:42:36 +0200",
+    "message": "feat: lägg till AI-service för receptgenerering med Gemini"
+  },
+  {
+    "hash": "4b6472419b958858f9ec256763008f5953f96c7d",
+    "date": "2026-09-10 15:32:53 +0200",
+    "message": "feat: add cleanup step to remove existing GitLab variables before update"
+  },
+  {
+    "hash": "cd66e11ad439594b2654ba46d1d22c44386f1427",
+    "date": "2026-09-10 14:48:20 +0200",
+    "message": "chore: migrate repository from GitHub to GitLab"
+  },
+  {
+    "hash": "8f55e2eeedc70f5842f1d21a932bf8ba0980770c",
+    "date": "2026-09-10 14:34:02 +0200",
+    "message": "fix: uppdatera generate-commits.js för att stödja GitLab API"
+  },
+  {
+    "hash": "4f6691699d3f0c27e67508671a41c7cbdeca0c7c",
+    "date": "2026-09-10 14:27:20 +0200",
+    "message": "fix: stoppa event propagation för måltidsplaneringsknappar i HomeView"
+  },
+  {
+    "hash": "a628f4b06adc6213a25704f42599d3e86db0324d",
+    "date": "2026-09-10 14:12:49 +0200",
+    "message": "fix: öppna måltidsmodal vid klick på + Lunch/Middag idag istället för att fylla i måltidstypen"
+  },
+  {
+    "hash": "e5525cfe91322433cf26d29ca989fa7510b61a5a",
+    "date": "2026-09-10 14:02:44 +0200",
+    "message": "feat: update commits.json and enhance HomeView quick-add styling"
+  },
+  {
     "hash": "66d1d2b91f1f90f341d75a6be3ed558d77dc72dc",
     "date": "2026-09-09 18:14:40 +0200",
     "message": "feat: förbättrad design för inköpslista och snabbfält med rundade hörn och modernt utseende"
@@ -43,60 +98,5 @@
     "hash": "86ad65356562c62cf1e04377fadaaa4b389f5c35",
     "date": "2026-09-09 15:11:26 +0200",
     "message": "feat: slutför namnbyte från BuyMilk till FoodHero och uppdatera dokumentation"
-  },
-  {
-    "hash": "c41c25eb736f9bb3b11f141fb2fa61eee82005dd",
-    "date": "2026-09-09 14:54:11 +0200",
-    "message": "docs: uppdatera genomförda funktioner i planned/README.md"
-  },
-  {
-    "hash": "c12cb8178df4314086bb25f5b4206cabd767c2f5",
-    "date": "2026-09-09 15:06:22 +0200",
-    "message": "docs: uppdatera genomförda funktioner i planned/README.md"
-  },
-  {
-    "hash": "1a4a1cce3fdff3b78f5841f96005704830ebd113",
-    "date": "2026-09-09 14:57:57 +0200",
-    "message": "Merge branch 'feature/snabbaddition-inkopslista' into 'main'"
-  },
-  {
-    "hash": "629a38433827e7102d32e207f3d64cfde458b6bd",
-    "date": "2026-09-09 14:54:11 +0200",
-    "message": "feat: lägg till snabbaddition av varor från startsidan"
-  },
-  {
-    "hash": "3582359066e43d7cd0c4d7317de32b5b6be1644c",
-    "date": "2026-09-09 13:59:09 +0200",
-    "message": "feat: lägg till snabblänkar för närmaste måltider i måltidsplaneringswidgeten"
-  },
-  {
-    "hash": "8235236841b92aa4ceaf7ef105ce8f3fb7a9528d",
-    "date": "2026-09-09 13:35:25 +0200",
-    "message": "fix(vite): update base and PWA paths to /foodhero/"
-  },
-  {
-    "hash": "aeddd5fad472ff5491a222c913c2a889ba571360",
-    "date": "2026-09-09 13:15:23 +0200",
-    "message": "chore: update PWA start_url in vite.config.ts to root"
-  },
-  {
-    "hash": "567954eae2e7d8630e33c3ff57ed1e3e47316c78",
-    "date": "2026-09-09 12:58:55 +0200",
-    "message": "fix(ci): correct npm command flag and clean up build script"
-  },
-  {
-    "hash": "e361a89063c361d64557d0a38f740fc405882cea",
-    "date": "2026-09-09 12:47:40 +0200",
-    "message": "feat: update deployment config and base path"
-  },
-  {
-    "hash": "9e1765b75a264168327472693fc058fefa28acab",
-    "date": "2026-09-09 12:35:59 +0200",
-    "message": "Package-lock.json"
-  },
-  {
-    "hash": "ecfa225c1994ff4a32ffda9886d536cd212afad6",
-    "date": "2026-09-09 12:31:42 +0200",
-    "message": "Removed Firebase Tools"
   }
 ]
