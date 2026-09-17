@@ -5,6 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
 import { useToast } from '../context/ToastContext';
+import { useAiRecipe } from '../hooks/useAiRecipe';
 
 const mockNavigate = vi.fn();
 
@@ -22,6 +23,10 @@ vi.mock('../context/AppContext', () => ({
 
 vi.mock('../hooks/useMealPlan', () => ({
     useMealPlan: vi.fn(),
+}));
+
+vi.mock('../hooks/useAiRecipe', () => ({
+    useAiRecipe: vi.fn(),
 }));
 
 vi.mock('../context/ToastContext', () => ({
@@ -68,6 +73,8 @@ vi.mock('react-i18next', () => ({
                 'meals.unknownMeal': 'Okänd måltid',
                 'meals.noRecipeFound': 'Ingen receptinformation hittades för denna måltid.',
                 'meals.fetchRecipeWithAI': 'Vill du hämta och komplettera receptet med hjälp av AI?',
+                'meals.fetchRecipeWithAIButton': 'Hämta recept med AI',
+                'meals.recipeFetchedWithAI': 'Receptet har hämtats och kompletterats med AI',
                 'meals.addedToShoppingList': 'Ingredienser lades till i inköpslistan',
                 'mealTypes.dinner': 'middag',
                 'mealTypes.lunch': 'lunch',
@@ -110,6 +117,10 @@ describe('HomeView Component', () => {
             getPlanForDate: vi.fn().mockReturnValue(null),
             mealPlans: [],
         } as unknown as ReturnType<typeof useMealPlan>);
+
+        vi.mocked(useAiRecipe).mockReturnValue({
+            enrichMeal: vi.fn().mockResolvedValue(null),
+        } as unknown as ReturnType<typeof useAiRecipe>);
     });
 
     it('renders header and empty states when list and mealplan are empty', () => {

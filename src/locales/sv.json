@@ -327,6 +327,8 @@
     "addedToShoppingList": "Ingredienser lades till i inköpslistan",
     "noRecipeFound": "Ingen receptinformation hittades för denna måltid.",
     "fetchRecipeWithAI": "Vill du hämta och komplettera receptet med hjälp av AI?",
+    "fetchRecipeWithAIButton": "Hämta recept med AI",
+    "recipeFetchedWithAI": "Receptet har hämtats och kompletterats med AI",
     "unknownMeal": "Okänd måltid",
     "jsonExportTitle": "Exportera recept som JSON",
     "jsonExportDescription": "Kopiera denna JSON för att spara eller dela ditt recept.",

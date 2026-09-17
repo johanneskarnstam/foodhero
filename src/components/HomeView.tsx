@@ -5,6 +5,7 @@ import { ShoppingCart, CalendarDays, ArrowRight, CheckCircle2, Circle, UtensilsC
 import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
 import { useToast } from '../context/ToastContext';
+import { useAiRecipe } from '../hooks/useAiRecipe';
 import { formatDate } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
 import type { List, Item, MealType, HistoryItem, Meal } from '../types';
@@ -17,6 +18,7 @@ export const HomeView: React.FC = () => {
     const { lists, defaultListId, addItemsToList, itemHistory, meals } = useApp();
     const { getPlanForDate, mealPlans, handleMealChange } = useMealPlan();
     const { showToast } = useToast();
+    const { enrichMeal } = useAiRecipe();
 
     // State för snabbaddition
     const [quickAddText, setQuickAddText] = useState('');
@@ -542,6 +544,21 @@ export const HomeView: React.FC = () => {
                         }));
                         addItemsToList(defaultListId, newItems);
                         showToast(t('meals.addedToShoppingList'), 'success');
+                    }
+                }}
+                onFetchAIRecipe={async (meal) => {
+                    // Hämta och berika recept med AI
+                    const enrichedRecipe = await enrichMeal(meal);
+                    if (enrichedRecipe) {
+                        setSelectedMeal({
+                            ...meal,
+                            ingredients: enrichedRecipe.ingredients,
+                            instructions: enrichedRecipe.instructions,
+                            description: enrichedRecipe.description,
+                            servings: enrichedRecipe.servings,
+                            tags: enrichedRecipe.tags,
+                        });
+                        showToast(t('meals.recipeFetchedWithAI'), 'success');
                     }
                 }}
             />

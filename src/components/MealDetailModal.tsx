@@ -29,6 +29,7 @@ interface MealDetailModalProps {
     onRandomMeal?: () => void;
     onDelete?: (meal: Meal) => void;
     onPlanSuccess?: () => void;
+    onFetchAIRecipe?: (meal: Meal) => void;
 }
 
 export const MealDetailModal: React.FC<MealDetailModalProps> = ({ 
@@ -42,7 +43,8 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     onTagClick,
     onRandomMeal,
     onDelete,
-    onPlanSuccess
+    onPlanSuccess,
+    onFetchAIRecipe
 }) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions'>('ingredients');
@@ -224,6 +226,14 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                             <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
                                 {t('meals.fetchRecipeWithAI')}
                             </p>
+                            {meal && onFetchAIRecipe && (
+                                <button
+                                    onClick={() => onFetchAIRecipe(meal)}
+                                    className="mt-3 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    {t('meals.fetchRecipeWithAIButton', 'Hämta recept med AI')}
+                                </button>
+                            )}
                         </div>
                     )}
 

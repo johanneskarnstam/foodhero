@@ -325,6 +325,8 @@
     "addedToShoppingList": "Ingredients added to shopping list",
     "noRecipeFound": "No recipe information found for this meal.",
     "fetchRecipeWithAI": "Would you like to fetch and complete the recipe using AI?",
+    "fetchRecipeWithAIButton": "Fetch recipe with AI",
+    "recipeFetchedWithAI": "Recipe has been fetched and completed with AI",
     "unknownMeal": "Unknown meal",
     "jsonExportTitle": "Export Recipe as JSON",
     "jsonExportDescription": "Copy this JSON to save or share your recipe.",
