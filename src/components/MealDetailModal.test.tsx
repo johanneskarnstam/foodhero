@@ -30,7 +30,13 @@ vi.mock('react-i18next', () => ({
                 'common.random': 'Slumpa ny',
                 'timers.start': 'Starta timer',
                 'timers.done': 'Klart!',
-                'timers.startTimerFor': 'Starta timer ({{time}})'
+                'timers.startTimerFor': 'Starta timer ({{time}})',
+                'meals.fetchRecipeWithAIButton': 'Hämta recept med AI',
+                'meals.enrichingWithAI': 'Kompletterar med AI...',
+                'meals.missingIngredientsAndInstructions': 'Receptet saknar både ingredienser och instruktioner.',
+                'meals.missingIngredients': 'Receptet saknar ingredienser.',
+                'meals.missingInstructions': 'Receptet saknar instruktioner.',
+                'meals.fetchRecipeWithAI': 'Vill du hämta och komplettera receptet med hjälp av AI?'
             };
             if (translations[key]) {
                 const opts = (typeof defaultTextOrOptions === 'object' ? defaultTextOrOptions : options) as Record<string, string> | undefined;
@@ -297,6 +303,98 @@ describe('MealDetailModal', () => {
         // Timer bar should now be visible
         expect(screen.getByTestId('recipe-timer-bar')).toBeInTheDocument();
         expect(screen.getByText('20:00')).toBeInTheDocument();
+    });
+
+    it('renders "Hämta recept med AI" button when recipe data is missing and onFetchAIRecipe is provided', () => {
+        const incompleteMeal: Meal = {
+            id: 'm-empty',
+            name: 'Pannkakor',
+            createdAt: ''
+        };
+        const mockOnFetchAIRecipe = vi.fn();
+
+        render(
+            <MealDetailModal
+                isOpen={true}
+                onClose={mockOnClose}
+                meal={incompleteMeal}
+                onFetchAIRecipe={mockOnFetchAIRecipe}
+            />
+        );
+
+        expect(screen.getByText('Receptet saknar både ingredienser och instruktioner.')).toBeInTheDocument();
+        const aiButton = screen.getByRole('button', { name: /Hämta recept med AI/i });
+        expect(aiButton).toBeInTheDocument();
+        expect(aiButton).not.toBeDisabled();
+
+        fireEvent.click(aiButton);
+        expect(mockOnFetchAIRecipe).toHaveBeenCalledWith(incompleteMeal);
+    });
+
+    it('disables the AI button and shows loading text and spinner when isAiLoading is true', () => {
+        const incompleteMeal: Meal = {
+            id: 'm-empty',
+            name: 'Pannkakor',
+            createdAt: ''
+        };
+        const mockOnFetchAIRecipe = vi.fn();
+
+        render(
+            <MealDetailModal
+                isOpen={true}
+                onClose={mockOnClose}
+                meal={incompleteMeal}
+                onFetchAIRecipe={mockOnFetchAIRecipe}
+                isAiLoading={true}
+            />
+        );
+
+        const aiButton = screen.getByRole('button', { name: /Kompletterar med AI.../i });
+        expect(aiButton).toBeInTheDocument();
+        expect(aiButton).toBeDisabled();
+
+        // Clicking while disabled should not trigger callback
+        fireEvent.click(aiButton);
+        expect(mockOnFetchAIRecipe).not.toHaveBeenCalled();
+    });
+
+    it('shows specific missing message when only ingredients or instructions are missing', () => {
+        const mealMissingIngredients: Meal = {
+            id: 'm-no-ing',
+            name: 'Köttbullar',
+            instructions: ['Stek köttbullarna'],
+            createdAt: ''
+        };
+        const mockOnFetchAIRecipe = vi.fn();
+
+        const { rerender } = render(
+            <MealDetailModal
+                isOpen={true}
+                onClose={mockOnClose}
+                meal={mealMissingIngredients}
+                onFetchAIRecipe={mockOnFetchAIRecipe}
+            />
+        );
+
+        expect(screen.getByText('Receptet saknar ingredienser.')).toBeInTheDocument();
+
+        const mealMissingInstructions: Meal = {
+            id: 'm-no-inst',
+            name: 'Köttbullar',
+            ingredients: [{ text: 'Köttfärs', amount: '500g' }],
+            createdAt: ''
+        };
+
+        rerender(
+            <MealDetailModal
+                isOpen={true}
+                onClose={mockOnClose}
+                meal={mealMissingInstructions}
+                onFetchAIRecipe={mockOnFetchAIRecipe}
+            />
+        );
+
+        expect(screen.getByText('Receptet saknar instruktioner.')).toBeInTheDocument();
     });
 });
 

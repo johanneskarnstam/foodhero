@@ -326,8 +326,12 @@
     "addToShoppingListPromptDescription": "Ingredienserna har lagts till i inköpslistan. Måltiden är inte inplanerad ännu. Vill du lägga till den i ditt matschema?",
     "addedToShoppingList": "Ingredienser lades till i inköpslistan",
     "noRecipeFound": "Ingen receptinformation hittades för denna måltid.",
+    "missingIngredientsAndInstructions": "Receptet saknar både ingredienser och instruktioner.",
+    "missingIngredients": "Receptet saknar ingredienser.",
+    "missingInstructions": "Receptet saknar instruktioner.",
     "fetchRecipeWithAI": "Vill du hämta och komplettera receptet med hjälp av AI?",
     "fetchRecipeWithAIButton": "Hämta recept med AI",
+    "enrichingWithAI": "Kompletterar med AI...",
     "recipeFetchedWithAI": "Receptet har hämtats och kompletterats med AI",
     "unknownMeal": "Okänd måltid",
     "jsonExportTitle": "Exportera recept som JSON",
@@ -618,7 +622,9 @@
     "ingredients": "Ingredienser",
     "instructions": "Instruktioner",
     "promptTitle": "Generera recept med AI",
-    "generate": "Generera"
+    "generate": "Generera",
+    "enrichFailed": "Kunde inte komplettera receptet med AI.",
+    "modelBusy": "AI-modellen är tillfälligt överbelastad. Vänligen vänta en stund och försök igen."
   },
   "autocomplete": {
     "tooltip": "Tryck på <kbd>Tab</kbd> eller klicka för att slutföra",

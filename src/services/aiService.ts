@@ -51,6 +51,23 @@ function validateRecipe(data: unknown): data is GeneratedRecipe {
 /**
  * Omvandlar ett API-fel till ett användarvänligt felmeddelande på svenska.
  */
+/**
+ * Avgör om ett fel är av typen som kan lösas genom att byta till en fallback-modell
+ * (t.ex. 503 Service Unavailable, high demand, kapacitetsproblem).
+ */
+export function isRetryableError(error: unknown): boolean {
+    if (!(error instanceof Error)) return false;
+    const raw = error.message.toLowerCase();
+    return (
+        raw.includes('503') ||
+        raw.includes('high demand') ||
+        raw.includes('capacity') ||
+        raw.includes('unavailable') ||
+        raw.includes('overloaded') ||
+        raw.includes('service_unavailable')
+    );
+}
+
 function toUserFriendlyError(error: unknown): string {
     let message = 'Kunde inte generera recept. Kontrollera din prompt eller försök igen senare.';
 
@@ -62,10 +79,12 @@ function toUserFriendlyError(error: unknown): string {
         message = 'Ogiltig API-nyckel för AI-tjänsten. Vänligen kontrollera dina inställningar.';
     } else if (raw.includes('fetch failed') || raw.includes('network error') || raw.includes('failed to fetch')) {
         message = 'Nätverksfel: Kunde inte ansluta till AI-tjänsten. Kontrollera din internetanslutning.';
+    } else if (raw.includes('503') || raw.includes('high demand') || raw.includes('unavailable') || raw.includes('overloaded') || raw.includes('capacity')) {
+        message = 'AI-modellen är tillfälligt överbelastad. Vänligen vänta en stund och försök igen.';
     } else if (raw.includes('429') || raw.includes('quota') || raw.includes('too many requests')) {
         message = 'Servern är överbelastad just nu. Vänligen vänta en liten stund och försök igen.';
     } else if (raw.includes('safety') || raw.includes('blocked')) {
-        message = 'Din förfrågan blockades av säkerhetsskäl. Försök att formulera om texten.';
+        message = 'Din förfrågan blockerades av säkerhetsskäl. Försök att formulera om texten.';
     } else if (raw.includes('invalid response format') || raw.includes('json')) {
         message = 'AI:n returnerade ett format vi inte kunde förstå. Vänligen försök med en annan beskrivning.';
     } else if (error.message.length < 100) {
@@ -75,12 +94,52 @@ function toUserFriendlyError(error: unknown): string {
     return message;
 }
 
+const PRIMARY_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-3.6-flash';
+export const FALLBACK_MODEL = 'gemini-2.5-flash';
+
 /**
  * Hämtar och returnerar en konfigurerad Gemini-modell.
  */
-function getModel() {
-    const modelName = import.meta.env.VITE_GEMINI_MODEL || 'gemini-3.6-flash';
-    return genAI.getGenerativeModel({ model: modelName, systemInstruction: SYSTEM_INSTRUCTION });
+function getModel(modelName?: string) {
+    const name = modelName || PRIMARY_MODEL;
+    return genAI.getGenerativeModel({ model: name, systemInstruction: SYSTEM_INSTRUCTION });
+}
+
+/**
+ * Anropar Gemini med automatisk fallback till alternativ modell vid retryable-fel.
+ * Försöker först med primärmodellen, och om felet är av retryable-typ (503, high demand, etc.)
+ * görs ett nytt försök med fallback-modellen.
+ */
+async function callWithFallback(prompt: string): Promise<GeneratedRecipe> {
+    try {
+        const model = getModel();
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+        const jsonString = extractJson(responseText);
+        const data: unknown = JSON.parse(jsonString);
+
+        if (!validateRecipe(data)) {
+            throw new Error('Invalid response format from AI.');
+        }
+
+        return data;
+    } catch (primaryError) {
+        if (isRetryableError(primaryError)) {
+            console.warn(`Primärmodell (${PRIMARY_MODEL}) gav retryable-fel, försöker med fallback (${FALLBACK_MODEL})...`);
+            const fallbackModel = getModel(FALLBACK_MODEL);
+            const result = await fallbackModel.generateContent(prompt);
+            const responseText = result.response.text();
+            const jsonString = extractJson(responseText);
+            const data: unknown = JSON.parse(jsonString);
+
+            if (!validateRecipe(data)) {
+                throw new Error('Invalid response format from AI.');
+            }
+
+            return data;
+        }
+        throw primaryError;
+    }
 }
 
 /**
@@ -96,17 +155,7 @@ export const generateRecipe = async (prompt: string): Promise<GeneratedRecipe> =
     }
 
     try {
-        const model = getModel();
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
-        const jsonString = extractJson(responseText);
-        const data: unknown = JSON.parse(jsonString);
-
-        if (!validateRecipe(data)) {
-            throw new Error('Invalid response format from AI.');
-        }
-
-        return data;
+        return await callWithFallback(prompt);
     } catch (error) {
         console.error('Error generating recipe with AI:', error);
         throw new Error(toUserFriendlyError(error));
@@ -145,17 +194,7 @@ export const enrichMeal = async (meal: Partial<Meal>): Promise<GeneratedRecipe> 
         'Behåll befintliga värden om de redan är korrekta, komplettera det som saknas.';
 
     try {
-        const model = getModel();
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
-        const jsonString = extractJson(responseText);
-        const data: unknown = JSON.parse(jsonString);
-
-        if (!validateRecipe(data)) {
-            throw new Error('Invalid response format from AI.');
-        }
-
-        return data;
+        return await callWithFallback(prompt);
     } catch (error) {
         console.error('Error enriching meal with AI:', error);
         throw new Error(toUserFriendlyError(error));

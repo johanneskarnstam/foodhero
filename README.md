@@ -8,6 +8,7 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
 
 - **Interaktiv måltidsplanerare**: Planera veckans luncher och middagar med ett intuitivt visuellt gränssnitt.
 - **Recepthantering**: Spara och organisera dina favoritrecept med ingredienser, instruktioner och taggar.
+- **AI-komplettering av recept**: Komplettera automatiskt ofärdiga recept (ingredienser, tillagningssteg, portioner och taggar) med hjälp av AI (Google Gemini) direkt i måltidsdetaljerna eller receptredigeraren, med automatisk modell-fallback vid hög belastning.
 - **Receptanalysator**: Klistra in recepttext eller webbadresser, så extraherar FoodHero automatiskt ingredienser direkt till din inköpslista.
 - **Ingredienssökning**: Sök recept baserat på ingredienser du redan har hemma för att minska matsvinnet.
 - **Kalenderexport**: Exportera planerade måltider direkt till din iCal/Google Calendar.
@@ -54,6 +55,7 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
 - **Frontend**: React, TypeScript, Tailwind CSS
 - **State Management**: React Context API
 - **Backend/Databas**: Firebase (Firestore & Auth)
+- **AI-integrering**: Google Generative AI (Gemini API)
 - **Internationellisering**: react-i18next
 - **Byggverktyg**: Vite
 - **Diagram**: Recharts

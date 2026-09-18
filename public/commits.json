@@ -1,5 +1,20 @@
 [
   {
+    "hash": "0cad6e9e64abe72b85add1697cd60cc53576e684",
+    "date": "2026-09-18 06:01:37 +0200",
+    "message": "feat: lägg till recepttimers i tillagningssteg"
+  },
+  {
+    "hash": "24c3a09e97789beae308e195383389fbb6c86ba1",
+    "date": "2026-09-18 05:48:04 +0200",
+    "message": "Remove of unused files"
+  },
+  {
+    "hash": "f2c95a91df76179210246bc860774062f019b66d",
+    "date": "2026-09-18 05:36:57 +0200",
+    "message": "fix: korrigera modal-bredd på tablet i liggande läge"
+  },
+  {
     "hash": "c7124f1232574b555445667b80d3bb2f271bbb47",
     "date": "2026-09-18 05:12:31 +0200",
     "message": "Debug info"
@@ -83,20 +98,5 @@
     "hash": "1c5e94fccca2e42077e69d226cc899130e0d2f84",
     "date": "2026-09-17 09:28:38 +0200",
     "message": "fix: visa fråga om att stänga modalen när PlanMealModal stängs efter lyckad planering"
-  },
-  {
-    "hash": "c74a86e111990a357ca3cc055c984fbdde9ae35c",
-    "date": "2026-09-17 09:21:21 +0200",
-    "message": "fix: visa fråga om att stänga modalen endast när måltiden precis planerats"
-  },
-  {
-    "hash": "c6a26b22344c30583286afb4d622bf83766201b5",
-    "date": "2026-09-17 06:58:28 +0200",
-    "message": "feat: lägg till fråga om att stänga modalen direkt i receptkortet istället för ConfirmModal"
-  },
-  {
-    "hash": "b753ab4ccdff32d5a231ff4977e98fbc294dc6ba",
-    "date": "2026-09-17 06:51:05 +0200",
-    "message": "fix: öka z-index på ConfirmModal till z-[200] för att säkerställa att den visas ovanför alla modaler"
   }
 ]

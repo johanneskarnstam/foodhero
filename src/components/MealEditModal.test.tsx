@@ -1,8 +1,23 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MealEditModal } from './MealEditModal';
 import { Meal } from '../types';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import { useToast } from '../context/ToastContext';
+import { useAiRecipe } from '../hooks/useAiRecipe';
+
+vi.mock('../context/ToastContext');
+const mockEnrichMeal = vi.fn();
+vi.mock('../hooks/useAiRecipe', () => ({
+    useAiRecipe: () => ({
+        isLoading: false,
+        error: null,
+        generateRecipe: vi.fn(),
+        enrichMeal: mockEnrichMeal,
+        clearError: vi.fn(),
+    }),
+}));
 
 const mockMeal: Meal = {
     id: 'm-123',
@@ -27,9 +42,13 @@ const mockMeal: Meal = {
 describe('MealEditModal', () => {
     const mockOnClose = vi.fn();
     const mockOnSave = vi.fn();
+    const mockShowToast = vi.fn();
 
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.mocked(useToast).mockReturnValue({
+            showToast: mockShowToast,
+        } as unknown as ReturnType<typeof useToast>);
     });
 
     it('renders in create mode when meal is null', () => {
@@ -199,5 +218,115 @@ describe('MealEditModal', () => {
             }),
             undefined
         );
+    });
+
+    describe('AI enrichment', () => {
+        it('should show success toast and update recipe on successful AI enrichment', async () => {
+            mockEnrichMeal.mockResolvedValue({
+                name: 'Köttbullar med mos',
+                description: 'Klassiska svenska köttbullar',
+                servings: 4,
+                tags: ['Husman', 'Klassiker'],
+                ingredients: [
+                    { text: 'Blandfärs', amount: '500g' },
+                    { text: 'Ströbröd', amount: '0.5 dl' },
+                ],
+                instructions: ['Blanda färs och ströbröd', 'Rulla och stek'],
+            });
+
+            render(
+                <MealEditModal
+                    isOpen={true}
+                    onClose={mockOnClose}
+                    onSave={mockOnSave}
+                    meal={null}
+                />
+            );
+
+            // Set meal name in basic tab
+            const nameInput = screen.getByPlaceholderText(/Krämig Kycklingpasta/i);
+            fireEvent.change(nameInput, { target: { value: 'Köttbullar med mos' } });
+
+            // Switch to ingredients tab
+            const ingTab = screen.getByRole('button', { name: /Ingredienser/i });
+            fireEvent.click(ingTab);
+
+            // Click enrich with AI button
+            const enrichBtn = document.getElementById('meal-edit-enrich-ingredients-btn')!;
+            expect(enrichBtn).toBeInTheDocument();
+            fireEvent.click(enrichBtn);
+
+            expect(mockEnrichMeal).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    name: 'Köttbullar med mos',
+                })
+            );
+
+            await screen.findByDisplayValue('Blandfärs');
+            await waitFor(() => {
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Receptet har hämtats och kompletterats med AI',
+                    'success'
+                );
+            });
+        });
+
+        it('should show error toast when enrichMeal returns null', async () => {
+            mockEnrichMeal.mockResolvedValue(null);
+
+            render(
+                <MealEditModal
+                    isOpen={true}
+                    onClose={mockOnClose}
+                    onSave={mockOnSave}
+                    meal={null}
+                />
+            );
+
+            const nameInput = screen.getByPlaceholderText(/Krämig Kycklingpasta/i);
+            fireEvent.change(nameInput, { target: { value: 'Test Meal' } });
+
+            const ingTab = screen.getByRole('button', { name: /Ingredienser/i });
+            fireEvent.click(ingTab);
+
+            const enrichBtn = document.getElementById('meal-edit-enrich-ingredients-btn')!;
+            fireEvent.click(enrichBtn);
+
+            await waitFor(() => {
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Kunde inte komplettera receptet med AI.',
+                    'error'
+                );
+            });
+        });
+
+        it('should show error toast when enrichMeal throws', async () => {
+            mockEnrichMeal.mockRejectedValue(new Error('Network error'));
+
+            render(
+                <MealEditModal
+                    isOpen={true}
+                    onClose={mockOnClose}
+                    onSave={mockOnSave}
+                    meal={null}
+                />
+            );
+
+            const nameInput = screen.getByPlaceholderText(/Krämig Kycklingpasta/i);
+            fireEvent.change(nameInput, { target: { value: 'Test Meal' } });
+
+            const ingTab = screen.getByRole('button', { name: /Ingredienser/i });
+            fireEvent.click(ingTab);
+
+            const enrichBtn = document.getElementById('meal-edit-enrich-ingredients-btn')!;
+            fireEvent.click(enrichBtn);
+
+            await waitFor(() => {
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Kunde inte komplettera receptet med AI.',
+                    'error'
+                );
+            });
+        });
     });
 });

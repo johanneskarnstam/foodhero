@@ -15,10 +15,10 @@ import { MealDetailModal } from './MealDetailModal';
 export const HomeView: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { lists, defaultListId, addItemsToList, itemHistory, meals } = useApp();
+    const { lists, defaultListId, addItemsToList, itemHistory, meals, updateMeal } = useApp();
     const { getPlanForDate, mealPlans, handleMealChange } = useMealPlan();
     const { showToast } = useToast();
-    const { enrichMeal } = useAiRecipe();
+    const { enrichMeal, isLoading: isAiEnriching } = useAiRecipe();
 
     // State för snabbaddition
     const [quickAddText, setQuickAddText] = useState('');
@@ -546,19 +546,34 @@ export const HomeView: React.FC = () => {
                         showToast(t('meals.addedToShoppingList'), 'success');
                     }
                 }}
+                isAiLoading={isAiEnriching}
                 onFetchAIRecipe={async (meal) => {
-                    // Hämta och berika recept med AI
-                    const enrichedRecipe = await enrichMeal(meal);
-                    if (enrichedRecipe) {
-                        setSelectedMeal({
-                            ...meal,
-                            ingredients: enrichedRecipe.ingredients,
-                            instructions: enrichedRecipe.instructions,
-                            description: enrichedRecipe.description,
-                            servings: enrichedRecipe.servings,
-                            tags: enrichedRecipe.tags,
-                        });
-                        showToast(t('meals.recipeFetchedWithAI'), 'success');
+                    try {
+                        const enrichedRecipe = await enrichMeal(meal);
+                        if (enrichedRecipe) {
+                            const updates: Partial<Meal> = {
+                                ingredients: enrichedRecipe.ingredients.map(ing => ({
+                                    text: ing.text,
+                                    amount: ing.amount,
+                                    checkIfExistAtHome: false,
+                                })),
+                                instructions: enrichedRecipe.instructions,
+                                description: enrichedRecipe.description || meal.description,
+                                servings: enrichedRecipe.servings || meal.servings || 4,
+                                tags: enrichedRecipe.tags && enrichedRecipe.tags.length > 0 ? enrichedRecipe.tags : (meal.tags || []),
+                            };
+                            await updateMeal(meal.id, updates);
+                            setSelectedMeal({
+                                ...meal,
+                                ...updates,
+                            });
+                            showToast(t('meals.recipeFetchedWithAI'), 'success');
+                        } else {
+                            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                        }
+                    } catch (err) {
+                        console.error('Failed to enrich recipe with AI:', err);
+                        showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
                     }
                 }}
             />

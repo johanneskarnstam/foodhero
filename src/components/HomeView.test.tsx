@@ -34,7 +34,27 @@ vi.mock('../context/ToastContext', () => ({
 }));
 
 vi.mock('./MealDetailModal', () => ({
-    MealDetailModal: () => null,
+    MealDetailModal: (props: {
+        isOpen: boolean;
+        meal: unknown;
+        onFetchAIRecipe?: (meal: unknown) => void;
+        isAiLoading?: boolean;
+    }) => {
+        if (!props.isOpen) return null;
+        return (
+            <div data-testid="meal-detail-modal">
+                {props.onFetchAIRecipe && (
+                    <button
+                        data-testid="ai-enrich-btn"
+                        disabled={props.isAiLoading}
+                        onClick={() => props.onFetchAIRecipe?.(props.meal)}
+                    >
+                        {props.isAiLoading ? 'Loading...' : 'Enrich AI'}
+                    </button>
+                )}
+            </div>
+        );
+    },
 }));
 
 vi.mock('react-i18next', () => ({
@@ -417,6 +437,185 @@ describe('HomeView Component', () => {
                     expect.objectContaining({ text: 'Mjölk', completed: false })
                 ]);
             });
+        });
+    });
+
+    describe('AI Enrichment in HomeView', () => {
+        const mockEnrichMeal = vi.fn();
+        const mockUpdateMeal = vi.fn();
+        const mockShowToast = vi.fn();
+
+        const incompleteMeal = {
+            id: 'meal-1',
+            name: 'Pasta Carbonara',
+            createdAt: new Date().toISOString(),
+        };
+
+        const enrichedResult = {
+            ingredients: [
+                { text: 'Spaghetti', amount: '400g' },
+                { text: 'Guanciale', amount: '200g' },
+            ],
+            instructions: ['Koka pastan', 'Stek guanciale'],
+            description: 'Klassisk italiensk pasta',
+            servings: 4,
+            tags: ['italienskt', 'pasta'],
+        };
+
+        beforeEach(() => {
+            vi.clearAllMocks();
+            vi.mocked(useToast).mockReturnValue({ showToast: mockShowToast });
+            vi.mocked(useAiRecipe).mockReturnValue({
+                enrichMeal: mockEnrichMeal,
+                isLoading: false,
+            } as unknown as ReturnType<typeof useAiRecipe>);
+
+            const today = new Date().toISOString().split('T')[0];
+            vi.mocked(useApp).mockReturnValue({
+                lists: [{ id: 'default-list', items: [], settings: {} }],
+                defaultListId: 'default-list',
+                addItemsToList: vi.fn(),
+                itemHistory: [],
+                meals: [incompleteMeal],
+                updateMeal: mockUpdateMeal,
+            } as unknown as ReturnType<typeof useApp>);
+
+            vi.mocked(useMealPlan).mockReturnValue({
+                getPlanForDate: vi.fn().mockReturnValue({
+                    id: 'plan-1',
+                    weekNumber: 1,
+                    year: 2026,
+                    days: [
+                        {
+                            date: today,
+                            meals: [
+                                {
+                                    type: 'dinner',
+                                    plannedMeal: {
+                                        id: 'meal-1',
+                                        customTitle: 'Pasta Carbonara',
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                }),
+                mealPlans: [],
+            } as unknown as ReturnType<typeof useMealPlan>);
+        });
+
+        it('should call enrichMeal and updateMeal on successful AI enrichment', async () => {
+            mockEnrichMeal.mockResolvedValue(enrichedResult);
+            mockUpdateMeal.mockResolvedValue(undefined);
+
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+
+            // Click meal card to open modal
+            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
+            fireEvent.click(mealCard);
+
+            // Click the AI enrich button in the mocked modal
+            const enrichBtn = await screen.findByTestId('ai-enrich-btn');
+            fireEvent.click(enrichBtn);
+
+            await waitFor(() => {
+                expect(mockEnrichMeal).toHaveBeenCalled();
+            });
+
+            await waitFor(() => {
+                expect(mockUpdateMeal).toHaveBeenCalledWith(
+                    'meal-1',
+                    expect.objectContaining({
+                        ingredients: expect.arrayContaining([
+                            expect.objectContaining({ text: 'Spaghetti' }),
+                        ]),
+                        instructions: enrichedResult.instructions,
+                        description: enrichedResult.description,
+                        servings: enrichedResult.servings,
+                        tags: enrichedResult.tags,
+                    })
+                );
+            });
+
+            await waitFor(() => {
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Receptet har hämtats och kompletterats med AI',
+                    'success'
+                );
+            });
+        });
+
+        it('should show error toast when enrichMeal returns null', async () => {
+            mockEnrichMeal.mockResolvedValue(null);
+
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+
+            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
+            fireEvent.click(mealCard);
+
+            const enrichBtn = await screen.findByTestId('ai-enrich-btn');
+            fireEvent.click(enrichBtn);
+
+            await waitFor(() => {
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Kunde inte komplettera receptet med AI.',
+                    'error'
+                );
+            });
+
+            // updateMeal should NOT be called when enrichMeal returns null
+            expect(mockUpdateMeal).not.toHaveBeenCalled();
+        });
+
+        it('should show error toast when enrichMeal throws', async () => {
+            mockEnrichMeal.mockRejectedValue(new Error('API error'));
+
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+
+            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
+            fireEvent.click(mealCard);
+
+            const enrichBtn = await screen.findByTestId('ai-enrich-btn');
+            fireEvent.click(enrichBtn);
+
+            await waitFor(() => {
+                expect(mockShowToast).toHaveBeenCalledWith(
+                    'Kunde inte komplettera receptet med AI.',
+                    'error'
+                );
+            });
+        });
+
+        it('should pass isAiLoading to MealDetailModal', async () => {
+            vi.mocked(useAiRecipe).mockReturnValue({
+                enrichMeal: mockEnrichMeal,
+                isLoading: true,
+            } as unknown as ReturnType<typeof useAiRecipe>);
+
+            render(
+                <MemoryRouter>
+                    <HomeView />
+                </MemoryRouter>
+            );
+
+            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
+            fireEvent.click(mealCard);
+
+            const enrichBtn = await screen.findByTestId('ai-enrich-btn');
+            expect(enrichBtn).toBeDisabled();
+            expect(enrichBtn).toHaveTextContent('Loading...');
         });
     });
 });

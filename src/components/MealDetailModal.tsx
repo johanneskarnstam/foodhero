@@ -11,7 +11,9 @@ import {
     Users,
     Trash2,
     CheckCircle2,
-    Timer
+    Timer,
+    Loader2,
+    Sparkles
 } from 'lucide-react';
 import { Meal, MealPlan, MealType } from '../types';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +36,7 @@ interface MealDetailModalProps {
     onDelete?: (meal: Meal) => void;
     onPlanSuccess?: () => void;
     onFetchAIRecipe?: (meal: Meal) => void;
+    isAiLoading?: boolean;
 }
 
 export const MealDetailModal: React.FC<MealDetailModalProps> = ({ 
@@ -48,7 +51,8 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     onRandomMeal,
     onDelete,
     onPlanSuccess,
-    onFetchAIRecipe
+    onFetchAIRecipe,
+    isAiLoading = false
 }) => {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<'ingredients' | 'instructions'>('ingredients');
@@ -239,19 +243,35 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                     </div>
 
                     {!hasRecipeData && onFetchAIRecipe && (
-                        <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-4 text-center">
-                            <p className="text-sm text-amber-800 dark:text-amber-200">
-                                {t('meals.noRecipeFound')}
+                        <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700/60 rounded-xl p-4 text-center">
+                            <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
+                                {!hasIngredients && !hasInstructions 
+                                    ? t('meals.missingIngredientsAndInstructions', 'Receptet saknar både ingredienser och instruktioner.')
+                                    : !hasIngredients 
+                                        ? t('meals.missingIngredients', 'Receptet saknar ingredienser.')
+                                        : t('meals.missingInstructions', 'Receptet saknar instruktioner.')}
                             </p>
                             <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-                                {t('meals.fetchRecipeWithAI')}
+                                {t('meals.fetchRecipeWithAI', 'Vill du hämta och komplettera receptet med hjälp av AI?')}
                             </p>
                             {meal && (
                                 <button
+                                    type="button"
                                     onClick={() => onFetchAIRecipe(meal)}
-                                    className="mt-3 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                                    disabled={isAiLoading}
+                                    className="mt-3 inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 dark:disabled:bg-blue-800/70 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg shadow-xs transition-colors"
                                 >
-                                    {t('meals.fetchRecipeWithAIButton', 'Hämta recept med AI')}
+                                    {isAiLoading ? (
+                                        <>
+                                            <Loader2 size={16} className="animate-spin" />
+                                            <span>{t('meals.enrichingWithAI', 'Kompletterar med AI...')}</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Sparkles size={16} />
+                                            <span>{t('meals.fetchRecipeWithAIButton', 'Hämta recept med AI')}</span>
+                                        </>
+                                    )}
                                 </button>
                             )}
                         </div>

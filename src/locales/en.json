@@ -324,8 +324,12 @@
     "addToShoppingListPromptDescription": "The ingredients have been added to the shopping list. The meal is not yet planned. Would you like to add it to your meal schedule?",
     "addedToShoppingList": "Ingredients added to shopping list",
     "noRecipeFound": "No recipe information found for this meal.",
+    "missingIngredientsAndInstructions": "The recipe is missing both ingredients and instructions.",
+    "missingIngredients": "The recipe is missing ingredients.",
+    "missingInstructions": "The recipe is missing instructions.",
     "fetchRecipeWithAI": "Would you like to fetch and complete the recipe using AI?",
     "fetchRecipeWithAIButton": "Fetch recipe with AI",
+    "enrichingWithAI": "Completing with AI...",
     "recipeFetchedWithAI": "Recipe has been fetched and completed with AI",
     "unknownMeal": "Unknown meal",
     "jsonExportTitle": "Export Recipe as JSON",
@@ -625,7 +629,9 @@
     "ingredients": "Ingredients",
     "instructions": "Instructions",
     "promptTitle": "Generate recipe with AI",
-    "generate": "Generate"
+    "generate": "Generate",
+    "enrichFailed": "Could not complete recipe with AI.",
+    "modelBusy": "The AI model is temporarily overloaded. Please try again shortly."
   },
   "autocomplete": {
     "tooltip": "Press <kbd>Tab</kbd> or tap to complete",

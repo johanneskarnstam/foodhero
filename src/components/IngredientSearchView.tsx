@@ -12,6 +12,7 @@ import { PlanMealModal } from './PlanMealModal';
 import { RandomMealCard } from './RandomMealCard';
 import { ConfirmModal } from './ConfirmModal';
 import { useToast } from '../context/ToastContext';
+import { useAiRecipe } from '../hooks/useAiRecipe';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -22,6 +23,7 @@ export const IngredientSearchView: React.FC = () => {
     const navigate = useNavigate();
 
     const { mealPlans, handleMealChange } = useMealPlan();
+    const { enrichMeal, isLoading: isAiEnriching } = useAiRecipe();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -626,6 +628,33 @@ export const IngredientSearchView: React.FC = () => {
                     mealPlans={mealPlans}
                     onTagClick={handleMealTagClick}
                     onPlanSuccess={showCloseQuestion ? () => setShowCloseQuestion(false) : undefined}
+                    onFetchAIRecipe={async (meal: Meal) => {
+                        try {
+                            const enrichedRecipe = await enrichMeal(meal);
+                            if (enrichedRecipe) {
+                                const updates: Partial<Meal> = {
+                                    ingredients: enrichedRecipe.ingredients.map(ing => ({
+                                        text: ing.text,
+                                        amount: ing.amount,
+                                        checkIfExistAtHome: false,
+                                    })),
+                                    instructions: enrichedRecipe.instructions,
+                                    description: enrichedRecipe.description || meal.description,
+                                    servings: enrichedRecipe.servings || meal.servings || 4,
+                                    tags: enrichedRecipe.tags && enrichedRecipe.tags.length > 0 ? enrichedRecipe.tags : (meal.tags || []),
+                                };
+                                await updateMeal(meal.id, updates);
+                                setSelectedMeal({ ...meal, ...updates });
+                                showToast(t('meals.recipeFetchedWithAI', 'Receptet har hämtats och kompletterats med AI'), 'success');
+                            } else {
+                                showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                            }
+                        } catch (err) {
+                            console.error('Error enriching meal with AI:', err);
+                            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                        }
+                    }}
+                    isAiLoading={isAiEnriching}
                 />
             )}
 

@@ -26,12 +26,14 @@ import { AiRecipeModal } from './AiRecipeModal';
 import { v4 as uuidv4 } from 'uuid';
 import { Item, Meal, MealType } from '../types';
 import { useMealPlan } from '../hooks/useMealPlan';
+import { useAiRecipe } from '../hooks/useAiRecipe';
 
 export const MealsView: React.FC = () => {
     const { meals, addMeal, updateMeal, deleteMeal, addItemsToList, defaultListId } = useApp();
     const { showToast } = useToast();
     const { t } = useTranslation();
     const { mealPlans, handleMealChange } = useMealPlan();
+    const { enrichMeal, isLoading: isAiEnriching } = useAiRecipe();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     
@@ -219,7 +221,36 @@ export const MealsView: React.FC = () => {
         setShowCloseQuestion(true);
     };
 
-
+    const handleEnrichMealWithAi = async (meal: Meal) => {
+        try {
+            const enrichedRecipe = await enrichMeal(meal);
+            if (enrichedRecipe) {
+                const updates: Partial<Meal> = {
+                    ingredients: enrichedRecipe.ingredients.map(ing => ({
+                        text: ing.text,
+                        amount: ing.amount,
+                        checkIfExistAtHome: false
+                    })),
+                    instructions: enrichedRecipe.instructions,
+                    description: enrichedRecipe.description || meal.description,
+                    servings: enrichedRecipe.servings || meal.servings || 4,
+                    tags: enrichedRecipe.tags && enrichedRecipe.tags.length > 0 ? enrichedRecipe.tags : (meal.tags || []),
+                };
+                await updateMeal(meal.id, updates);
+                const updatedMeal: Meal = {
+                    ...meal,
+                    ...updates
+                };
+                setViewingMeal(updatedMeal);
+                showToast(t('meals.recipeFetchedWithAI', 'Receptet har hämtats och kompletterats med AI'), 'success');
+            } else {
+                showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+            }
+        } catch (err) {
+            console.error('Error enriching meal with AI:', err);
+            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+        }
+    };
 
     const handleOpenIngredientTransfer = (meal: Meal) => {
         if (!meal.ingredients || meal.ingredients.length === 0) {
@@ -553,6 +584,8 @@ export const MealsView: React.FC = () => {
                 mealPlans={mealPlans}
                 onTagClick={handleMealTagClick}
                 onPlanSuccess={showCloseQuestion ? () => setShowCloseQuestion(false) : undefined}
+                onFetchAIRecipe={handleEnrichMealWithAi}
+                isAiLoading={isAiEnriching}
             />
 
             <ConfirmModal

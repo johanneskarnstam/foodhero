@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { InlineAutocompleteInput } from './InlineAutocompleteInput';
 import { useVoiceInput } from '../hooks/useVoiceInput';
 import { useMealPlan } from '../hooks/useMealPlan';
+import { useAiRecipe } from '../hooks/useAiRecipe';
 import { formatDate } from '../utils/dateUtils';
 
 interface OutletContext {
@@ -35,6 +36,7 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
     const { showToast } = useToast();
     const { getPlanForDate } = useMealPlan();
     const { isListening, transcript, startListening, stopListening, hasSupport } = useVoiceInput();
+    const { enrichMeal, isLoading: isAiEnriching } = useAiRecipe();
     const [viewingMeal, setViewingMeal] = useState<Meal | null>(null);
     const [editingMeal, setEditingMeal] = useState<Meal | null>(null);
     const [deleteConfirmMeal, setDeleteConfirmMeal] = useState<Meal | null>(null);
@@ -445,6 +447,33 @@ export const GroceryListView: React.FC = React.memo(function GroceryListView() {
                 onRandomMeal={() => {}}
                 onDelete={handleDeleteMeal}
                 meal={viewingMeal}
+                onFetchAIRecipe={async (meal: Meal) => {
+                    try {
+                        const enrichedRecipe = await enrichMeal(meal);
+                        if (enrichedRecipe) {
+                            const updates: Partial<Meal> = {
+                                ingredients: enrichedRecipe.ingredients.map(ing => ({
+                                    text: ing.text,
+                                    amount: ing.amount,
+                                    checkIfExistAtHome: false,
+                                })),
+                                instructions: enrichedRecipe.instructions,
+                                description: enrichedRecipe.description || meal.description,
+                                servings: enrichedRecipe.servings || meal.servings || 4,
+                                tags: enrichedRecipe.tags && enrichedRecipe.tags.length > 0 ? enrichedRecipe.tags : (meal.tags || []),
+                            };
+                            await updateMeal(meal.id, updates);
+                            setViewingMeal({ ...meal, ...updates });
+                            showToast(t('meals.recipeFetchedWithAI', 'Receptet har hämtats och kompletterats med AI'), 'success');
+                        } else {
+                            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                        }
+                    } catch (err) {
+                        console.error('Error enriching meal with AI:', err);
+                        showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                    }
+                }}
+                isAiLoading={isAiEnriching}
             />
 
             <ConfirmModal

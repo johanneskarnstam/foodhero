@@ -1,14 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { isRetryableError, FALLBACK_MODEL } from './aiService';
 
 const mockGenerateContent = vi.fn();
+const mockGetGenerativeModel = vi.fn().mockImplementation(() => ({
+    generateContent: mockGenerateContent,
+}));
 
 vi.mock('@google/generative-ai', () => {
     return {
         GoogleGenerativeAI: class {
-            getGenerativeModel() {
-                return {
-                    generateContent: mockGenerateContent,
-                };
+            getGenerativeModel(args: unknown) {
+                return mockGetGenerativeModel(args);
             }
         },
     };
@@ -29,6 +31,26 @@ function makeRecipePayload(overrides: Record<string, unknown> = {}) {
         ...overrides,
     };
 }
+
+describe('isRetryableError', () => {
+    it('identifierar fel som kan åtgärdas med fallback-modell', () => {
+        expect(isRetryableError(new Error('503 Service Unavailable'))).toBe(true);
+        expect(isRetryableError(new Error('The model is experiencing high demand'))).toBe(true);
+        expect(isRetryableError(new Error('Capacity exceeded for model'))).toBe(true);
+        expect(isRetryableError(new Error('Model temporarily unavailable'))).toBe(true);
+        expect(isRetryableError(new Error('Server overloaded'))).toBe(true);
+        expect(isRetryableError(new Error('service_unavailable error'))).toBe(true);
+    });
+
+    it('returnerar false för icke-retryable fel och icke-Error typer', () => {
+        expect(isRetryableError(new Error('401 Unauthorized'))).toBe(false);
+        expect(isRetryableError(new Error('api key not valid'))).toBe(false);
+        expect(isRetryableError(new Error('content blocked by safety filters'))).toBe(false);
+        expect(isRetryableError(null)).toBe(false);
+        expect(isRetryableError('string error')).toBe(false);
+        expect(isRetryableError({ message: '503' })).toBe(false);
+    });
+});
 
 describe('aiService - generateRecipe', () => {
     beforeEach(() => {
@@ -110,7 +132,7 @@ describe('aiService - generateRecipe', () => {
         mockGenerateContent.mockRejectedValueOnce(new Error('content blocked by safety filters'));
 
         const { generateRecipe } = await import('./aiService');
-        await expect(generateRecipe('test')).rejects.toThrow(/blockades/);
+        await expect(generateRecipe('test')).rejects.toThrow(/blockerades/);
     });
 
     it('kastar användarvänligt fel när JSON-svaret saknar obligatoriska fält', async () => {
@@ -134,6 +156,55 @@ describe('aiService - generateRecipe', () => {
 
         const { generateRecipe } = await import('./aiService');
         await expect(generateRecipe('test')).rejects.toThrow();
+    });
+
+    it('gör automatisk fallback till FALLBACK_MODEL när primärmodell ger 503 / high demand', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        // Första anropet (primärmodell) kastar 503 high demand
+        mockGenerateContent.mockRejectedValueOnce(
+            new Error('[GoogleGenerativeAI Error]: 503 Service Unavailable: The model is experiencing high demand')
+        );
+
+        // Andra anropet (fallbackmodell) lyckas
+        const fallbackPayload = makeRecipePayload({ name: 'Fallback Kycklinggryta' });
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(fallbackPayload) },
+        });
+
+        const { generateRecipe } = await import('./aiService');
+        const result = await generateRecipe('kycklinggryta');
+
+        expect(result.name).toBe('Fallback Kycklinggryta');
+        expect(mockGenerateContent).toHaveBeenCalledTimes(2);
+
+        // Verifiera att fallback-modellen anropades i andra försöket
+        expect(mockGetGenerativeModel).toHaveBeenLastCalledWith(
+            expect.objectContaining({ model: FALLBACK_MODEL })
+        );
+    });
+
+    it('kastar användarvänligt fel om även fallback-modellen kastar fel', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        // Primärmodell ger 503
+        mockGenerateContent.mockRejectedValueOnce(new Error('503 Service Unavailable'));
+        // Fallbackmodell kastar också 503
+        mockGenerateContent.mockRejectedValueOnce(new Error('503 Service Unavailable'));
+
+        const { generateRecipe } = await import('./aiService');
+        await expect(generateRecipe('test')).rejects.toThrow(/AI-modellen är tillfälligt överbelastad/);
+        expect(mockGenerateContent).toHaveBeenCalledTimes(2);
+    });
+
+    it('försöker inte med fallback vid icke-retryable fel (t.ex. ogiltig prompt/format)', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        mockGenerateContent.mockRejectedValueOnce(new Error('api key not valid'));
+
+        const { generateRecipe } = await import('./aiService');
+        await expect(generateRecipe('test')).rejects.toThrow(/Ogiltig API-nyckel/);
+        expect(mockGenerateContent).toHaveBeenCalledTimes(1);
     });
 });
 
@@ -205,10 +276,30 @@ describe('aiService - enrichMeal', () => {
             ingredients: [{ text: 'Lax', amount: '400g', checkIfExistAtHome: false }],
         });
 
-        // Kontrollerar att mockGenerateContent anropades (med ingrediensinfo i prompten)
         expect(mockGenerateContent).toHaveBeenCalledOnce();
         const calledPrompt = mockGenerateContent.mock.calls[0][0] as string;
         expect(calledPrompt).toContain('Lax');
+    });
+
+    it('gör fallback till FALLBACK_MODEL när primärmodell ger 503 under enrichMeal', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        mockGenerateContent.mockRejectedValueOnce(
+            new Error('503 Service Unavailable: High demand')
+        );
+        const payload = makeRecipePayload({ name: 'Köttbullar' });
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+
+        const { enrichMeal } = await import('./aiService');
+        const result = await enrichMeal({ name: 'Köttbullar' });
+
+        expect(result.name).toBe('Köttbullar');
+        expect(mockGenerateContent).toHaveBeenCalledTimes(2);
+        expect(mockGetGenerativeModel).toHaveBeenLastCalledWith(
+            expect.objectContaining({ model: FALLBACK_MODEL })
+        );
     });
 
     it('kastar användarvänligt fel vid nätverksfel', async () => {

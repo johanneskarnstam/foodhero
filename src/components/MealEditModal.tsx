@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { JsonExportModal } from './JsonExportModal';
 import { JsonImportModal } from './JsonImportModal';
 import { useAiRecipe } from '../hooks/useAiRecipe';
+import { useToast } from '../context/ToastContext';
 
 interface MealEditModalProps {
     isOpen: boolean;
@@ -60,6 +61,7 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
     meal 
 }) => {
     const { t } = useTranslation();
+    const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState<'basic' | 'ingredients' | 'instructions'>('basic');
     const { isLoading: isAiLoading, enrichMeal } = useAiRecipe();
     
@@ -186,28 +188,36 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
      */
     const handleEnrichWithAi = async () => {
         if (!name.trim() || isAiLoading) return;
-        const result = await enrichMeal({
-            name: name.trim(),
-            description: description.trim() || undefined,
-            tags: tagList.length > 0 ? tagList : undefined,
-            servings: servings ? parseInt(servings, 10) : undefined,
-            ingredients: ingredients.length > 0 ? ingredients : undefined,
-            instructions: instructions.length > 0 ? instructions : undefined,
-        });
-        if (result) {
-            if (result.ingredients.length > 0 && ingredients.length === 0) {
-                setIngredients(result.ingredients.map(i => ({
-                    text: i.text,
-                    amount: i.amount || undefined,
-                    checkIfExistAtHome: false,
-                })));
+        try {
+            const result = await enrichMeal({
+                name: name.trim(),
+                description: description.trim() || undefined,
+                tags: tagList.length > 0 ? tagList : undefined,
+                servings: servings ? parseInt(servings, 10) : undefined,
+                ingredients: ingredients.length > 0 ? ingredients : undefined,
+                instructions: instructions.length > 0 ? instructions : undefined,
+            });
+            if (result) {
+                if (result.ingredients.length > 0 && ingredients.length === 0) {
+                    setIngredients(result.ingredients.map(i => ({
+                        text: i.text,
+                        amount: i.amount || undefined,
+                        checkIfExistAtHome: false,
+                    })));
+                }
+                if (result.instructions.length > 0 && instructions.length === 0) {
+                    setInstructions(result.instructions);
+                }
+                if (!description && result.description) {
+                    setDescription(result.description);
+                }
+                showToast(t('meals.recipeFetchedWithAI', 'Receptet har hämtats och kompletterats med AI'), 'success');
+            } else {
+                showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
             }
-            if (result.instructions.length > 0 && instructions.length === 0) {
-                setInstructions(result.instructions);
-            }
-            if (!description && result.description) {
-                setDescription(result.description);
-            }
+        } catch (err) {
+            console.error('Error enriching meal with AI:', err);
+            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
         }
     };
 

@@ -15,6 +15,17 @@ vi.mock('react-router-dom', () => ({
     useSearchParams: () => mockUseSearchParams(),
 }));
 
+const mockEnrichMeal = vi.fn();
+vi.mock('../hooks/useAiRecipe', () => ({
+    useAiRecipe: () => ({
+        isLoading: false,
+        error: null,
+        generateRecipe: vi.fn(),
+        enrichMeal: mockEnrichMeal,
+        clearError: vi.fn(),
+    }),
+}));
+
 const mockMeals: Meal[] = [
     {
         id: '1',
@@ -125,5 +136,87 @@ describe('MealsView', () => {
         expect(dialog).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Handla/i })).toBeInTheDocument();
         expect(screen.getAllByRole('button', { name: /Planera/i }).length).toBeGreaterThan(1);
+    });
+
+    it('enriches an incomplete recipe with AI and saves updates to Firestore', async () => {
+        const incompleteMeal: Meal = {
+            id: '3',
+            name: 'Pannkakor',
+            createdAt: ''
+        };
+        vi.mocked(useApp).mockReturnValue({
+            meals: [incompleteMeal],
+            addMeal: mockAddMeal,
+            updateMeal: mockUpdateMeal,
+            deleteMeal: mockDeleteMeal,
+            addItemsToList: mockAddItemsToList,
+            defaultListId: 'list-1',
+            mealPlans: [],
+            addMealPlan: vi.fn(),
+            updateMealPlan: vi.fn(),
+        } as unknown as ReturnType<typeof useApp>);
+
+        mockEnrichMeal.mockResolvedValueOnce({
+            name: 'Pannkakor',
+            description: 'Goda pannkakor',
+            servings: 4,
+            tags: ['Sött'],
+            ingredients: [{ text: 'Mjöl', amount: '2 dl' }],
+            instructions: ['Blanda smeten', 'Stek']
+        });
+
+        render(<MealsView />);
+
+        // Click the card to open MealDetailModal
+        fireEvent.click(screen.getByText('Pannkakor'));
+
+        // AI button should be rendered
+        const aiButton = screen.getByRole('button', { name: /Hämta recept med AI/i });
+        expect(aiButton).toBeInTheDocument();
+        fireEvent.click(aiButton);
+
+        expect(mockEnrichMeal).toHaveBeenCalledWith(incompleteMeal);
+        await vi.waitFor(() => {
+            expect(mockUpdateMeal).toHaveBeenCalledWith('3', expect.objectContaining({
+                description: 'Goda pannkakor',
+                servings: 4,
+                tags: ['Sött'],
+                ingredients: [expect.objectContaining({ text: 'Mjöl', amount: '2 dl' })],
+                instructions: ['Blanda smeten', 'Stek']
+            }));
+        });
+        expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(/Receptet har hämtats|meals\.recipeFetchedWithAI/), 'success');
+    });
+
+    it('shows error toast when AI enrichment fails', async () => {
+        const incompleteMeal: Meal = {
+            id: '3',
+            name: 'Pannkakor',
+            createdAt: ''
+        };
+        vi.mocked(useApp).mockReturnValue({
+            meals: [incompleteMeal],
+            addMeal: mockAddMeal,
+            updateMeal: mockUpdateMeal,
+            deleteMeal: mockDeleteMeal,
+            addItemsToList: mockAddItemsToList,
+            defaultListId: 'list-1',
+            mealPlans: [],
+            addMealPlan: vi.fn(),
+            updateMealPlan: vi.fn(),
+        } as unknown as ReturnType<typeof useApp>);
+
+        mockEnrichMeal.mockResolvedValueOnce(null);
+
+        render(<MealsView />);
+
+        fireEvent.click(screen.getByText('Pannkakor'));
+        const aiButton = screen.getByRole('button', { name: /Hämta recept med AI/i });
+        fireEvent.click(aiButton);
+
+        await vi.waitFor(() => {
+            expect(mockShowToast).toHaveBeenCalledWith(expect.stringMatching(/Kunde inte komplettera|ai\.enrichFailed/), 'error');
+        });
+        expect(mockUpdateMeal).not.toHaveBeenCalled();
     });
 });
