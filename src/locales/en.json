@@ -48,15 +48,7 @@
     "emptyItem": "You must enter an item",
     "failedToAddItem": "Failed to add item"
   },
-  "common": {
-    "clear": "Clear",
-    "close": "Close",
-    "syncing": "Syncing changes...",
-    "syncingWithCount": "Syncing {{count}} change...",
-    "syncingWithCount_plural": "Syncing {{count}} changes...",
-    "offlineMode": "You are offline. Changes will be saved locally and synced when you reconnect.",
-    "unsyncedChanges": "{{count}} unsynced changes."
-  },
+
   "update": {
     "title": "Update Available",
     "message": "A new version of the app is available. Click update to reload and get the latest features.",
@@ -202,7 +194,17 @@
     "logout": "Log out",
     "used": "Used {{count}} times",
     "syncing": "Syncing changes...",
-    "loading": "Loading..."
+    "syncingWithCount": "Syncing {{count}} change...",
+    "syncingWithCount_plural": "Syncing {{count}} changes...",
+    "offlineMode": "You are offline. Changes will be saved locally and synced when you reconnect.",
+    "unsyncedChanges": "{{count}} unsynced changes.",
+    "loading": "Loading...",
+    "back": "Back",
+    "select": "Select",
+    "clear": "Clear",
+    "saving": "Saving...",
+    "savingShort": "...",
+    "reset": "Reset"
   },
   "settings": {
     "title": "Settings",
@@ -294,7 +296,6 @@
     "noInstructions": "No preparation instructions listed.",
     "createRecipe": "Create Recipe",
     "searchByIngredient": "Search by Ingredient",
-    "createRecipe": "Create Recipe",
     "editRecipe": "Edit Recipe",
     "newRecipeTitle": "Create New Recipe",
     "editRecipeTitle": "Edit Recipe",
@@ -568,15 +569,6 @@
     "dinner": "Dinner",
     "snack": "Snack"
   },
-  "common": {
-    "back": "Back",
-    "next": "Next",
-    "select": "Select",
-    "save": "Save",
-    "cancel": "Cancel",
-    "clear": "Clear",
-    "delete": "Delete"
-  },
   "quickItems": {
     "title": "Quick add",
     "milk": "Milk",
@@ -636,26 +628,6 @@
   "autocomplete": {
     "tooltip": "Press <kbd>Tab</kbd> or tap to complete",
     "tapToComplete": "Tap to complete"
-  },
-  "common": {
-    "back": "Back",
-    "next": "Next",
-    "select": "Select",
-    "save": "Save",
-    "cancel": "Cancel",
-    "clear": "Clear",
-    "delete": "Delete",
-    "close": "Close",
-    "saving": "Saving...",
-    "savingShort": "...",
-    "copy": "Copy",
-    "reset": "Reset",
-    "logout": "Log out",
-    "syncing": "Syncing changes...",
-    "syncingWithCount": "Syncing {{count}} change...",
-    "syncingWithCount_plural": "Syncing {{count}} changes...",
-    "offlineMode": "You are offline. Changes will be saved locally and synced when you reconnect.",
-    "unsyncedChanges": "{{count}} unsynced changes."
   },
   "debug": {
     "title": "Debug Info",

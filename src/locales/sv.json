@@ -48,13 +48,7 @@
     "emptyItem": "Du måste ange en vara",
     "failedToAddItem": "Misslyckades att lägga till varan"
   },
-  "common": {
-    "clear": "Rensa",
-    "close": "Stäng",
-    "syncing": "Synkroniserar ändringar...",
-    "syncingWithCount": "Synkroniserar {{count}} ändring...",
-    "syncingWithCount_plural": "Synkroniserar {{count}} ändringar..."
-  },
+
   "update": {
     "title": "Uppdatering tillgänglig",
     "message": "En ny version av appen är tillgänglig. Klicka på uppdatera för att ladda om och få de senaste funktionerna.",
@@ -203,7 +197,14 @@
     "loading": "Laddar...",
     "back": "Tillbaka",
     "select": "Välj",
-    "clear": "Rensa"
+    "clear": "Rensa",
+    "syncingWithCount": "Synkroniserar {{count}} ändring...",
+    "syncingWithCount_plural": "Synkroniserar {{count}} ändringar...",
+    "offlineMode": "Du är offline. Ändringar sparas lokalt och synkroniseras när du återansluter.",
+    "unsyncedChanges": "{{count}} osynkade ändringar.",
+    "saving": "Sparar...",
+    "savingShort": "...",
+    "reset": "Återställ"
 
   },
   "settings": {
@@ -296,7 +297,6 @@
     "noInstructions": "Inga instruktioner för tillagning listade.",
     "createRecipe": "Skapa recept",
     "searchByIngredient": "Sök ingrediens",
-    "createRecipe": "Skapa recept",
     "editRecipe": "Redigera recept",
     "newRecipeTitle": "Skapa nytt recept",
     "editRecipeTitle": "Redigera recept",
@@ -629,26 +629,6 @@
   "autocomplete": {
     "tooltip": "Tryck på <kbd>Tab</kbd> eller klicka för att slutföra",
     "tapToComplete": "Klicka för att slutföra"
-  },
-  "common": {
-    "clear": "Rensa",
-    "close": "Stäng",
-    "syncing": "Synkroniserar ändringar...",
-    "syncingWithCount": "Synkroniserar {{count}} ändring...",
-    "syncingWithCount_plural": "Synkroniserar {{count}} ändringar...",
-    "offlineMode": "Du är offline. Ändringar sparas lokalt och synkroniseras när du återansluter.",
-    "unsyncedChanges": "{{count}} osynkade ändringar.",
-    "saving": "Sparar...",
-    "savingShort": "...",
-    "save": "Spara",
-    "cancel": "Avbryt",
-    "delete": "Ta bort",
-    "back": "Tillbaka",
-    "next": "Nästa",
-    "select": "Välj",
-    "copy": "Kopiera",
-    "reset": "Återställ",
-    "logout": "Logga ut"
   },
   "debug": {
     "title": "Debug-info",
