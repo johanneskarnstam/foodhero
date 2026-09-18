@@ -37,6 +37,8 @@ vi.mock('react-i18next', () => ({
             if (key === 'aiSettings.refreshSuccess') return `${options?.count} modeller hämtades`;
             if (key === 'aiSettings.title') return 'AI-modell';
             if (key === 'aiSettings.refreshButton') return 'Hämta senaste modeller';
+            if (key === 'aiSettings.showMore') return `Visa alla modeller (${options?.count} st)`;
+            if (key === 'aiSettings.showLess') return 'Visa färre modeller';
             return key;
         },
     }),
@@ -80,5 +82,46 @@ describe('AiModelSelector', () => {
                 'success'
             );
         });
+    });
+
+    it('visar modellens badge och beskrivning av styrkor', () => {
+        render(<AiModelSelector />);
+
+        expect(screen.getByText('Toppval')).toBeInTheDocument();
+        expect(screen.getByText(/Googles senaste flaggskepp|Senaste generationen/)).toBeInTheDocument();
+    });
+
+    it('visar "visa fler modeller"-knapp och expanderar listan vid fler än 5 modeller', () => {
+        const manyModels = Array.from({ length: 8 }, (_, i) => ({
+            id: `gemini-test-${i + 1}`,
+            name: `Gemini Test ${i + 1}`,
+            description: `Beskrivning för testmodell ${i + 1}`,
+            badge: i === 0 ? 'Toppval' : undefined,
+        }));
+
+        mockHookOverrides = {
+            models: manyModels,
+            selectedModelId: 'gemini-test-1',
+        };
+
+        render(<AiModelSelector />);
+
+        // De 5 första syns initialt
+        expect(screen.getByText('Gemini Test 1')).toBeInTheDocument();
+        expect(screen.getByText('Gemini Test 5')).toBeInTheDocument();
+        expect(screen.queryByText('Gemini Test 6')).not.toBeInTheDocument();
+
+        // Knappen "Visa alla modeller" finns
+        const toggleButton = screen.getByRole('button', { name: /Visa alla modeller/i });
+        expect(toggleButton).toBeInTheDocument();
+
+        // Klicka för att expandera
+        fireEvent.click(toggleButton);
+        expect(screen.getByText('Gemini Test 6')).toBeInTheDocument();
+        expect(screen.getByText('Gemini Test 8')).toBeInTheDocument();
+
+        // Klicka igen för att minimera
+        fireEvent.click(screen.getByRole('button', { name: /Visa färre modeller/i }));
+        expect(screen.queryByText('Gemini Test 6')).not.toBeInTheDocument();
     });
 });

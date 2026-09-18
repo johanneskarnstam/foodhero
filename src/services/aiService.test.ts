@@ -405,5 +405,88 @@ describe('Model selection och dynamisk hämtning', () => {
         expect(models).toEqual(DEFAULT_GEMINI_MODELS);
         fetchSpy.mockRestore();
     });
+
+    it('exkluderar bildmodeller som nano-banana, tts och robotik samt rangordnar med bäst längst upp', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'valid-api-key');
+        const mockApiResponse = {
+            models: [
+                {
+                    name: 'models/gemini-2.5-flash-image',
+                    displayName: 'Nano Banana',
+                    description: 'Gemini 2.5 Flash Preview Image',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+                {
+                    name: 'models/nano-banana-pro-preview',
+                    displayName: 'Nano Banana Pro',
+                    description: 'Image preview',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+                {
+                    name: 'models/gemini-2.5-flash-preview-tts',
+                    displayName: 'Gemini 2.5 Flash Preview TTS',
+                    description: 'Gemini 2.5 Flash Preview TTS',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+                {
+                    name: 'models/gemini-2.5-flash-lite',
+                    displayName: 'Gemini 2.5 Flash-Lite',
+                    description: 'Lite version',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+                {
+                    name: 'models/gemini-3.8-flash',
+                    displayName: 'Gemini 3.8 Flash',
+                    description: 'Gemini 3.8 Flash',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+                {
+                    name: 'models/gemini-2.5-flash',
+                    displayName: 'Gemini 2.5 Flash',
+                    description: 'Gemini 2.5 Flash',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+            ],
+        };
+
+        const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockApiResponse,
+        } as Response);
+
+        const { fetchAvailableGeminiModels } = await import('./aiService');
+        const models = await fetchAvailableGeminiModels(true);
+
+        // Bild- och TTS-modeller ska ha filtrerats bort helt
+        expect(models.some(m => m.id.includes('image'))).toBe(false);
+        expect(models.some(m => m.id.includes('banana'))).toBe(false);
+        expect(models.some(m => m.id.includes('tts'))).toBe(false);
+
+        // Rangordning: 3.8 Flash ska vara överst, följt av 2.5 Flash och därefter 2.5 Flash-Lite
+        expect(models.map(m => m.id)).toEqual([
+            'gemini-3.8-flash',
+            'gemini-2.5-flash',
+            'gemini-2.5-flash-lite',
+        ]);
+
+        // Kontrollera att beskrivning och badge förklarar styrkor
+        expect(models[0].badge).toBe('Toppval');
+        expect(models[0].description).toContain('Googles senaste');
+
+        fetchSpy.mockRestore();
+    });
+
+    it('calculateModelScore ger högre poäng till nyare versioner och fullvärdiga Flash/Pro-modeller', async () => {
+        const { calculateModelScore } = await import('./aiService');
+
+        const score38Flash = calculateModelScore('gemini-3.8-flash');
+        const score36Flash = calculateModelScore('gemini-3.6-flash');
+        const score25Flash = calculateModelScore('gemini-2.5-flash');
+        const score25Lite = calculateModelScore('gemini-2.5-flash-lite');
+
+        expect(score38Flash).toBeGreaterThan(score36Flash);
+        expect(score36Flash).toBeGreaterThan(score25Flash);
+        expect(score25Flash).toBeGreaterThan(score25Lite);
+    });
 });
 

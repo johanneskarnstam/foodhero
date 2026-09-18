@@ -192,14 +192,35 @@ export interface AIModelOption {
     id: string;
     name: string;
     description: string;
+    badge?: string;
     isOnline?: boolean;
 }
 
 export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
 
 export const DEFAULT_GEMINI_MODELS: AIModelOption[] = [
-    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', description: 'Snabb och stabil' },
-    { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', description: 'Balanserad och modern' },
-    { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', description: 'Senaste generationen Flash' },
-    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', description: 'Hög precision för detaljerade recept' },
+    {
+        id: 'gemini-3.8-flash',
+        name: 'Gemini 3.8 Flash',
+        badge: 'Toppval',
+        description: 'Senaste generationen. Blixtsnabb, högsta precision och bäst på kreativa recept.',
+    },
+    {
+        id: 'gemini-3.6-flash',
+        name: 'Gemini 3.6 Flash',
+        badge: 'Snabb & modern',
+        description: 'Modern och snabb modell optimerad för balanserad receptgenerering.',
+    },
+    {
+        id: 'gemini-2.5-flash',
+        name: 'Gemini 2.5 Flash',
+        badge: 'Stabil',
+        description: 'Beprövad standardmodell med jämn leverans av klassiska vardagsrecept.',
+    },
+    {
+        id: 'gemini-2.5-pro',
+        name: 'Gemini 2.5 Pro',
+        badge: 'Resonemang',
+        description: 'Hög resonemangsförmåga för komplexa instruktioner och detaljrika rätter.',
+    },
 ];

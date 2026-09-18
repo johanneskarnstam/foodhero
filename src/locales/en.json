@@ -766,7 +766,9 @@
     "modelChanged": "Changed AI model to {{name}}",
     "cachedNotice": "Fetched from Gemini API",
     "fallbackNotice": "Default models (standard)",
-    "noApiKeyNotice": "Add VITE_GEMINI_KEY to fetch dynamic models."
+    "noApiKeyNotice": "Add VITE_GEMINI_KEY to fetch dynamic models.",
+    "showMore": "Show all models ({{count}})",
+    "showLess": "Show fewer models"
   }
 }
 

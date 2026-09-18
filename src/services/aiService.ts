@@ -137,6 +137,159 @@ interface CachedModels {
 }
 
 /**
+ * Nyckelord för modeller som ska exkluderas från listan (t.ex. bild-, ljud-,
+ * robotik-, embeddings- och icke-receptmodeller som Nano Banana).
+ */
+export const EXCLUDED_MODEL_KEYWORDS = [
+    'embedding',
+    'aqa',
+    'image',
+    'banana',
+    'imagen',
+    'tts',
+    'audio',
+    'transcribe',
+    'robotics',
+    'computer-use',
+    'customtools',
+    'vision',
+];
+
+/**
+ * Beräknar en poäng för en Gemini-modell för att rangordna dem med den bästa/mest lämpliga
+ * längst upp i fallande skala.
+ */
+export function calculateModelScore(id: string): number {
+    const cleanId = id.toLowerCase();
+    let score = 0;
+
+    // 1. Extrahera version: t.ex. 3.8 -> 3800, 2.5 -> 2500
+    const vMatch = cleanId.match(/(\d+)(?:\.(\d+))?/);
+    if (vMatch) {
+        const major = parseInt(vMatch[1], 10);
+        const minor = vMatch[2] ? parseInt(vMatch[2], 10) : 0;
+        score += major * 1000 + minor * 100;
+    } else if (cleanId.includes('latest')) {
+        score += 3650;
+    }
+
+    // 2. Tier-poäng: Flash är optimal för snabb receptgenerering och JSON-struktur, Pro för resonemang
+    if (cleanId.includes('flash') && !cleanId.includes('lite')) {
+        score += 90;
+    } else if (cleanId.includes('pro')) {
+        score += 85;
+    } else if (cleanId.includes('lite')) {
+        score += 25;
+    }
+
+    // 3. Avdrag för tidiga preview-versioner gentemot stabila releaser
+    if (cleanId.includes('preview')) {
+        score -= 15;
+    }
+
+    return score;
+}
+
+export interface ModelDescriptionInfo {
+    name: string;
+    description: string;
+    badge?: string;
+}
+
+/**
+ * Returnerar en koncis sammanfattning av vad en modell är särskilt bra på,
+ * inklusive en passande badge/etikett.
+ */
+export function getModelMetadata(cleanId: string, displayName?: string): ModelDescriptionInfo {
+    const lower = cleanId.toLowerCase();
+    const formattedName = displayName || cleanId;
+
+    if (lower.includes('3.8-flash')) {
+        return {
+            name: formattedName,
+            badge: 'Toppval',
+            description: 'Googles senaste flaggskepp. Blixtsnabb med överlägsen förmåga för kreativa recept och precisa mått.',
+        };
+    }
+    if (lower.includes('3.7-flash')) {
+        return {
+            name: formattedName,
+            badge: 'Snabb & modern',
+            description: 'Mycket snabb och modern modell med hög precision för vardagsmat och anpassade instruktioner.',
+        };
+    }
+    if (lower.includes('3.6-flash')) {
+        return {
+            name: formattedName,
+            badge: 'Snabb & modern',
+            description: 'Modern och högpresterande modell optimerad för snabbhet och strukturerad data.',
+        };
+    }
+    if (lower === 'gemini-flash-latest') {
+        return {
+            name: formattedName,
+            badge: 'Auto-uppdaterad',
+            description: 'Pekar alltid automatiskt på Googles senaste stabila Flash-modell för snabb receptgenerering.',
+        };
+    }
+    if (lower === 'gemini-pro-latest') {
+        return {
+            name: formattedName,
+            badge: 'Resonemang',
+            description: 'Pekar alltid på Googles senaste stabila Pro-modell för djupgående analys och receptstöd.',
+        };
+    }
+    if (lower.includes('3.1-pro') || lower.includes('3-pro')) {
+        return {
+            name: formattedName,
+            badge: 'Resonemang',
+            description: 'Avancerat resonemang och hög detaljrikedom för komplexa menyer och precisa näringsberäkningar.',
+        };
+    }
+    if (lower.includes('2.5-pro') || lower.includes('pro')) {
+        return {
+            name: formattedName,
+            badge: 'Resonemang',
+            description: 'Hög resonemangsförmåga för detaljerade recept, ingredienssubstitution och svåra tekniker.',
+        };
+    }
+    if (lower.includes('3.5-flash')) {
+        return {
+            name: formattedName,
+            badge: 'Snabb',
+            description: 'Stabil och snabb modell med bra balans mellan svarstid och receptkvalitet.',
+        };
+    }
+    if (lower.includes('2.5-flash') && !lower.includes('lite')) {
+        return {
+            name: formattedName,
+            badge: 'Stabil',
+            description: 'Beprövad standardmodell med jämn och pålitlig leverans av vardagsrecept.',
+        };
+    }
+    if (lower.includes('lite')) {
+        return {
+            name: formattedName,
+            badge: 'Lättvikt',
+            description: 'Ultrasnabb och resurssnål modell optimerad för korta svar och snabba idéer.',
+        };
+    }
+    if (lower.includes('preview')) {
+        return {
+            name: formattedName,
+            badge: 'Förhandsvisning',
+            description: 'Tidig förhandsversion av kommande modellgeneration från Google.',
+        };
+    }
+
+    return {
+        name: formattedName,
+        badge: lower.includes('flash') ? 'Snabb' : undefined,
+        description: 'Google Gemini-modell för text- och receptgenerering.',
+    };
+}
+
+/**
  * Hämtar tillgängliga Gemini-modeller via Googles REST API och filtrerar
  * fram de som stöder generateContent. Faller tillbaka på standardmodeller
  * om API-nyckel saknas, nätverket är offline eller fel uppstår.
@@ -185,16 +338,21 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
             .filter(m => {
                 const hasGenerateContent = m.supportedGenerationMethods?.includes('generateContent');
                 const rawName = m.name.toLowerCase();
+                const displayName = (m.displayName || '').toLowerCase();
                 const isGemini = rawName.includes('gemini');
-                const isExcluded = rawName.includes('embedding') || rawName.includes('aqa') || rawName.includes('vision');
+                const isExcluded = EXCLUDED_MODEL_KEYWORDS.some(
+                    kw => rawName.includes(kw) || displayName.includes(kw)
+                );
                 return hasGenerateContent && isGemini && !isExcluded;
             })
             .map(m => {
                 const cleanId = m.name.replace(/^models\//, '');
+                const metadata = getModelMetadata(cleanId, m.displayName);
                 return {
                     id: cleanId,
-                    name: m.displayName || cleanId,
-                    description: m.description || 'Google Gemini AI',
+                    name: metadata.name,
+                    description: metadata.description,
+                    badge: metadata.badge,
                     isOnline: true,
                 };
             });
@@ -203,12 +361,14 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
             return DEFAULT_GEMINI_MODELS;
         }
 
-        // Sortera: 'flash' först, sedan 'pro', därefter nyast/alfabetiskt
+        // Sortera: Bäst längst upp i fallande skala baserat på calculateModelScore
         filteredModels.sort((a, b) => {
-            const aIsFlash = a.id.includes('flash') ? 0 : 1;
-            const bIsFlash = b.id.includes('flash') ? 0 : 1;
-            if (aIsFlash !== bIsFlash) return aIsFlash - bIsFlash;
-            return b.id.localeCompare(a.id);
+            const scoreA = calculateModelScore(a.id);
+            const scoreB = calculateModelScore(b.id);
+            if (scoreA !== scoreB) {
+                return scoreB - scoreA;
+            }
+            return a.id.localeCompare(b.id);
         });
 
         // Spara i cache

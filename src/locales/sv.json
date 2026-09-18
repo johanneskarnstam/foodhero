@@ -759,7 +759,9 @@
     "modelChanged": "Bytte AI-modell till {{name}}",
     "cachedNotice": "Hämtad från Gemini API",
     "fallbackNotice": "Förvalda modeller (standard)",
-    "noApiKeyNotice": "Lägg till VITE_GEMINI_KEY för att hämta dynamiska modeller."
+    "noApiKeyNotice": "Lägg till VITE_GEMINI_KEY för att hämta dynamiska modeller.",
+    "showMore": "Visa alla modeller ({{count}} st)",
+    "showLess": "Visa färre modeller"
   }
 }
 
