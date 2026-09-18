@@ -1,5 +1,20 @@
 [
   {
+    "hash": "21836ebf215a7816a70db66aa31f90e184484d0b",
+    "date": "2026-09-17 17:50:53 +0200",
+    "message": "feat: lägg till knapp för att hämta recept med AI i måltidsdetaljmodal"
+  },
+  {
+    "hash": "7e0edcda851b6e8a0d1da0ebaa456f103ec6c951",
+    "date": "2026-09-17 16:42:51 +0200",
+    "message": "feat: öppna receptmodal vid klick på inplanerad måltid på hemsidan"
+  },
+  {
+    "hash": "12b9c5bacede86fed6349cfb87e0efa4af84c82e",
+    "date": "2026-09-17 16:21:48 +0200",
+    "message": "feat: lägg till funktion för att spara enhetsdebuginfo med titel och visa sparade poster på /debug sidan"
+  },
+  {
     "hash": "2a6ae581e35c0531606dc7e4577c8b67535e28d9",
     "date": "2026-09-17 15:34:04 +0200",
     "message": "feat: lägg till debug-sida med enhetsinformation"
@@ -83,20 +98,5 @@
     "hash": "f3e03630767827eebc58c06ba98fdd6f5ad03fc9",
     "date": "2026-09-17 06:49:29 +0200",
     "message": "fix: åtgärda z-index för ConfirmModal så den visas ovanför MealDetailModal"
-  },
-  {
-    "hash": "9ca97fb77b8a38198f385fc74aedb8edd603e905",
-    "date": "2026-09-17 06:39:05 +0200",
-    "message": "feat: visa planeringsinfo i receptmodal och fråga om att stänga modalen efter planering"
-  },
-  {
-    "hash": "5d6edf46f511de2a13ee7ac8dbde6bebec1dc3f6",
-    "date": "2026-09-17 06:23:43 +0200",
-    "message": "fix: åtgärda z-index problem för PlanMealModal så den visas ovanför RecipeDetailModal"
-  },
-  {
-    "hash": "4d030db80073132ed0c723d93da22f36cdecbfdc",
-    "date": "2026-09-10 16:00:30 +0200",
-    "message": "fix: uppdatera standardmodell för Gemini till gemini-3.6-flash"
   }
 ]

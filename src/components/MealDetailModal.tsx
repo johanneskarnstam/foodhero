@@ -134,7 +134,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
 
     const hasIngredients = meal.ingredients && meal.ingredients.length > 0;
     const hasInstructions = meal.instructions && meal.instructions.length > 0;
-    const hasRecipeData = hasIngredients || hasInstructions || meal.description || meal.servings || (meal.tags && meal.tags.length > 0);
+    const hasRecipeData = hasIngredients && hasInstructions;
 
     return (
         <div 
@@ -218,7 +218,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                         ))}
                     </div>
 
-                    {!hasRecipeData && (
+                    {!hasRecipeData && onFetchAIRecipe && (
                         <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-4 text-center">
                             <p className="text-sm text-amber-800 dark:text-amber-200">
                                 {t('meals.noRecipeFound')}
@@ -226,7 +226,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                             <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
                                 {t('meals.fetchRecipeWithAI')}
                             </p>
-                            {meal && onFetchAIRecipe && (
+                            {meal && (
                                 <button
                                     onClick={() => onFetchAIRecipe(meal)}
                                     className="mt-3 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
