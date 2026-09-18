@@ -3,6 +3,7 @@ import { Sparkles, RefreshCw, Check, Globe, ChevronDown, ChevronUp } from 'lucid
 import { useTranslation } from 'react-i18next';
 import { useAiModelSetting } from '../hooks/useAiModelSetting';
 import { useToast } from '../context/ToastContext';
+import { getModelMetadata } from '../services/aiService';
 import { AIModelOption } from '../types';
 
 const INITIAL_LIMIT = 5;
@@ -21,6 +22,8 @@ function getBadgeStyle(badge?: string): string {
             return 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800/40';
         case 'Lättvikt':
             return 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300 border-teal-200 dark:border-teal-800/40';
+        case 'Multimodal':
+            return 'bg-violet-100 text-violet-800 dark:bg-violet-950/60 dark:text-violet-300 border-violet-200 dark:border-violet-800/40';
         default:
             return 'bg-gray-100 text-gray-700 dark:bg-gray-700/60 dark:text-gray-300 border-gray-200 dark:border-gray-600/40';
     }
@@ -122,6 +125,12 @@ export const AiModelSelector: React.FC = () => {
             <div className="space-y-2.5" role="radiogroup" aria-label={t('aiSettings.title')}>
                 {visibleModels.map((model) => {
                     const isSelected = model.id === selectedModelId;
+                    const metadata = getModelMetadata(model.id, model.name);
+                    const badge = model.badge || metadata.badge;
+                    const specialtyDescription = (model.description && model.description !== model.name && model.description !== model.id && !model.description.toLowerCase().includes('google gemini ai'))
+                        ? model.description
+                        : metadata.description;
+
                     return (
                         <button
                             key={model.id}
@@ -146,9 +155,9 @@ export const AiModelSelector: React.FC = () => {
                                     </span>
 
                                     {/* Specialitets-badge */}
-                                    {model.badge && (
-                                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${getBadgeStyle(model.badge)}`}>
-                                            {model.badge}
+                                    {badge && (
+                                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${getBadgeStyle(badge)}`}>
+                                            {badge}
                                         </span>
                                     )}
 
@@ -160,15 +169,10 @@ export const AiModelSelector: React.FC = () => {
                                     )}
                                 </div>
 
-                                {/* Teknisk modell-identifierare */}
-                                <span className="inline-block text-[11px] font-mono text-gray-400 dark:text-gray-400 mt-0.5">
-                                    {model.id}
-                                </span>
-
-                                {/* Koncis beskrivning av modellens styrkor */}
-                                {model.description && (
+                                {/* Beskrivning av vad modellen är särskilt bra på (ersätter det tekniska id:et) */}
+                                {specialtyDescription && (
                                     <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
-                                        {model.description}
+                                        {specialtyDescription}
                                     </p>
                                 )}
                             </div>

@@ -124,4 +124,12 @@ describe('AiModelSelector', () => {
         fireEvent.click(screen.getByRole('button', { name: /Visa färre modeller/i }));
         expect(screen.queryByText('Gemini Test 6')).not.toBeInTheDocument();
     });
+
+    it('visar inte det tekniska utgråade modell-id:et utan fokuserar på namn, badge och beskrivning', () => {
+        render(<AiModelSelector />);
+
+        expect(screen.getByText('Gemini 2.5 Flash')).toBeInTheDocument();
+        expect(screen.queryByText('gemini-2.5-flash')).not.toBeInTheDocument();
+        expect(screen.queryByText('gemini-3.8-flash')).not.toBeInTheDocument();
+    });
 });

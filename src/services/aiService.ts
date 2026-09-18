@@ -274,6 +274,13 @@ export function getModelMetadata(cleanId: string, displayName?: string): ModelDe
             description: 'Ultrasnabb och resurssnål modell optimerad för korta svar och snabba idéer.',
         };
     }
+    if (lower.includes('omni')) {
+        return {
+            name: formattedName,
+            badge: 'Multimodal',
+            description: 'Mångsidig och snabb modell med bred förståelse för mångfacetterade uppgifter.',
+        };
+    }
     if (lower.includes('preview')) {
         return {
             name: formattedName,
@@ -305,7 +312,21 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
                     if (parsed.timestamp && Array.isArray(parsed.models) && parsed.models.length > 0) {
                         const isFresh = Date.now() - parsed.timestamp < CACHE_TTL_MS;
                         if (isFresh) {
-                            return parsed.models;
+                            const cleanedCached = parsed.models
+                                .filter(m => !EXCLUDED_MODEL_KEYWORDS.some(kw => m.id.toLowerCase().includes(kw)))
+                                .map(m => {
+                                    const meta = getModelMetadata(m.id, m.name);
+                                    return {
+                                        ...m,
+                                        badge: m.badge || meta.badge,
+                                        description: (m.description && m.description !== m.name && m.description !== m.id && !m.description.toLowerCase().includes('google gemini ai'))
+                                            ? m.description
+                                            : meta.description,
+                                    };
+                                });
+                            if (cleanedCached.length > 0) {
+                                return cleanedCached;
+                            }
                         }
                     }
                 }
