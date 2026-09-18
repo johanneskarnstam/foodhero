@@ -311,3 +311,99 @@ describe('aiService - enrichMeal', () => {
         await expect(enrichMeal({ name: 'Test' })).rejects.toThrow(/Nätverksfel/);
     });
 });
+
+describe('Model selection och dynamisk hämtning', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        localStorage.clear();
+        vi.unstubAllEnvs();
+    });
+
+    it('getActiveModelId returnerar modell från localStorage om den finns', async () => {
+        localStorage.setItem('foodhero_ai_model', 'gemini-test-custom');
+        const { getActiveModelId } = await import('./aiService');
+        expect(getActiveModelId()).toBe('gemini-test-custom');
+    });
+
+    it('getActiveModelId faller tillbaka på VITE_GEMINI_MODEL om localStorage är tomt', async () => {
+        vi.stubEnv('VITE_GEMINI_MODEL', 'gemini-env-model');
+        const { getActiveModelId } = await import('./aiService');
+        expect(getActiveModelId()).toBe('gemini-env-model');
+    });
+
+    it('getActiveModelId faller tillbaka på DEFAULT_GEMINI_MODEL om inget är satt', async () => {
+        const { getActiveModelId } = await import('./aiService');
+        const { DEFAULT_GEMINI_MODEL } = await import('../types');
+        expect(getActiveModelId()).toBe(DEFAULT_GEMINI_MODEL);
+    });
+
+    it('fetchAvailableGeminiModels returnerar cachade modeller om cachen är giltig', async () => {
+        const cachedPayload = {
+            timestamp: Date.now(),
+            models: [{ id: 'gemini-cached', name: 'Cached Gemini', description: 'Test' }],
+        };
+        localStorage.setItem('foodhero_gemini_models_cache', JSON.stringify(cachedPayload));
+
+        const fetchSpy = vi.spyOn(globalThis, 'fetch');
+        const { fetchAvailableGeminiModels } = await import('./aiService');
+        const models = await fetchAvailableGeminiModels(false);
+
+        expect(models).toEqual(cachedPayload.models);
+        expect(fetchSpy).not.toHaveBeenCalled();
+        fetchSpy.mockRestore();
+    });
+
+    it('fetchAvailableGeminiModels anropar REST API och filtrerar generateContent-modeller', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'valid-api-key');
+        const mockApiResponse = {
+            models: [
+                {
+                    name: 'models/gemini-2.5-flash',
+                    displayName: 'Gemini 2.5 Flash',
+                    description: 'Snabb modell',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+                {
+                    name: 'models/text-embedding-004',
+                    displayName: 'Embedding',
+                    description: 'Bara embedding',
+                    supportedGenerationMethods: ['embedContent'],
+                },
+                {
+                    name: 'models/gemini-2.5-pro',
+                    displayName: 'Gemini 2.5 Pro',
+                    description: 'Pro modell',
+                    supportedGenerationMethods: ['generateContent'],
+                },
+            ],
+        };
+
+        const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockApiResponse,
+        } as Response);
+
+        const { fetchAvailableGeminiModels } = await import('./aiService');
+        const models = await fetchAvailableGeminiModels(true);
+
+        expect(models).toHaveLength(2);
+        expect(models.map(m => m.id)).toEqual(['gemini-2.5-flash', 'gemini-2.5-pro']);
+        expect(models[0].name).toBe('Gemini 2.5 Flash');
+        expect(models[0].isOnline).toBe(true);
+
+        fetchSpy.mockRestore();
+    });
+
+    it('fetchAvailableGeminiModels faller tillbaka på DEFAULT_GEMINI_MODELS vid API-fel', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'valid-api-key');
+        const fetchSpy = vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new Error('Network offline'));
+
+        const { fetchAvailableGeminiModels } = await import('./aiService');
+        const { DEFAULT_GEMINI_MODELS } = await import('../types');
+        const models = await fetchAvailableGeminiModels(true);
+
+        expect(models).toEqual(DEFAULT_GEMINI_MODELS);
+        fetchSpy.mockRestore();
+    });
+});
+

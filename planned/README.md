@@ -12,7 +12,7 @@
 
 | Plan | Fil | Innehåll | Prioritet |
 |---|---|---|---|
-| 04 | `04-ai-model-selector.md` | Dropdown för Gemini-modell i Inställningar | 🟡 Medel |
+| 04 | `04-ai-model-selector.md` | Dynamisk AI-modellista via Gemini API & val i Inställningar | 🟡 Medel |
 
 ---
 

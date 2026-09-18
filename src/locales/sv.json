@@ -747,6 +747,19 @@
     "activeTimers": "Aktiva timers",
     "timeRemaining": "{{time}} kvar",
     "startTimerFor": "Starta timer ({{time}})"
+  },
+  "aiSettings": {
+    "title": "AI-modell",
+    "description": "Välj vilken Gemini-modell som används för recept och måltidsförslag.",
+    "activeModel": "Aktiv modell",
+    "refreshButton": "Hämta senaste modeller",
+    "refreshing": "Hämtar från Google...",
+    "refreshSuccess": "{{count}} modeller hämtades från Gemini API",
+    "refreshError": "Kunde inte hämta modeller från Google. Använder förvalda modeller.",
+    "modelChanged": "Bytte AI-modell till {{name}}",
+    "cachedNotice": "Hämtad från Gemini API",
+    "fallbackNotice": "Förvalda modeller (standard)",
+    "noApiKeyNotice": "Lägg till VITE_GEMINI_KEY för att hämta dynamiska modeller."
   }
 }
 

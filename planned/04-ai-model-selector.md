@@ -1,309 +1,192 @@
-# Plan 04 – AI-modellväljare: Dropdown i Inställningar
+# Plan 04 – Dynamisk AI-modellista via Gemini API & Inställningar (Alternativ 2)
 
 ## Mål
 
-Låta användaren välja vilken Gemini-modell som används för receptgenerering
-via en tydlig dropdown i inställningsvyn. Valet sparas i `localStorage` och
-används direkt av `aiService.ts` utan omstart.
+Göra det möjligt för appen att dynamiskt hämta tillgängliga Gemini-modeller direkt från Googles Gemini API (`listModels`), filtrera fram modeller som stöder innehållsgenerering, samt låta användaren välja och byta aktiv modell direkt i appens inställningsvy. Valet sparas i `localStorage` och slår igenom omedelbart vid receptgenerering utan att appen behöver byggas om.
 
 ---
 
-## Bakgrund & kontext
+## Bakgrund & Teknisk lösning
 
-Idag hämtas modellen via `import.meta.env.VITE_GEMINI_MODEL` med fallback
-till en hårdkodad sträng i `getModel()` (rad 82 i `aiService.ts`):
+### Nuläge
+- Modeller är hårdkodade i `src/services/aiService.ts`:
+  ```typescript
+  const PRIMARY_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-3.6-flash';
+  export const FALLBACK_MODEL = 'gemini-2.5-flash';
+  ```
+- Det finns inget sätt för användare eller administratör att se eller välja nyare modeller när Google lanserar dem (t.ex. Gemini 3.8 Flash, Gemini 2.5 Pro) utan att ändra miljövariabler eller källkod.
 
-```typescript
-// src/services/aiService.ts – nuläge
-function getModel() {
-    const modelName = import.meta.env.VITE_GEMINI_MODEL || 'gemini-3.6-flash';
-    return genAI.getGenerativeModel({ model: modelName, ... });
-}
-```
-
-Det finns ingen användargränssnitt för att byta modell. Den nya lösningen
-ska göra modellvalet runtime-konfigurerbart via UI utan att ändra env-variabler.
-
-Befintliga relevanta filer:
-- `src/services/aiService.ts` – `getModel()`-funktionen
-- `src/components/SettingsView.tsx` – inställningssidan (51 KB, stor fil)
-- `src/hooks/useLocalStorage.ts` – generell `useLocalStorage`-hook
-- `src/types/index.ts` – centraliserade typdefinitioner
-- `src/locales/sv.json` & `en.json` – i18n-filer
-
----
-
-## Steg-för-steg implementation
-
-### Steg 1 – Typdefinition i `src/types/index.ts`
-
-**Fil:** `src/types/index.ts` [ÄNDRA]
-
-Lägg till interface och konstant-lista längst ned i filen:
-
-```typescript
-export interface AIModelOption {
-    id: string;
-    name: string;
-    description: string;
-}
-
-export const AVAILABLE_GEMINI_MODELS: AIModelOption[] = [
-    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', description: 'Snabb & stabil' },
-    { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', description: 'Nyast & smartast' },
-    { id: 'gemini-2.5-pro',   name: 'Gemini 2.5 Pro',   description: 'Hög precision'   },
-];
-
-export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
-```
-
-**Varför i `types/index.ts`?** Konstanten används av både `aiService.ts` och
-`SettingsView.tsx` – en gemensam källa undviker duplicering.
+### Alternativ 2: Dynamisk hämtning via Gemini API
+1. **Google AI REST API:** Anropar `GET https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`.
+2. **Filtrering & Normalisering:**
+   - Behåll endast modeller med `supportedGenerationMethods` som inkluderar `"generateContent"`.
+   - Exkludera rena embedding-modeller, AQA och modeller som inte lämpar sig för text/receptgenerering.
+   - Normalisera id (ta bort prefixet `models/`, t.ex. `models/gemini-2.5-flash` → `gemini-2.5-flash`).
+3. **Robusthet & Caching:**
+   - Spara hämtade modeller i `localStorage` (`foodhero_gemini_models_cache`) med tidsstämpel (t.ex. 24h TTL) för att minimera onödiga API-anrop.
+   - Om anropet misslyckas (t.ex. offline, kvot eller ogiltig nyckel) används alltid en hårdkodad lista med beprövade standardmodeller (`DEFAULT_GEMINI_MODELS`).
+4. **Användarval:**
+   - Vald modell sparas i `localStorage` (`foodhero_ai_model`).
+   - `aiService.ts` hämtar vald modell vid runtime:
+     `Vald modell i localStorage` → `VITE_GEMINI_MODEL` → `DEFAULT_GEMINI_MODEL`.
+5. **UI & UX:**
+   - En dedikerad AI-sektion i `SettingsView.tsx`.
+   - Visar aktiv modell, lista över tillgängliga modeller med beskrivning och taggar.
+   - Knapp för att manuellt hämta/uppdatera modellistan från Google med laddningsindikator och felhantering.
+   - Toast-bekräftelse vid modellbyte.
 
 ---
 
-### Steg 2 – localStorage-nyckel & läsning i `aiService.ts`
+## Checklista & Steg-för-steg implementation
 
-**Fil:** `src/services/aiService.ts` [ÄNDRA]
-
-Ersätt `getModel()` med en version som läser från `localStorage` i runtime:
-
-```typescript
-import { DEFAULT_GEMINI_MODEL } from '../types';
-
-const AI_MODEL_STORAGE_KEY = 'foodhero_ai_model';
-
-function getSelectedModelId(): string {
-    try {
-        const stored = window.localStorage.getItem(AI_MODEL_STORAGE_KEY);
-        return stored ?? import.meta.env.VITE_GEMINI_MODEL ?? DEFAULT_GEMINI_MODEL;
-    } catch {
-        return import.meta.env.VITE_GEMINI_MODEL ?? DEFAULT_GEMINI_MODEL;
-    }
-}
-
-function getModel() {
-    const modelName = getSelectedModelId();
-    return genAI.getGenerativeModel({ model: modelName, systemInstruction: SYSTEM_INSTRUCTION });
-}
-```
-
-**Prioritetsordning:**
-1. `localStorage['foodhero_ai_model']` (användarens val)
-2. `VITE_GEMINI_MODEL` (env-variabel för driftsättning)
-3. `DEFAULT_GEMINI_MODEL` (hårdkodad fallback = `'gemini-2.5-flash'`)
-
-**Konstanten `AI_MODEL_STORAGE_KEY`** exporteras för att undvika magic strings:
-
-```typescript
-export const AI_MODEL_STORAGE_KEY = 'foodhero_ai_model';
-```
+### Steg 1: Typdefinitioner & konstanter (`src/types/index.ts`)
+- [x] **1.1** Definiera `AIModelOption`-gränssnittet i `src/types/index.ts`:
+  ```typescript
+  export interface AIModelOption {
+      id: string;            // t.ex. 'gemini-2.5-flash'
+      name: string;          // t.ex. 'Gemini 2.5 Flash'
+      description: string;   // Kort beskrivning av egenskaper
+      isOnline?: boolean;    // Om modellen hämtades live från API:et
+  }
+  ```
+- [x] **1.2** Skapa `DEFAULT_GEMINI_MODELS`-listan och `DEFAULT_GEMINI_MODEL`-konstanten i `src/types/index.ts` som stabil fallback.
+- [x] **1.3** Exportera alla nya typer och konstanter centralt.
 
 ---
 
-### Steg 3 – Hook: `useAiModelSetting`
-
-**Fil:** `src/hooks/useAiModelSetting.ts` [NY]
-
-En tunn hook som wrappar `useLocalStorage` med rätt nyckel och typ:
-
-```typescript
-import useLocalStorage from './useLocalStorage';
-import { AI_MODEL_STORAGE_KEY } from '../services/aiService';
-import { AVAILABLE_GEMINI_MODELS, DEFAULT_GEMINI_MODEL, AIModelOption } from '../types';
-
-export interface UseAiModelSettingReturn {
-    selectedModelId: string;
-    selectedModel: AIModelOption | undefined;
-    setModelId: (id: string) => void;
-    availableModels: AIModelOption[];
-}
-
-export function useAiModelSetting(): UseAiModelSettingReturn {
-    const [selectedModelId, setModelId] = useLocalStorage<string>(
-        AI_MODEL_STORAGE_KEY,
-        DEFAULT_GEMINI_MODEL
-    );
-
-    const selectedModel = AVAILABLE_GEMINI_MODELS.find(m => m.id === selectedModelId);
-
-    return {
-        selectedModelId,
-        selectedModel,
-        setModelId,
-        availableModels: AVAILABLE_GEMINI_MODELS,
-    };
-}
-```
+### Steg 2: Service-funktioner för API-anrop & modellval (`src/services/aiService.ts`)
+- [x] **2.1** Definiera konstanter för storage-nycklar:
+  ```typescript
+  export const AI_MODEL_STORAGE_KEY = 'foodhero_ai_model';
+  export const AI_MODELS_CACHE_KEY = 'foodhero_gemini_models_cache';
+  ```
+- [x] **2.2** Implementera `fetchAvailableGeminiModels(forceRefresh?: boolean): Promise<AIModelOption[]>`:
+  - Kontrollera först cache i `localStorage` (om inte `forceRefresh` är sant och TTL inte löpt ut).
+  - Anropa Gemini REST API: `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`.
+  - Filtrera svar: `m.supportedGenerationMethods?.includes('generateContent')` och `m.name.includes('gemini')`.
+  - Mappa svar till `AIModelOption[]` och spara i cache.
+  - Vid fel / saknad API-nyckel: returnera `DEFAULT_GEMINI_MODELS` som trygg fallback och logga varning.
+- [x] **2.3** Uppdatera `getModel(modelName?: string)`:
+  - Skapa hjälparfunktion `getActiveModelId()` som läser:
+    1. `localStorage.getItem(AI_MODEL_STORAGE_KEY)`
+    2. `import.meta.env.VITE_GEMINI_MODEL`
+    3. `DEFAULT_GEMINI_MODEL`
+  - Se till att `callWithFallback` och `enrichMeal` använder aktiv modell.
+- [x] **2.4** Exportera `getActiveModelId` och `fetchAvailableGeminiModels`.
 
 ---
 
-### Steg 4 – UI-komponent i `SettingsView.tsx`
-
-**Fil:** `src/components/SettingsView.tsx` [ÄNDRA]
-
-Lägg till ett nytt AI-inställnings-avsnitt. Hitta rätt plats: sök efter det
-befintliga AI/Gemini-avsnittet (om sådant finns) eller lägg till efter
-API-nyckel-sektionen.
-
-**Markup för dropdown-sektionen:**
-
-```tsx
-import { useAiModelSetting } from '../hooks/useAiModelSetting';
-import { Cpu } from 'lucide-react';
-
-// Inuti komponenten:
-const { selectedModelId, setModelId, availableModels } = useAiModelSetting();
-
-// JSX:
-<section aria-labelledby="ai-model-heading">
-  <h3 id="ai-model-heading" className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-    <Cpu size={14} />
-    {t('settings.aiModel', 'AI-modell')}
-  </h3>
-
-  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden">
-    {availableModels.map((model) => (
-      <button
-        key={model.id}
-        id={`ai-model-option-${model.id}`}
-        type="button"
-        role="radio"
-        aria-checked={selectedModelId === model.id}
-        onClick={() => setModelId(model.id)}
-        className={clsx(
-          'w-full flex items-center justify-between px-4 py-3.5 text-left transition-colors',
-          selectedModelId === model.id
-            ? 'bg-blue-50 dark:bg-blue-950/30'
-            : 'hover:bg-gray-50 dark:hover:bg-gray-700/40'
-        )}
-      >
-        <div>
-          <p className={clsx(
-            'text-sm font-semibold',
-            selectedModelId === model.id
-              ? 'text-blue-600 dark:text-blue-400'
-              : 'text-gray-900 dark:text-gray-100'
-          )}>
-            {model.name}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            {model.description}
-          </p>
-        </div>
-        {selectedModelId === model.id && (
-          <Check size={16} className="text-blue-500 flex-shrink-0" />
-        )}
-      </button>
-    ))}
-  </div>
-</section>
-```
-
-**Designbeslut:** Radio-liknande knapplista (inte `<select>`) för att:
-- Visa namn + beskrivning för varje alternativ
-- Vara mer touchvänlig på mobil
-- Passa den befintliga kortbaserade designen i SettingsView
+### Steg 3: Hook för hantering av AI-inställningar (`src/hooks/useAiModelSetting.ts`)
+- [x] **3.1** Skapa den anpassade hooken `src/hooks/useAiModelSetting.ts`.
+- [x] **3.2** Definiera returtyp `UseAiModelSettingReturn`:
+  ```typescript
+  export interface UseAiModelSettingReturn {
+      selectedModelId: string;
+      setSelectedModelId: (id: string) => void;
+      models: AIModelOption[];
+      isLoading: boolean;
+      isFetchingRemote: boolean;
+      error: string | null;
+      lastUpdated: number | null;
+      refreshModels: () => Promise<void>;
+  }
+  ```
+- [x] **3.3** Implementera laddning från cache vid mount samt automatisk initial hämtning om nätverk och API-nyckel finns.
+- [x] **3.4** Hantera sparande till `localStorage` via reaktiv state och synkning.
 
 ---
 
-### Steg 5 – i18n-nycklar
-
-**Filer:** `src/locales/sv.json` & `src/locales/en.json` [ÄNDRA]
-
-```json
-// sv.json – lägg till under "settings" (eller skapa nytt nyckelblock)
-"aiModel": "AI-modell",
-"aiModelDescription": "Välj vilken Gemini-modell som används för receptgenerering.",
-"aiModelChanged": "AI-modell ändrad till {{name}}"
-
-// en.json
-"aiModel": "AI model",
-"aiModelDescription": "Choose which Gemini model is used for recipe generation.",
-"aiModelChanged": "AI model changed to {{name}}"
-```
-
----
-
-### Steg 6 – Toast-bekräftelse vid modellbyte
-
-I SettingsView, lägg till ett toast-meddelande när modellen byts:
-
-```typescript
-const handleModelChange = (id: string) => {
-    const model = availableModels.find(m => m.id === id);
-    setModelId(id);
-    if (model) {
-        showToast(t('settings.aiModelChanged', 'AI-modell ändrad till {{name}}', { name: model.name }));
-    }
-};
-```
-
----
-
-### Steg 7 – Tester
-
-**Fil:** `src/hooks/useAiModelSetting.test.ts` [NY]
-
-```typescript
-// Tester:
-it('ska returnera DEFAULT_GEMINI_MODEL som standard')
-it('ska spara valt modell-id i localStorage')
-it('ska returnera rätt AIModelOption-objekt för valt id')
-it('ska returnera undefined selectedModel om lagrat id inte matchar kända modeller')
-```
-
-**Fil:** `src/services/aiService.test.ts` [ÄNDRA]
-
-Lägg till test som verifierar att `getSelectedModelId()` läser från
-`localStorage` och faller tillbaka korrekt:
-
-```typescript
-it('ska använda modell från localStorage om den finns')
-it('ska falla tillbaka till env-variabel om localStorage saknar värde')
-it('ska falla tillbaka till DEFAULT_GEMINI_MODEL om inget är konfigurerat')
-```
+### Steg 4: Språkstöd & i18n (`src/locales/sv.json` & `src/locales/en.json`)
+- [x] **4.1** Lägg till översättningsnycklar i `src/locales/sv.json`:
+  ```json
+  "aiSettings": {
+      "title": "AI-modell",
+      "description": "Välj vilken Gemini-modell som används för recept och måltidsförslag.",
+      "activeModel": "Aktiv modell",
+      "refreshButton": "Hämta senaste modeller",
+      "refreshing": "Hämtar från Google...",
+      "refreshSuccess": "{{count}} modeller hämtades från Gemini API",
+      "refreshError": "Kunde inte hämta modeller från Google. Använder förvalda modeller.",
+      "modelChanged": "Bytte AI-modell till {{name}}",
+      "cachedNotice": "Hämtad från Gemini API",
+      "fallbackNotice": "Standardmodeller (offline/fallback)",
+      "noApiKeyNotice": "Lägg till VITE_GEMINI_KEY för att hämta dynamiska modeller."
+  }
+  ```
+- [x] **4.2** Lägg till motsvarande översättningsnycklar i `src/locales/en.json`:
+  ```json
+  "aiSettings": {
+      "title": "AI Model",
+      "description": "Choose which Gemini model is used for recipes and meal suggestions.",
+      "activeModel": "Active model",
+      "refreshButton": "Fetch latest models",
+      "refreshing": "Fetching from Google...",
+      "refreshSuccess": "{{count}} models fetched from Gemini API",
+      "refreshError": "Could not fetch models from Google. Using default models.",
+      "modelChanged": "Changed AI model to {{name}}",
+      "cachedNotice": "Fetched from Gemini API",
+      "fallbackNotice": "Default models (offline/fallback)",
+      "noApiKeyNotice": "Add VITE_GEMINI_KEY to fetch dynamic models."
+  }
+  ```
 
 ---
 
-## Sammanfattning – filer som berörs
+### Steg 5: UI-komponent i Inställningar (`src/components/SettingsView.tsx`)
+- [x] **5.1** Skapa eventuellt en ren och modulär delkomponent `src/components/AiModelSelector.tsx` (eller integrera snyggt direkt i `SettingsView.tsx`).
+- [x] **5.2** Bygg gränssnittet:
+  - Header med `Cpu`- eller `Sparkles`-ikon och sektionstitel.
+  - Statusrad som visar om listan är live-hämtad från API eller fallback.
+  - "Uppdatera modeller"-knapp med snurrande ikon (`RefreshCw`) vid laddning.
+  - Radio-/kortlista för modellerna med markering av vald modell (`Check`-ikon).
+  - Tydlig visning av modellens namn, ID och beskrivning.
+- [x] **5.3** Koppla ihop med `useToast` för att visa bekräftelse när användaren byter modell eller när uppdatering lyckas.
+- [x] **5.4** Säkerställ fullt stöd för mörkt läge (`dark:`-klasser) och tillgänglighet (`role="radiogroup"`, `aria-checked`).
 
-| Fil | Åtgärd | Detalj |
+---
+
+### Steg 6: Enhetstester & testtäckning
+- [x] **6.1** Skapa `src/hooks/useAiModelSetting.test.ts`:
+  - Test: Returnerar standardmodell om inget finns i `localStorage`.
+  - Test: Uppdaterar och sparar nytt modellval i `localStorage`.
+  - Test: Anropar `refreshModels` och hanterar lyckad/misslyckad hämtning.
+- [x] **6.2** Uppdatera `src/services/aiService.test.ts`:
+  - Test: `getActiveModelId` prioriterar `localStorage` framför env-variabel och fallback.
+  - Test: `fetchAvailableGeminiModels` filtrerar bort icke-generateContent-modeller.
+  - Test: `fetchAvailableGeminiModels` faller tillbaka på standardlista vid API-fel/nätverksfel.
+- [x] **6.3** Skapa/uppdatera komponenttest för modellväljaren.
+
+---
+
+### Steg 7: Kvalitetsgranskning, Validering & Versionering
+- [x] **7.1** Kör full valideringssvit:
+  ```bash
+  npm run validate
+  ```
+- [x] **7.2** Säkerställ att inga `any`-typer används (passerar `npm run check-any`).
+- [x] **7.3** Verifiera manuellt i webbläsaren:
+  - Öppna Inställningar.
+  - Testa att klicka "Hämta senaste modeller".
+  - Byt modell och generera ett testrecept under "Måltider" / "Skapa med AI".
+  - Verifiera i DevTools Network-fliken att rätt modell anropas.
+- [x] **7.4** Uppdatera versionsnumret i `package.json` enligt SemVer:
+  - **PATCH** (bakåtkompatibel förbättring av konfiguration & inställningar).
+- [x] **7.5** Skapa git-commit på svenska enligt `AGENTS.md`:
+  ```bash
+  git commit -m "feat: lägg till dynamisk hämtning och val av AI-modeller i inställningar"
+  ```
+
+---
+
+## Sammanfattning av berörda filer
+
+| Fil | Typ | Beskrivning |
 |---|---|---|
-| `src/types/index.ts` | **[ÄNDRA]** | `AIModelOption`, `AVAILABLE_GEMINI_MODELS`, `DEFAULT_GEMINI_MODEL` |
-| `src/services/aiService.ts` | **[ÄNDRA]** | `getSelectedModelId()`, exportera `AI_MODEL_STORAGE_KEY` |
-| `src/hooks/useAiModelSetting.ts` | **[NY]** | Tunn hook för modellval |
-| `src/hooks/useAiModelSetting.test.ts` | **[NY]** | Enhetstester |
-| `src/components/SettingsView.tsx` | **[ÄNDRA]** | UI-sektion med radio-knapplista |
-| `src/services/aiService.test.ts` | **[ÄNDRA]** | Tester för localStorage-läsning |
-| `src/locales/sv.json` | **[ÄNDRA]** | `settings.aiModel*`-nycklar |
-| `src/locales/en.json` | **[ÄNDRA]** | `settings.aiModel*`-nycklar |
-
----
-
-## Designbeslut att bekräfta
-
-1. **Radio-lista vs `<select>`** – Planen använder knapplista.
-   Byt till `<select>` om SettingsView redan är för tät.
-
-2. **Modell-lista i `types/index.ts`** – Alternativt kan den ligga i
-   `services/aiService.ts`. Valt types för att undvika cirkulärberoenden.
-
-3. **Ingen server-validering** – Modell-id:t skickas rakt till Google API.
-   Om ett ogiltigt id anges misslyckas nästa API-anrop med ett tydligt felmeddelande.
-
----
-
-## Beroenden
-
-Ingen beroende till planerna 01–03. Kan implementeras helt oberoende.
-
----
-
-## Valideringssteg
-
-```bash
-npm run validate
-```
-
-Versionsökning: **PATCH** (förbättrad konfigurerbarhet, ingen ny kärnfunktion)
+| `src/types/index.ts` | **Ändra** | Typdefinitioner (`AIModelOption`, `DEFAULT_GEMINI_MODELS`) |
+| `src/services/aiService.ts` | **Ändra** | Dynamisk `fetchAvailableGeminiModels`, `getActiveModelId` och fallback |
+| `src/hooks/useAiModelSetting.ts` | **Ny** | Custom hook för state, cache och hämtning |
+| `src/hooks/useAiModelSetting.test.ts` | **Ny** | Enhetstester för hooken |
+| `src/components/SettingsView.tsx` | **Ändra** | AI-modellsektion med uppdateringsknapp och radiokort |
+| `src/locales/sv.json` | **Ändra** | Svenska översättningar för AI-inställningar |
+| `src/locales/en.json` | **Ändra** | Engelska översättningar för AI-inställningar |
+| `src/services/aiService.test.ts` | **Ändra** | Tester för dynamisk hämtning och localStorage-prioritet |

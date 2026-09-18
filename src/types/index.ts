@@ -187,3 +187,19 @@ export interface SavedDebugInfo {
     };
     createdAt: string;
 }
+
+export interface AIModelOption {
+    id: string;
+    name: string;
+    description: string;
+    isOnline?: boolean;
+}
+
+export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+
+export const DEFAULT_GEMINI_MODELS: AIModelOption[] = [
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', description: 'Snabb och stabil' },
+    { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', description: 'Balanserad och modern' },
+    { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', description: 'Senaste generationen Flash' },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', description: 'Hög precision för detaljerade recept' },
+];

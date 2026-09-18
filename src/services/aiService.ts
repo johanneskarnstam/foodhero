@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Meal } from '../types';
+import { Meal, AIModelOption, DEFAULT_GEMINI_MODEL, DEFAULT_GEMINI_MODELS } from '../types';
 
 // Initierar API:et med nyckeln från miljövariabler
 // Använder VITE_GEMINI_KEY med fallback till VITE_GEMINI_API_KEY
@@ -94,14 +94,148 @@ function toUserFriendlyError(error: unknown): string {
     return message;
 }
 
-const PRIMARY_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-3.6-flash';
+export const AI_MODEL_STORAGE_KEY = 'foodhero_ai_model';
+export const AI_MODELS_CACHE_KEY = 'foodhero_gemini_models_cache';
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 timmar
+
 export const FALLBACK_MODEL = 'gemini-2.5-flash';
+
+/**
+ * Returnerar det aktiva modell-ID:t baserat på följande prioritetsordning:
+ * 1. Vald modell i localStorage (användarens manuella val)
+ * 2. Miljövariabel VITE_GEMINI_MODEL
+ * 3. Standardmodell (DEFAULT_GEMINI_MODEL = gemini-2.5-flash)
+ */
+export function getActiveModelId(): string {
+    try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const stored = window.localStorage.getItem(AI_MODEL_STORAGE_KEY);
+            if (stored && stored.trim()) {
+                return stored.trim();
+            }
+        }
+    } catch {
+        // Ignorera fel om localStorage inte är tillgängligt
+    }
+    return import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+}
+
+interface GeminiApiModel {
+    name: string;
+    displayName?: string;
+    description?: string;
+    supportedGenerationMethods?: string[];
+}
+
+interface GeminiListModelsResponse {
+    models?: GeminiApiModel[];
+}
+
+interface CachedModels {
+    timestamp: number;
+    models: AIModelOption[];
+}
+
+/**
+ * Hämtar tillgängliga Gemini-modeller via Googles REST API och filtrerar
+ * fram de som stöder generateContent. Faller tillbaka på standardmodeller
+ * om API-nyckel saknas, nätverket är offline eller fel uppstår.
+ */
+export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<AIModelOption[]> {
+    // 1. Kontrollera cache om inte tvingad omläsning
+    if (!forceRefresh) {
+        try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+                const cachedStr = window.localStorage.getItem(AI_MODELS_CACHE_KEY);
+                if (cachedStr) {
+                    const parsed: CachedModels = JSON.parse(cachedStr);
+                    if (parsed.timestamp && Array.isArray(parsed.models) && parsed.models.length > 0) {
+                        const isFresh = Date.now() - parsed.timestamp < CACHE_TTL_MS;
+                        if (isFresh) {
+                            return parsed.models;
+                        }
+                    }
+                }
+            }
+        } catch {
+            // Fortsätt till API-anrop vid cache-läsningsfel
+        }
+    }
+
+    if (!apiKey) {
+        return DEFAULT_GEMINI_MODELS;
+    }
+
+    try {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`
+        );
+
+        if (!response.ok) {
+            console.warn(`Gemini API svarade med status ${response.status} vid hämtning av modeller.`);
+            return DEFAULT_GEMINI_MODELS;
+        }
+
+        const data: GeminiListModelsResponse = await response.json();
+        if (!data.models || !Array.isArray(data.models)) {
+            return DEFAULT_GEMINI_MODELS;
+        }
+
+        const filteredModels: AIModelOption[] = data.models
+            .filter(m => {
+                const hasGenerateContent = m.supportedGenerationMethods?.includes('generateContent');
+                const rawName = m.name.toLowerCase();
+                const isGemini = rawName.includes('gemini');
+                const isExcluded = rawName.includes('embedding') || rawName.includes('aqa') || rawName.includes('vision');
+                return hasGenerateContent && isGemini && !isExcluded;
+            })
+            .map(m => {
+                const cleanId = m.name.replace(/^models\//, '');
+                return {
+                    id: cleanId,
+                    name: m.displayName || cleanId,
+                    description: m.description || 'Google Gemini AI',
+                    isOnline: true,
+                };
+            });
+
+        if (filteredModels.length === 0) {
+            return DEFAULT_GEMINI_MODELS;
+        }
+
+        // Sortera: 'flash' först, sedan 'pro', därefter nyast/alfabetiskt
+        filteredModels.sort((a, b) => {
+            const aIsFlash = a.id.includes('flash') ? 0 : 1;
+            const bIsFlash = b.id.includes('flash') ? 0 : 1;
+            if (aIsFlash !== bIsFlash) return aIsFlash - bIsFlash;
+            return b.id.localeCompare(a.id);
+        });
+
+        // Spara i cache
+        try {
+            if (typeof window !== 'undefined' && window.localStorage) {
+                const cachePayload: CachedModels = {
+                    timestamp: Date.now(),
+                    models: filteredModels,
+                };
+                window.localStorage.setItem(AI_MODELS_CACHE_KEY, JSON.stringify(cachePayload));
+            }
+        } catch {
+            // Ignorera lagringsfel
+        }
+
+        return filteredModels;
+    } catch (error) {
+        console.warn('Kunde inte hämta dynamiska modeller från Gemini API, använder förvalda modeller:', error);
+        return DEFAULT_GEMINI_MODELS;
+    }
+}
 
 /**
  * Hämtar och returnerar en konfigurerad Gemini-modell.
  */
 function getModel(modelName?: string) {
-    const name = modelName || PRIMARY_MODEL;
+    const name = modelName || getActiveModelId();
     return genAI.getGenerativeModel({ model: name, systemInstruction: SYSTEM_INSTRUCTION });
 }
 
@@ -125,7 +259,8 @@ async function callWithFallback(prompt: string): Promise<GeneratedRecipe> {
         return data;
     } catch (primaryError) {
         if (isRetryableError(primaryError)) {
-            console.warn(`Primärmodell (${PRIMARY_MODEL}) gav retryable-fel, försöker med fallback (${FALLBACK_MODEL})...`);
+            const activeModel = getActiveModelId();
+            console.warn(`Primärmodell (${activeModel}) gav retryable-fel, försöker med fallback (${FALLBACK_MODEL})...`);
             const fallbackModel = getModel(FALLBACK_MODEL);
             const result = await fallbackModel.generateContent(prompt);
             const responseText = result.response.text();

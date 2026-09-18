@@ -754,6 +754,19 @@
     "activeTimers": "Active timers",
     "timeRemaining": "{{time}} left",
     "startTimerFor": "Start timer ({{time}})"
+  },
+  "aiSettings": {
+    "title": "AI Model",
+    "description": "Choose which Gemini model is used for recipes and meal suggestions.",
+    "activeModel": "Active model",
+    "refreshButton": "Fetch latest models",
+    "refreshing": "Fetching from Google...",
+    "refreshSuccess": "{{count}} models fetched from Gemini API",
+    "refreshError": "Could not fetch models from Google. Using default models.",
+    "modelChanged": "Changed AI model to {{name}}",
+    "cachedNotice": "Fetched from Gemini API",
+    "fallbackNotice": "Default models (standard)",
+    "noApiKeyNotice": "Add VITE_GEMINI_KEY to fetch dynamic models."
   }
 }
 

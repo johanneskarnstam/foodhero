@@ -13,6 +13,7 @@ import { QuickItemsSettingsModal } from './QuickItemsSettingsModal';
 import { useTranslation } from 'react-i18next';
 import { parseJsonItems, convertToItems } from '../utils/importUtils';
 import { Modal } from './Modal';
+import { AiModelSelector } from './AiModelSelector';
 
 const SIMPLE_EXAMPLE = `[{"text": "Pajdeg", "note": "1st", "checkIfExistAtHome": true}, {"text": "Mjölk", "note": "1liter"}]`;
 
@@ -576,6 +577,9 @@ export const SettingsView: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* CARD: AI Model Settings */}
+            <AiModelSelector />
 
             {/* CARD 4: Data Management */}
             <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden text-left">
