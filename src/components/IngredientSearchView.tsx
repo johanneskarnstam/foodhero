@@ -13,6 +13,7 @@ import { RandomMealCard } from './RandomMealCard';
 import { ConfirmModal } from './ConfirmModal';
 import { useToast } from '../context/ToastContext';
 import { useAiRecipe } from '../hooks/useAiRecipe';
+import { getSuggestedAlternativeModel } from '../services/aiService';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -647,11 +648,13 @@ export const IngredientSearchView: React.FC = () => {
                                 setSelectedMeal({ ...meal, ...updates });
                                 showToast(t('meals.recipeFetchedWithAI', 'Receptet har hämtats och kompletterats med AI'), 'success');
                             } else {
-                                showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                                const suggested = getSuggestedAlternativeModel();
+                                showToast(t('ai.enrichFailedWithSuggestion', { model: suggested.name, defaultValue: `Kunde inte komplettera receptet med AI. Förslag: Byt till ${suggested.name} i Inställningar.` }), 'error');
                             }
                         } catch (err) {
                             console.error('Error enriching meal with AI:', err);
-                            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                            const suggested = getSuggestedAlternativeModel();
+                            showToast(t('ai.enrichFailedWithSuggestion', { model: suggested.name, defaultValue: `Kunde inte komplettera receptet med AI. Förslag: Byt till ${suggested.name} i Inställningar.` }), 'error');
                         }
                     }}
                     isAiLoading={isAiEnriching}

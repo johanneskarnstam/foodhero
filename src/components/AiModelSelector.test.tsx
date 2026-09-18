@@ -172,4 +172,22 @@ describe('AiModelSelector', () => {
         // Modal ska vara stängd
         expect(screen.queryByText('aiSettings.performanceInfoTitle')).not.toBeInTheDocument();
     });
+
+    it('sorterar modellerna med högst prestandaindex / score överst', () => {
+        // Skicka in modeller i osorterad ordning
+        mockHookOverrides = {
+            models: [
+                { id: 'm-low', name: 'Low Model', performanceIndex: 6.0, description: 'Låg' },
+                { id: 'm-top', name: 'Top Model', performanceIndex: 9.9, description: 'Bäst' },
+                { id: 'm-mid', name: 'Mid Model', performanceIndex: 8.5, description: 'Mellan' },
+            ],
+            selectedModelId: 'm-top',
+        };
+
+        render(<AiModelSelector />);
+
+        // Verifiera att de renderade modellerna visas i fallande poängordning
+        const renderedNames = screen.getAllByText(/(Top|Mid|Low) Model/).map(el => el.textContent);
+        expect(renderedNames).toEqual(['Top Model', 'Mid Model', 'Low Model']);
+    });
 });

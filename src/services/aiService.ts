@@ -68,8 +68,12 @@ export function isRetryableError(error: unknown): boolean {
     );
 }
 
-function toUserFriendlyError(error: unknown): string {
-    let message = 'Kunde inte generera recept. Kontrollera din prompt eller försök igen senare.';
+export function toUserFriendlyError(error: unknown, suggestedModel?: AIModelOption): string {
+    const suggestionText = suggestedModel
+        ? ` Förslag: Prova att byta till ${suggestedModel.name} i Inställningar.`
+        : '';
+
+    let message = `Kunde inte generera recept. Kontrollera din prompt eller försök igen senare.${suggestionText}`;
 
     if (!(error instanceof Error)) return message;
 
@@ -78,17 +82,17 @@ function toUserFriendlyError(error: unknown): string {
     if (raw.includes('api key not valid') || raw.includes('api_key_invalid')) {
         message = 'Ogiltig API-nyckel för AI-tjänsten. Vänligen kontrollera dina inställningar.';
     } else if (raw.includes('fetch failed') || raw.includes('network error') || raw.includes('failed to fetch')) {
-        message = 'Nätverksfel: Kunde inte ansluta till AI-tjänsten. Kontrollera din internetanslutning.';
+        message = `Nätverksfel: Kunde inte ansluta till AI-tjänsten. Kontrollera din internetanslutning.${suggestionText}`;
     } else if (raw.includes('503') || raw.includes('high demand') || raw.includes('unavailable') || raw.includes('overloaded') || raw.includes('capacity')) {
-        message = 'AI-modellen är tillfälligt överbelastad. Vänligen vänta en stund och försök igen.';
+        message = `AI-modellen är tillfälligt överbelastad. Vänligen vänta en stund och försök igen.${suggestionText}`;
     } else if (raw.includes('429') || raw.includes('quota') || raw.includes('too many requests')) {
-        message = 'Servern är överbelastad just nu. Vänligen vänta en liten stund och försök igen.';
+        message = `Servern är överbelastad just nu. Vänligen vänta en liten stund och försök igen.${suggestionText}`;
     } else if (raw.includes('safety') || raw.includes('blocked')) {
         message = 'Din förfrågan blockerades av säkerhetsskäl. Försök att formulera om texten.';
     } else if (raw.includes('invalid response format') || raw.includes('json')) {
-        message = 'AI:n returnerade ett format vi inte kunde förstå. Vänligen försök med en annan beskrivning.';
+        message = `AI:n returnerade ett format vi inte kunde förstå. Vänligen försök med en annan beskrivning.${suggestionText}`;
     } else if (error.message.length < 100) {
-        message = error.message.replace(/\[GoogleGenerativeAI Error\]:\s*/i, '');
+        message = error.message.replace(/\[GoogleGenerativeAI Error\]:\s*/i, '') + (suggestionText ? `.${suggestionText}` : '');
     }
 
     return message;
@@ -99,6 +103,19 @@ export const AI_MODELS_CACHE_KEY = 'foodhero_gemini_models_cache';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 timmar
 
 export const FALLBACK_MODEL = 'gemini-2.5-flash';
+
+/**
+ * Sparar vald modell-ID till localStorage.
+ */
+export function setActiveModelId(modelId: string): void {
+    try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+            window.localStorage.setItem(AI_MODEL_STORAGE_KEY, modelId);
+        }
+    } catch {
+        // Ignorera fel om localStorage inte är tillgängligt
+    }
+}
 
 /**
  * Returnerar det aktiva modell-ID:t baserat på följande prioritetsordning:
@@ -118,6 +135,45 @@ export function getActiveModelId(): string {
         // Ignorera fel om localStorage inte är tillgängligt
     }
     return import.meta.env.VITE_GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+}
+
+/**
+ * Returnerar ett förslag på en alternativ modell att använda
+ * om den aktiva modellen inte svarar eller misslyckas med anropet.
+ */
+export function getSuggestedAlternativeModel(currentModelId?: string): AIModelOption {
+    const currentId = (currentModelId || getActiveModelId()).toLowerCase();
+
+    let available: AIModelOption[] = DEFAULT_GEMINI_MODELS;
+    try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const cachedStr = window.localStorage.getItem(AI_MODELS_CACHE_KEY);
+            if (cachedStr) {
+                const parsed = JSON.parse(cachedStr);
+                if (Array.isArray(parsed.models) && parsed.models.length > 0) {
+                    available = parsed.models;
+                }
+            }
+        }
+    } catch {
+        // Faller tillbaka på DEFAULT_GEMINI_MODELS
+    }
+
+    const candidates = available.filter(m => m.id.toLowerCase() !== currentId);
+    if (candidates.length === 0) {
+        return DEFAULT_GEMINI_MODELS.find(m => m.id.toLowerCase() !== currentId) || DEFAULT_GEMINI_MODELS[0];
+    }
+
+    const sorted = [...candidates].sort((a, b) => {
+        const scoreA = a.performanceIndex ?? calculatePerformanceIndex(a.id);
+        const scoreB = b.performanceIndex ?? calculatePerformanceIndex(b.id);
+        if (scoreA !== scoreB) {
+            return scoreB - scoreA;
+        }
+        return calculateModelScore(b.id) - calculateModelScore(a.id);
+    });
+
+    return sorted[0];
 }
 
 interface GeminiApiModel {
@@ -317,6 +373,14 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
                                     };
                                 });
                             if (cleanedCached.length > 0) {
+                                cleanedCached.sort((a, b) => {
+                                    const scoreA = a.performanceIndex ?? calculatePerformanceIndex(a.id);
+                                    const scoreB = b.performanceIndex ?? calculatePerformanceIndex(b.id);
+                                    if (scoreA !== scoreB) {
+                                        return scoreB - scoreA;
+                                    }
+                                    return calculateModelScore(b.id) - calculateModelScore(a.id);
+                                });
                                 return cleanedCached;
                             }
                         }
@@ -375,14 +439,14 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
             return DEFAULT_GEMINI_MODELS;
         }
 
-        // Sortera: Bäst längst upp i fallande skala baserat på calculateModelScore
+        // Sortera: Bäst längst upp i fallande skala baserat på prestandaindex och poäng
         filteredModels.sort((a, b) => {
-            const scoreA = calculateModelScore(a.id);
-            const scoreB = calculateModelScore(b.id);
+            const scoreA = a.performanceIndex ?? calculatePerformanceIndex(a.id);
+            const scoreB = b.performanceIndex ?? calculatePerformanceIndex(b.id);
             if (scoreA !== scoreB) {
                 return scoreB - scoreA;
             }
-            return a.id.localeCompare(b.id);
+            return calculateModelScore(b.id) - calculateModelScore(a.id);
         });
 
         // Spara i cache
@@ -467,7 +531,8 @@ export const generateRecipe = async (prompt: string): Promise<GeneratedRecipe> =
         return await callWithFallback(prompt);
     } catch (error) {
         console.error('Error generating recipe with AI:', error);
-        throw new Error(toUserFriendlyError(error));
+        const suggested = getSuggestedAlternativeModel();
+        throw new Error(toUserFriendlyError(error, suggested));
     }
 };
 
@@ -506,6 +571,7 @@ export const enrichMeal = async (meal: Partial<Meal>): Promise<GeneratedRecipe> 
         return await callWithFallback(prompt);
     } catch (error) {
         console.error('Error enriching meal with AI:', error);
-        throw new Error(toUserFriendlyError(error));
+        const suggested = getSuggestedAlternativeModel();
+        throw new Error(toUserFriendlyError(error, suggested));
     }
 };

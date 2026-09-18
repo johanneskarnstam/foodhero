@@ -624,6 +624,9 @@
     "promptTitle": "Generera recept med AI",
     "generate": "Generera",
     "enrichFailed": "Kunde inte komplettera receptet med AI.",
+    "enrichFailedWithSuggestion": "Kunde inte komplettera receptet med vald AI-modell. Förslag: Byt till {{model}} i Inställningar.",
+    "suggestAlternativePrompt": "Vald modell svarade inte. Prova med {{model}} istället?",
+    "useSuggestedModel": "Byt till {{model}} och försök igen",
     "modelBusy": "AI-modellen är tillfälligt överbelastad. Vänligen vänta en stund och försök igen."
   },
   "autocomplete": {

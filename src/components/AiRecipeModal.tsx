@@ -21,7 +21,7 @@ interface AiRecipeModalProps {
  */
 export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, onSave }) => {
     const { t } = useTranslation();
-    const { isLoading, error, generateRecipe, clearError } = useAiRecipe();
+    const { isLoading, error, suggestedModel, generateRecipe, clearError, applySuggestedModel } = useAiRecipe();
 
     const [prompt, setPrompt] = useState('');
     const [recipe, setRecipe] = useState<GeneratedRecipe | null>(null);
@@ -162,10 +162,33 @@ export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, o
                         <div
                             id="ai-recipe-error"
                             role="alert"
-                            className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                            className="flex flex-col gap-2 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
                         >
-                            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-                            <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                            <div className="flex items-start gap-3">
+                                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                                <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                            </div>
+                            {suggestedModel && (
+                                <div className="mt-1 pt-2 border-t border-red-200/60 dark:border-red-800/40 flex items-center justify-between gap-3 flex-wrap">
+                                    <span className="text-xs text-red-800 dark:text-red-200 font-medium">
+                                        {t('ai.suggestAlternativePrompt', { model: suggestedModel.name })}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        id="ai-recipe-apply-suggested-model-btn"
+                                        onClick={async () => {
+                                            applySuggestedModel(suggestedModel.id);
+                                            if (prompt.trim()) {
+                                                const result = await generateRecipe(prompt.trim());
+                                                if (result) setRecipe(result);
+                                            }
+                                        }}
+                                        className="text-xs px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+                                    >
+                                        {t('ai.useSuggestedModel', { model: suggestedModel.name })}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
 

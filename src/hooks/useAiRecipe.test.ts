@@ -6,6 +6,12 @@ import { useAiRecipe } from './useAiRecipe';
 vi.mock('../services/aiService', () => ({
     generateRecipe: vi.fn(),
     enrichMeal: vi.fn(),
+    getSuggestedAlternativeModel: vi.fn(() => ({
+        id: 'gemini-3.6-flash',
+        name: 'Gemini 3.6 Flash',
+        performanceIndex: 9.4,
+    })),
+    setActiveModelId: vi.fn(),
 }));
 
 import * as aiService from '../services/aiService';
@@ -187,5 +193,34 @@ describe('useAiRecipe', () => {
             result.current.clearError();
         });
         expect(result.current.error).toBeNull();
+        expect(result.current.suggestedModel).toBeNull();
+    });
+
+    // ─── suggestedModel & applySuggestedModel ──────────────────────────────────
+
+    it('sätter suggestedModel vid fel och låter användaren tillämpa förslaget', async () => {
+        vi.mocked(aiService.generateRecipe).mockRejectedValueOnce(new Error('Modell svarar inte'));
+
+        const { result } = renderHook(() => useAiRecipe());
+
+        await act(async () => {
+            await result.current.generateRecipe('test');
+        });
+
+        expect(result.current.error).toBe('Modell svarar inte');
+        expect(result.current.suggestedModel).toEqual({
+            id: 'gemini-3.6-flash',
+            name: 'Gemini 3.6 Flash',
+            performanceIndex: 9.4,
+        });
+
+        // Tillämpa den föreslagna modellen
+        act(() => {
+            result.current.applySuggestedModel();
+        });
+
+        expect(aiService.setActiveModelId).toHaveBeenCalledWith('gemini-3.6-flash');
+        expect(result.current.error).toBeNull();
+        expect(result.current.suggestedModel).toBeNull();
     });
 });

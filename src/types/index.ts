@@ -215,17 +215,17 @@ export const DEFAULT_GEMINI_MODELS: AIModelOption[] = [
         description: 'Modern och snabb modell optimerad för balanserad receptgenerering.',
     },
     {
-        id: 'gemini-2.5-flash',
-        name: 'Gemini 2.5 Flash',
-        badge: 'Stabil',
-        performanceIndex: 8.0,
-        description: 'Beprövad standardmodell med jämn leverans av klassiska vardagsrecept.',
-    },
-    {
         id: 'gemini-2.5-pro',
         name: 'Gemini 2.5 Pro',
         badge: 'Resonemang',
         performanceIndex: 8.2,
         description: 'Hög resonemangsförmåga för komplexa instruktioner och detaljrika rätter.',
+    },
+    {
+        id: 'gemini-2.5-flash',
+        name: 'Gemini 2.5 Flash',
+        badge: 'Stabil',
+        performanceIndex: 8.0,
+        description: 'Beprövad standardmodell med jämn leverans av klassiska vardagsrecept.',
     },
 ];

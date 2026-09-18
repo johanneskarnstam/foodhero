@@ -6,6 +6,7 @@ import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
 import { useToast } from '../context/ToastContext';
 import { useAiRecipe } from '../hooks/useAiRecipe';
+import { getSuggestedAlternativeModel } from '../services/aiService';
 import { formatDate } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
 import type { List, Item, MealType, HistoryItem, Meal } from '../types';
@@ -569,11 +570,13 @@ export const HomeView: React.FC = () => {
                             });
                             showToast(t('meals.recipeFetchedWithAI'), 'success');
                         } else {
-                            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                            const suggested = getSuggestedAlternativeModel();
+                            showToast(t('ai.enrichFailedWithSuggestion', `Kunde inte komplettera receptet med AI. Förslag: Byt till ${suggested.name} i Inställningar.`, { model: suggested.name }), 'error');
                         }
                     } catch (err) {
                         console.error('Failed to enrich recipe with AI:', err);
-                        showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                        const suggested = getSuggestedAlternativeModel();
+                        showToast(t('ai.enrichFailedWithSuggestion', `Kunde inte komplettera receptet med AI. Förslag: Byt till ${suggested.name} i Inställningar.`, { model: suggested.name }), 'error');
                     }
                 }}
             />

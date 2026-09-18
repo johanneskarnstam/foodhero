@@ -68,18 +68,30 @@ export const AiModelSelector: React.FC = () => {
 
     const isOnlineList = models.some(m => m.isOnline);
 
+    // Sortera modellerna med högst prestandaindex överst
+    const sortedModels = React.useMemo(() => {
+        return [...models].sort((a, b) => {
+            const scoreA = a.performanceIndex ?? 0;
+            const scoreB = b.performanceIndex ?? 0;
+            if (scoreA !== scoreB) {
+                return scoreB - scoreA;
+            }
+            return a.name.localeCompare(b.name);
+        });
+    }, [models]);
+
     // Säkerställ att vald modell alltid syns även om listan inte är expanderad
     const visibleModels = React.useMemo(() => {
-        if (showAll || models.length <= INITIAL_LIMIT) {
-            return models;
+        if (showAll || sortedModels.length <= INITIAL_LIMIT) {
+            return sortedModels;
         }
-        const topSlice = models.slice(0, INITIAL_LIMIT);
-        const selectedModel = models.find(m => m.id === selectedModelId);
+        const topSlice = sortedModels.slice(0, INITIAL_LIMIT);
+        const selectedModel = sortedModels.find(m => m.id === selectedModelId);
         if (selectedModel && !topSlice.some(m => m.id === selectedModelId)) {
             return [...topSlice, selectedModel];
         }
         return topSlice;
-    }, [models, showAll, selectedModelId]);
+    }, [sortedModels, showAll, selectedModelId]);
 
     return (
         <>

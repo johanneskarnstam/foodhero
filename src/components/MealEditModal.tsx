@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { JsonExportModal } from './JsonExportModal';
 import { JsonImportModal } from './JsonImportModal';
 import { useAiRecipe } from '../hooks/useAiRecipe';
+import { getSuggestedAlternativeModel } from '../services/aiService';
 import { useToast } from '../context/ToastContext';
 
 interface MealEditModalProps {
@@ -213,11 +214,13 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
                 }
                 showToast(t('meals.recipeFetchedWithAI', 'Receptet har hämtats och kompletterats med AI'), 'success');
             } else {
-                showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+                const suggested = getSuggestedAlternativeModel();
+                showToast(t('ai.enrichFailedWithSuggestion', { model: suggested.name, defaultValue: `Kunde inte komplettera receptet med AI. Förslag: Byt till ${suggested.name} i Inställningar.` }), 'error');
             }
         } catch (err) {
             console.error('Error enriching meal with AI:', err);
-            showToast(t('ai.enrichFailed', 'Kunde inte komplettera receptet med AI.'), 'error');
+            const suggested = getSuggestedAlternativeModel();
+            showToast(t('ai.enrichFailedWithSuggestion', { model: suggested.name, defaultValue: `Kunde inte komplettera receptet med AI. Förslag: Byt till ${suggested.name} i Inställningar.` }), 'error');
         }
     };
 

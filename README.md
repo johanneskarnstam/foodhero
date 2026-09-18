@@ -8,7 +8,9 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
 
 - **Interaktiv måltidsplanerare**: Planera veckans luncher och middagar med ett intuitivt visuellt gränssnitt.
 - **Recepthantering**: Spara och organisera dina favoritrecept med ingredienser, instruktioner och taggar.
-- **AI-komplettering av recept**: Komplettera automatiskt ofärdiga recept (ingredienser, tillagningssteg, portioner och taggar) med hjälp av AI (Google Gemini) direkt i måltidsdetaljerna eller receptredigeraren, med automatisk modell-fallback vid hög belastning.
+- **AI-komplettering och generering av recept**: Skapa nya recept från fri textprompt eller komplettera automatiskt ofärdiga recept (ingredienser, tillagningssteg, portioner och taggar) via Google Gemini AI direkt i appen.
+- **AI-modellväljare med prestandaindex**: Välj och anpassa Gemini-modell i inställningarna. Modellerna rangordnas med bäst prestanda överst, har tydliga beskrivningar av sina styrkor och ett beräknat prestandaindex (1.0–10.0) med förklarande modal.
+- **Intelligenta modellförslag & automatisk fallback**: Om vald modell är överbelastad, inte svarar eller inte kan leverera resultat föreslås automatiskt en lämplig alternativ modell med snabbvalsknapp direkt i felvyn samt automatisk fallback vid nätverks- och kapacitetsfel.
 - **Receptanalysator**: Klistra in recepttext eller webbadresser, så extraherar FoodHero automatiskt ingredienser direkt till din inköpslista.
 - **Ingredienssökning**: Sök recept baserat på ingredienser du redan har hemma för att minska matsvinnet.
 - **Kalenderexport**: Exportera planerade måltider direkt till din iCal/Google Calendar.

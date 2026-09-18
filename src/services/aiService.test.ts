@@ -392,8 +392,9 @@ describe('Model selection och dynamisk hämtning', () => {
         const models = await fetchAvailableGeminiModels(true);
 
         expect(models).toHaveLength(2);
-        expect(models.map(m => m.id)).toEqual(['gemini-2.5-flash', 'gemini-2.5-pro']);
-        expect(models[0].name).toBe('Gemini 2.5 Flash');
+        expect(models.map(m => m.id)).toEqual(['gemini-2.5-pro', 'gemini-2.5-flash']);
+        expect(models[0].name).toBe('Gemini 2.5 Pro');
+        expect(models[1].name).toBe('Gemini 2.5 Flash');
         expect(models[0].isOnline).toBe(true);
 
         fetchSpy.mockRestore();
@@ -493,5 +494,38 @@ describe('Model selection och dynamisk hämtning', () => {
         expect(score36Flash).toBeGreaterThan(score25Flash);
         expect(score25Flash).toBeGreaterThan(score25Lite);
     });
+
+    it('getSuggestedAlternativeModel föreslår bästa alternativa modell förutom den aktiva', async () => {
+        const { getSuggestedAlternativeModel, setActiveModelId } = await import('./aiService');
+
+        // Om aktiv modell är 3.8 Flash ska den föreslå 3.6 Flash
+        const altFor38 = getSuggestedAlternativeModel('gemini-3.8-flash');
+        expect(altFor38.id).toBe('gemini-3.6-flash');
+
+        // Om aktiv modell är 2.5 Flash ska den föreslå toppmodellen 3.8 Flash
+        const altFor25 = getSuggestedAlternativeModel('gemini-2.5-flash');
+        expect(altFor25.id).toBe('gemini-3.8-flash');
+
+        // Testa att setActiveModelId sparar till localStorage
+        setActiveModelId('gemini-3.6-flash');
+        const altFromStored = getSuggestedAlternativeModel();
+        expect(altFromStored.id).toBe('gemini-3.8-flash');
+    });
+
+    it('toUserFriendlyError inkluderar förslag på alternativ modell om det anges', async () => {
+        const { toUserFriendlyError } = await import('./aiService');
+
+        const suggested = {
+            id: 'gemini-3.6-flash',
+            name: 'Gemini 3.6 Flash',
+            description: 'Snabb och modern',
+            performanceIndex: 9.4,
+        };
+
+        const errorMsg = toUserFriendlyError(new Error('503 model is overloaded'), suggested);
+        expect(errorMsg).toContain('AI-modellen är tillfälligt överbelastad');
+        expect(errorMsg).toContain('Förslag: Prova att byta till Gemini 3.6 Flash i Inställningar');
+    });
 });
+
 

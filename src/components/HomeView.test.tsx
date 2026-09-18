@@ -566,7 +566,7 @@ describe('HomeView Component', () => {
 
             await waitFor(() => {
                 expect(mockShowToast).toHaveBeenCalledWith(
-                    'Kunde inte komplettera receptet med AI.',
+                    expect.stringContaining('Kunde inte komplettera receptet med AI'),
                     'error'
                 );
             });
@@ -592,7 +592,7 @@ describe('HomeView Component', () => {
 
             await waitFor(() => {
                 expect(mockShowToast).toHaveBeenCalledWith(
-                    'Kunde inte komplettera receptet med AI.',
+                    expect.stringContaining('Kunde inte komplettera receptet med AI'),
                     'error'
                 );
             });

@@ -294,7 +294,7 @@ describe('MealEditModal', () => {
 
             await waitFor(() => {
                 expect(mockShowToast).toHaveBeenCalledWith(
-                    'Kunde inte komplettera receptet med AI.',
+                    expect.stringContaining('Kunde inte komplettera receptet med AI'),
                     'error'
                 );
             });
@@ -323,7 +323,7 @@ describe('MealEditModal', () => {
 
             await waitFor(() => {
                 expect(mockShowToast).toHaveBeenCalledWith(
-                    'Kunde inte komplettera receptet med AI.',
+                    expect.stringContaining('Kunde inte komplettera receptet med AI'),
                     'error'
                 );
             });

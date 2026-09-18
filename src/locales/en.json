@@ -623,6 +623,9 @@
     "promptTitle": "Generate recipe with AI",
     "generate": "Generate",
     "enrichFailed": "Could not complete recipe with AI.",
+    "enrichFailedWithSuggestion": "Could not complete the recipe with the selected AI model. Suggestion: Switch to {{model}} in Settings.",
+    "suggestAlternativePrompt": "Selected model did not respond. Try {{model}} instead?",
+    "useSuggestedModel": "Switch to {{model}} and try again",
     "modelBusy": "The AI model is temporarily overloaded. Please try again shortly."
   },
   "autocomplete": {

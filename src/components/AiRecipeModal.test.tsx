@@ -6,14 +6,17 @@ import { AiRecipeModal } from './AiRecipeModal';
 // Mockar useAiRecipe-hooken
 const mockGenerateRecipe = vi.fn();
 const mockClearError = vi.fn();
+const mockApplySuggestedModel = vi.fn();
 
 vi.mock('../hooks/useAiRecipe', () => ({
     useAiRecipe: () => ({
         isLoading: false,
         error: null,
+        suggestedModel: null,
         generateRecipe: mockGenerateRecipe,
         enrichMeal: vi.fn(),
         clearError: mockClearError,
+        applySuggestedModel: mockApplySuggestedModel,
         ...mockHookOverrides,
     }),
 }));
@@ -23,12 +26,22 @@ let mockHookOverrides: Record<string, unknown> = {};
 
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
-        t: (key: string, fallback?: string) => {
+        t: (key: string, optionsOrFallback?: string | Record<string, unknown>) => {
             const translations: Record<string, string> = {
-                'common.savingShort': '...'
+                'common.savingShort': '...',
             };
-            return translations[key] || fallback || key;
-        }
+            if (translations[key]) return translations[key];
+            if (typeof optionsOrFallback === 'string') return optionsOrFallback;
+            if (optionsOrFallback && typeof optionsOrFallback === 'object') {
+                if ('defaultValue' in optionsOrFallback && typeof optionsOrFallback.defaultValue === 'string') {
+                    return optionsOrFallback.defaultValue;
+                }
+                if ('model' in optionsOrFallback) {
+                    return `${key} ${optionsOrFallback.model}`;
+                }
+            }
+            return key;
+        },
     }),
 }));
 
@@ -234,5 +247,30 @@ describe('AiRecipeModal', () => {
 
         expect(screen.queryByText('Laxpasta')).toBeNull();
         expect((screen.getByPlaceholderText('ai.recipePromptPlaceholder') as HTMLInputElement).value).toBe('');
+    });
+
+    // ─── Modellförslag vid fel ──────────────────────────────────────────────────
+
+    it('visar förslag på alternativ modell vid fel om suggestedModel finns och tillåter snabb-byte', async () => {
+        mockHookOverrides = {
+            error: 'AI-modellen svarar inte.',
+            suggestedModel: {
+                id: 'gemini-3.6-flash',
+                name: 'Gemini 3.6 Flash',
+                performanceIndex: 9.4,
+            },
+        };
+
+        renderModal();
+
+        expect(screen.getByRole('alert')).toBeInTheDocument();
+        expect(screen.getByText('AI-modellen svarar inte.')).toBeInTheDocument();
+
+        const applyBtn = screen.getByRole('button', { name: /ai\.useSuggestedModel/ });
+        expect(applyBtn).toBeInTheDocument();
+
+        // Klicka på knappen för att byta till föreslagen modell
+        fireEvent.click(applyBtn);
+        expect(mockApplySuggestedModel).toHaveBeenCalledWith('gemini-3.6-flash');
     });
 });
