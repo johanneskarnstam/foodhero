@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Sparkles, RefreshCw, Check, Globe, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sparkles, RefreshCw, Check, Globe, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAiModelSetting } from '../hooks/useAiModelSetting';
 import { useToast } from '../context/ToastContext';
 import { getModelMetadata } from '../services/aiService';
+import { InfoModal } from './InfoModal';
 import { AIModelOption } from '../types';
 
 const INITIAL_LIMIT = 5;
@@ -42,6 +43,7 @@ export const AiModelSelector: React.FC = () => {
     } = useAiModelSetting();
 
     const [showAll, setShowAll] = useState(false);
+    const [showPerfInfo, setShowPerfInfo] = useState(false);
 
     const handleSelectModel = (model: AIModelOption) => {
         if (model.id === selectedModelId) return;
@@ -80,6 +82,7 @@ export const AiModelSelector: React.FC = () => {
     }, [models, showAll, selectedModelId]);
 
     return (
+        <>
         <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700/60 transition-colors">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -175,6 +178,32 @@ export const AiModelSelector: React.FC = () => {
                                         {specialtyDescription}
                                     </p>
                                 )}
+
+                                {/* Prestandaindex */}
+                                {metadata.performanceIndex > 0 && (
+                                    <div className="flex items-center gap-1.5 mt-1.5">
+                                        <span className={`text-[11px] font-semibold tabular-nums ${
+                                            metadata.performanceIndex >= 9.5
+                                                ? 'text-emerald-600 dark:text-emerald-400'
+                                                : metadata.performanceIndex >= 8.5
+                                                    ? 'text-amber-600 dark:text-amber-400'
+                                                    : 'text-gray-500 dark:text-gray-400'
+                                        }`}>
+                                            {t('aiSettings.performanceLabel')}: {metadata.performanceIndex.toFixed(1)} / 10
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowPerfInfo(true);
+                                            }}
+                                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                                            aria-label={t('aiSettings.performanceInfoLabel')}
+                                        >
+                                            <Info size={12} />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors flex-shrink-0 mt-0.5 ${
@@ -210,5 +239,57 @@ export const AiModelSelector: React.FC = () => {
                 </button>
             )}
         </div>
+
+            {/* Modal som förklarar prestandaindex */}
+            <InfoModal
+                isOpen={showPerfInfo}
+                onClose={() => setShowPerfInfo(false)}
+                title={t('aiSettings.performanceInfoTitle')}
+            >
+                <div className="space-y-3">
+                    <p>{t('aiSettings.performanceInfoDescription')}</p>
+
+                    <div className="space-y-2">
+                        <h4 className="text-xs font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wide">
+                            {t('aiSettings.performanceInfoFactorsTitle')}
+                        </h4>
+                        <ul className="space-y-1.5 pl-0">
+                            <li className="flex items-start gap-2">
+                                <span className="text-emerald-500 mt-0.5 flex-shrink-0">●</span>
+                                <span>{t('aiSettings.performanceInfoFactorVersion')}</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-amber-500 mt-0.5 flex-shrink-0">●</span>
+                                <span>{t('aiSettings.performanceInfoFactorTier')}</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-blue-500 mt-0.5 flex-shrink-0">●</span>
+                                <span>{t('aiSettings.performanceInfoFactorStability')}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="space-y-1.5 pt-1">
+                        <h4 className="text-xs font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wide">
+                            {t('aiSettings.performanceInfoScaleTitle')}
+                        </h4>
+                        <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs">
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400">9.5–10</span>
+                            <span>{t('aiSettings.performanceInfoScaleTop')}</span>
+                            <span className="font-bold text-amber-600 dark:text-amber-400">8.5–9.4</span>
+                            <span>{t('aiSettings.performanceInfoScaleHigh')}</span>
+                            <span className="font-bold text-gray-500 dark:text-gray-400">7.0–8.4</span>
+                            <span>{t('aiSettings.performanceInfoScaleMid')}</span>
+                            <span className="font-bold text-gray-400 dark:text-gray-500">&lt; 7.0</span>
+                            <span>{t('aiSettings.performanceInfoScaleLow')}</span>
+                        </div>
+                    </div>
+
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500 pt-1 italic">
+                        {t('aiSettings.performanceInfoDisclaimer')}
+                    </p>
+                </div>
+            </InfoModal>
+        </>
     );
 };

@@ -132,4 +132,44 @@ describe('AiModelSelector', () => {
         expect(screen.queryByText('gemini-2.5-flash')).not.toBeInTheDocument();
         expect(screen.queryByText('gemini-3.8-flash')).not.toBeInTheDocument();
     });
+
+    it('visar prestandaindex för varje modell', () => {
+        render(<AiModelSelector />);
+
+        // DEFAULT_GEMINI_MODELS har performanceIndex: 9.8, 9.4, 8.0, 8.2
+        // Alla bör visa "aiSettings.performanceLabel: X.X / 10"
+        const perfLabels = screen.getAllByText(/aiSettings\.performanceLabel/);
+        expect(perfLabels.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('visar info-modal när info-knappen klickas', () => {
+        render(<AiModelSelector />);
+
+        // Klicka på den första info-knappen bredvid prestandaindex
+        const infoButtons = screen.getAllByLabelText('aiSettings.performanceInfoLabel');
+        expect(infoButtons.length).toBeGreaterThanOrEqual(1);
+
+        fireEvent.click(infoButtons[0]);
+
+        // Modalen ska nu vara synlig med förklarande rubrik
+        expect(screen.getByText('aiSettings.performanceInfoTitle')).toBeInTheDocument();
+        expect(screen.getByText('aiSettings.performanceInfoDescription')).toBeInTheDocument();
+    });
+
+    it('stänger info-modal vid klick på OK-knappen', () => {
+        render(<AiModelSelector />);
+
+        const infoButtons = screen.getAllByLabelText('aiSettings.performanceInfoLabel');
+        fireEvent.click(infoButtons[0]);
+
+        // Modal syns
+        expect(screen.getByText('aiSettings.performanceInfoTitle')).toBeInTheDocument();
+
+        // Klicka OK
+        const okButton = screen.getByRole('button', { name: 'OK' });
+        fireEvent.click(okButton);
+
+        // Modal ska vara stängd
+        expect(screen.queryByText('aiSettings.performanceInfoTitle')).not.toBeInTheDocument();
+    });
 });

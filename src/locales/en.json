@@ -768,7 +768,21 @@
     "fallbackNotice": "Default models (standard)",
     "noApiKeyNotice": "Add VITE_GEMINI_KEY to fetch dynamic models.",
     "showMore": "Show all models ({{count}})",
-    "showLess": "Show fewer models"
+    "showLess": "Show fewer models",
+    "performanceLabel": "Performance",
+    "performanceInfoLabel": "What does the performance index mean?",
+    "performanceInfoTitle": "Performance Index",
+    "performanceInfoDescription": "The performance index is a calculated rating from 1.0 to 10.0 that reflects the model's overall capability for recipe generation in FoodHero.",
+    "performanceInfoFactorsTitle": "Based on",
+    "performanceInfoFactorVersion": "Model version — newer generations score higher",
+    "performanceInfoFactorTier": "Model tier — Flash for speed, Pro for deeper reasoning",
+    "performanceInfoFactorStability": "Stability — stable releases are scored higher than previews",
+    "performanceInfoScaleTitle": "Rating scale",
+    "performanceInfoScaleTop": "Top tier — latest flagship models",
+    "performanceInfoScaleHigh": "High — modern, high-performing models",
+    "performanceInfoScaleMid": "Medium — stable standard models",
+    "performanceInfoScaleLow": "Basic — older or preview models",
+    "performanceInfoDisclaimer": "The index is calculated automatically and may change as new models are released."
   }
 }
 

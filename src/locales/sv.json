@@ -761,7 +761,21 @@
     "fallbackNotice": "Förvalda modeller (standard)",
     "noApiKeyNotice": "Lägg till VITE_GEMINI_KEY för att hämta dynamiska modeller.",
     "showMore": "Visa alla modeller ({{count}} st)",
-    "showLess": "Visa färre modeller"
+    "showLess": "Visa färre modeller",
+    "performanceLabel": "Prestanda",
+    "performanceInfoLabel": "Vad betyder prestandaindex?",
+    "performanceInfoTitle": "Prestandaindex",
+    "performanceInfoDescription": "Prestandaindex är ett beräknat betyg från 1.0 till 10.0 som speglar modellens övergripande kapacitet för receptgenerering i FoodHero.",
+    "performanceInfoFactorsTitle": "Beräknas utifrån",
+    "performanceInfoFactorVersion": "Modellversion — nyare generationer ger högre poäng",
+    "performanceInfoFactorTier": "Modellnivå — Flash för snabbhet, Pro för djupare resonemang",
+    "performanceInfoFactorStability": "Stabilitet — stabila versioner premieras över förhandsversioner",
+    "performanceInfoScaleTitle": "Betygsskala",
+    "performanceInfoScaleTop": "Toppklass — senaste flaggskeppsmodeller",
+    "performanceInfoScaleHigh": "Hög — moderna och välpresterande modeller",
+    "performanceInfoScaleMid": "Medel — stabila standardmodeller",
+    "performanceInfoScaleLow": "Grundläggande — äldre eller förhandsversioner",
+    "performanceInfoDisclaimer": "Indexet beräknas automatiskt och kan ändras när nya modeller släpps."
   }
 }
 

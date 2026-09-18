@@ -193,6 +193,7 @@ export interface AIModelOption {
     name: string;
     description: string;
     badge?: string;
+    performanceIndex?: number;
     isOnline?: boolean;
 }
 
@@ -203,24 +204,28 @@ export const DEFAULT_GEMINI_MODELS: AIModelOption[] = [
         id: 'gemini-3.8-flash',
         name: 'Gemini 3.8 Flash',
         badge: 'Toppval',
+        performanceIndex: 9.8,
         description: 'Senaste generationen. Blixtsnabb, högsta precision och bäst på kreativa recept.',
     },
     {
         id: 'gemini-3.6-flash',
         name: 'Gemini 3.6 Flash',
         badge: 'Snabb & modern',
+        performanceIndex: 9.4,
         description: 'Modern och snabb modell optimerad för balanserad receptgenerering.',
     },
     {
         id: 'gemini-2.5-flash',
         name: 'Gemini 2.5 Flash',
         badge: 'Stabil',
+        performanceIndex: 8.0,
         description: 'Beprövad standardmodell med jämn leverans av klassiska vardagsrecept.',
     },
     {
         id: 'gemini-2.5-pro',
         name: 'Gemini 2.5 Pro',
         badge: 'Resonemang',
+        performanceIndex: 8.2,
         description: 'Hög resonemangsförmåga för komplexa instruktioner och detaljrika rätter.',
     },
 ];

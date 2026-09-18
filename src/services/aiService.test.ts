@@ -348,7 +348,12 @@ describe('Model selection och dynamisk hämtning', () => {
         const { fetchAvailableGeminiModels } = await import('./aiService');
         const models = await fetchAvailableGeminiModels(false);
 
-        expect(models).toEqual(cachedPayload.models);
+        // Cache-modeller berikas dynamiskt med badge och performanceIndex
+        expect(models).toHaveLength(1);
+        expect(models[0].id).toBe('gemini-cached');
+        expect(models[0].name).toBe('Cached Gemini');
+        expect(models[0].description).toBe('Test');
+        expect(models[0]).toHaveProperty('performanceIndex');
         expect(fetchSpy).not.toHaveBeenCalled();
         fetchSpy.mockRestore();
     });

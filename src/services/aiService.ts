@@ -190,109 +190,100 @@ export function calculateModelScore(id: string): number {
     return score;
 }
 
+/**
+ * Beräknar ett normaliserat prestandaindex på skalan 1.0–10.0 för en Gemini-modell
+ * för att ge användaren ett begripligt kapacitetsbetyg.
+ */
+export function calculatePerformanceIndex(id: string): number {
+    const cleanId = id.toLowerCase();
+
+    if (cleanId.includes('3.8-flash')) return 9.8;
+    if (cleanId.includes('3.7-flash')) return 9.6;
+    if (cleanId === 'gemini-flash-latest') return 9.5;
+    if (cleanId.includes('3.6-flash')) return 9.4;
+    if (cleanId === 'gemini-pro-latest') return 9.3;
+    if (cleanId === 'gemini-flash-lite-latest') return 9.0;
+    if (cleanId.includes('3.5-flash') && !cleanId.includes('lite')) return 8.9;
+    if (cleanId.includes('3.1-pro')) return 8.7;
+    if (cleanId.includes('3.5-flash-lite')) return 8.6;
+    if (cleanId.includes('3.1-flash-lite')) return 8.4;
+    if (cleanId.includes('3-flash')) return 8.3;
+    if (cleanId.includes('2.5-pro')) return 8.2;
+    if (cleanId.includes('2.5-flash') && !cleanId.includes('lite')) return 8.0;
+    if (cleanId.includes('2.5-flash-lite')) return 7.6;
+    if (cleanId.includes('omni-1.1')) return 7.4;
+    if (cleanId.includes('omni')) return 7.2;
+
+    const score = calculateModelScore(id);
+    const normalized = 6.0 + ((score - 1000) / 2900) * 3.8;
+    return Math.round(Math.min(9.9, Math.max(5.0, normalized)) * 10) / 10;
+}
+
 export interface ModelDescriptionInfo {
     name: string;
     description: string;
     badge?: string;
+    performanceIndex: number;
 }
 
 /**
  * Returnerar en koncis sammanfattning av vad en modell är särskilt bra på,
- * inklusive en passande badge/etikett.
+ * inklusive en passande badge/etikett och dess prestandaindex.
  */
 export function getModelMetadata(cleanId: string, displayName?: string): ModelDescriptionInfo {
     const lower = cleanId.toLowerCase();
     const formattedName = displayName || cleanId;
+    const performanceIndex = calculatePerformanceIndex(cleanId);
+
+    let badge: string | undefined;
+    let description: string;
 
     if (lower.includes('3.8-flash')) {
-        return {
-            name: formattedName,
-            badge: 'Toppval',
-            description: 'Googles senaste flaggskepp. Blixtsnabb med överlägsen förmåga för kreativa recept och precisa mått.',
-        };
-    }
-    if (lower.includes('3.7-flash')) {
-        return {
-            name: formattedName,
-            badge: 'Snabb & modern',
-            description: 'Mycket snabb och modern modell med hög precision för vardagsmat och anpassade instruktioner.',
-        };
-    }
-    if (lower.includes('3.6-flash')) {
-        return {
-            name: formattedName,
-            badge: 'Snabb & modern',
-            description: 'Modern och högpresterande modell optimerad för snabbhet och strukturerad data.',
-        };
-    }
-    if (lower === 'gemini-flash-latest') {
-        return {
-            name: formattedName,
-            badge: 'Auto-uppdaterad',
-            description: 'Pekar alltid automatiskt på Googles senaste stabila Flash-modell för snabb receptgenerering.',
-        };
-    }
-    if (lower === 'gemini-pro-latest') {
-        return {
-            name: formattedName,
-            badge: 'Resonemang',
-            description: 'Pekar alltid på Googles senaste stabila Pro-modell för djupgående analys och receptstöd.',
-        };
-    }
-    if (lower.includes('3.1-pro') || lower.includes('3-pro')) {
-        return {
-            name: formattedName,
-            badge: 'Resonemang',
-            description: 'Avancerat resonemang och hög detaljrikedom för komplexa menyer och precisa näringsberäkningar.',
-        };
-    }
-    if (lower.includes('2.5-pro') || lower.includes('pro')) {
-        return {
-            name: formattedName,
-            badge: 'Resonemang',
-            description: 'Hög resonemangsförmåga för detaljerade recept, ingredienssubstitution och svåra tekniker.',
-        };
-    }
-    if (lower.includes('3.5-flash')) {
-        return {
-            name: formattedName,
-            badge: 'Snabb',
-            description: 'Stabil och snabb modell med bra balans mellan svarstid och receptkvalitet.',
-        };
-    }
-    if (lower.includes('2.5-flash') && !lower.includes('lite')) {
-        return {
-            name: formattedName,
-            badge: 'Stabil',
-            description: 'Beprövad standardmodell med jämn och pålitlig leverans av vardagsrecept.',
-        };
-    }
-    if (lower.includes('lite')) {
-        return {
-            name: formattedName,
-            badge: 'Lättvikt',
-            description: 'Ultrasnabb och resurssnål modell optimerad för korta svar och snabba idéer.',
-        };
-    }
-    if (lower.includes('omni')) {
-        return {
-            name: formattedName,
-            badge: 'Multimodal',
-            description: 'Mångsidig och snabb modell med bred förståelse för mångfacetterade uppgifter.',
-        };
-    }
-    if (lower.includes('preview')) {
-        return {
-            name: formattedName,
-            badge: 'Förhandsvisning',
-            description: 'Tidig förhandsversion av kommande modellgeneration från Google.',
-        };
+        badge = 'Toppval';
+        description = 'Googles senaste flaggskepp. Blixtsnabb med överlägsen förmåga för kreativa recept och precisa mått.';
+    } else if (lower.includes('3.7-flash')) {
+        badge = 'Snabb & modern';
+        description = 'Mycket snabb och modern modell med hög precision för vardagsmat och anpassade instruktioner.';
+    } else if (lower.includes('3.6-flash')) {
+        badge = 'Snabb & modern';
+        description = 'Modern och högpresterande modell optimerad för snabbhet och strukturerad data.';
+    } else if (lower === 'gemini-flash-latest') {
+        badge = 'Auto-uppdaterad';
+        description = 'Pekar alltid automatiskt på Googles senaste stabila Flash-modell för snabb receptgenerering.';
+    } else if (lower === 'gemini-pro-latest') {
+        badge = 'Resonemang';
+        description = 'Pekar alltid på Googles senaste stabila Pro-modell för djupgående analys och receptstöd.';
+    } else if (lower.includes('3.1-pro') || lower.includes('3-pro')) {
+        badge = 'Resonemang';
+        description = 'Avancerat resonemang och hög detaljrikedom för komplexa menyer och precisa näringsberäkningar.';
+    } else if (lower.includes('2.5-pro') || lower.includes('pro')) {
+        badge = 'Resonemang';
+        description = 'Hög resonemangsförmåga för detaljerade recept, ingredienssubstitution och svåra tekniker.';
+    } else if (lower.includes('3.5-flash')) {
+        badge = 'Snabb';
+        description = 'Stabil och snabb modell med bra balans mellan svarstid och receptkvalitet.';
+    } else if (lower.includes('2.5-flash') && !lower.includes('lite')) {
+        badge = 'Stabil';
+        description = 'Beprövad standardmodell med jämn och pålitlig leverans av vardagsrecept.';
+    } else if (lower.includes('lite')) {
+        badge = 'Lättvikt';
+        description = 'Ultrasnabb och resurssnål modell optimerad för korta svar och snabba idéer.';
+    } else if (lower.includes('omni')) {
+        badge = 'Multimodal';
+        description = 'Mångsidig och snabb modell med bred förståelse för mångfacetterade uppgifter.';
+    } else if (lower.includes('preview')) {
+        badge = 'Förhandsvisning';
+        description = 'Tidig förhandsversion av kommande modellgeneration från Google.';
+    } else {
+        badge = lower.includes('flash') ? 'Snabb' : undefined;
+        description = 'Google Gemini-modell för text- och receptgenerering.';
     }
 
     return {
         name: formattedName,
-        badge: lower.includes('flash') ? 'Snabb' : undefined,
-        description: 'Google Gemini-modell för text- och receptgenerering.',
+        badge,
+        performanceIndex,
+        description,
     };
 }
 
@@ -319,6 +310,7 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
                                     return {
                                         ...m,
                                         badge: m.badge || meta.badge,
+                                        performanceIndex: m.performanceIndex || meta.performanceIndex,
                                         description: (m.description && m.description !== m.name && m.description !== m.id && !m.description.toLowerCase().includes('google gemini ai'))
                                             ? m.description
                                             : meta.description,
@@ -374,6 +366,7 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
                     name: metadata.name,
                     description: metadata.description,
                     badge: metadata.badge,
+                    performanceIndex: metadata.performanceIndex,
                     isOnline: true,
                 };
             });
