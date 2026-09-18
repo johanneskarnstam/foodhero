@@ -144,7 +144,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
             aria-labelledby="meal-detail-title"
         >
             <div 
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg md:max-w-[calc(100vw-2rem)] lg:max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg md:max-w-[calc(100vw-2rem)] 2xl:max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200"
             >
                 {/* Hero / Header Image */}
                 <div className="relative h-36 sm:h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-900 flex-shrink-0">

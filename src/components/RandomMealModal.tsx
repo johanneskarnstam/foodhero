@@ -165,7 +165,7 @@ export const RandomMealModal: React.FC<RandomMealModalProps> = ({
             aria-labelledby="random-meal-title"
         >
             <div
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg md:max-w-[calc(100vw-2rem)] lg:max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg md:max-w-[calc(100vw-2rem)] 2xl:max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200"
             >
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700/80">

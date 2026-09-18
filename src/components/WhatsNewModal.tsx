@@ -101,7 +101,7 @@ export const WhatsNewModal: React.FC<WhatsNewModalProps> = ({ isOpen, commits, o
                 aria-modal="true"
                 aria-labelledby="whats-new-title"
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg md:max-w-[calc(100vw-2rem)] lg:max-w-lg max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg md:max-w-[calc(100vw-2rem)] 2xl:max-w-lg max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
             >
                 <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
                     <h2 id="whats-new-title" className="text-xl font-bold text-gray-900 dark:text-gray-100">

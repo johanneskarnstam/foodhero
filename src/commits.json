@@ -1,5 +1,10 @@
 [
   {
+    "hash": "c7124f1232574b555445667b80d3bb2f271bbb47",
+    "date": "2026-09-18 05:12:31 +0200",
+    "message": "Debug info"
+  },
+  {
     "hash": "21836ebf215a7816a70db66aa31f90e184484d0b",
     "date": "2026-09-17 17:50:53 +0200",
     "message": "feat: lägg till knapp för att hämta recept med AI i måltidsdetaljmodal"
@@ -93,10 +98,5 @@
     "hash": "b753ab4ccdff32d5a231ff4977e98fbc294dc6ba",
     "date": "2026-09-17 06:51:05 +0200",
     "message": "fix: öka z-index på ConfirmModal till z-[200] för att säkerställa att den visas ovanför alla modaler"
-  },
-  {
-    "hash": "f3e03630767827eebc58c06ba98fdd6f5ad03fc9",
-    "date": "2026-09-17 06:49:29 +0200",
-    "message": "fix: åtgärda z-index för ConfirmModal så den visas ovanför MealDetailModal"
   }
 ]

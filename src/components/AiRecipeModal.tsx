@@ -93,7 +93,7 @@ export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, o
             aria-modal="true"
             aria-labelledby="ai-recipe-modal-title"
         >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl md:max-w-[calc(100vw-2rem)] lg:max-w-2xl max-h-[90vh] flex flex-col border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl md:max-w-[calc(100vw-2rem)] 2xl:max-w-2xl max-h-[90vh] flex flex-col border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200">
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700 shrink-0">

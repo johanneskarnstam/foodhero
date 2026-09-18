@@ -273,7 +273,7 @@ export const MealEditModal: React.FC<MealEditModalProps> = ({
             role="dialog"
             aria-modal="true"
         >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-xl md:max-w-[calc(100vw-2rem)] lg:max-w-xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-xl md:max-w-[calc(100vw-2rem)] 2xl:max-w-xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700/80">
                     <div className="flex items-center gap-3">

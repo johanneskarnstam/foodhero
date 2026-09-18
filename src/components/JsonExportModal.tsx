@@ -57,7 +57,7 @@ export const JsonExportModal: React.FC<JsonExportModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl md:max-w-[calc(100vw-2rem)] lg:max-w-2xl w-full max-h-[80vh] p-6 border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl md:max-w-[calc(100vw-2rem)] 2xl:max-w-2xl w-full max-h-[80vh] p-6 border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                         {t('meals.jsonExportTitle', 'Exportera recept som JSON')}
