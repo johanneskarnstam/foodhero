@@ -728,6 +728,19 @@
     "oct": "Okt",
     "nov": "Nov",
     "dec": "Dec"
+  },
+  "timers": {
+    "start": "Starta timer",
+    "pause": "Pausa",
+    "resume": "Starta",
+    "reset": "Återställ",
+    "addMinute": "+1 min",
+    "dismiss": "Stäng",
+    "done": "Klart!",
+    "step": "Steg {{step}}",
+    "activeTimers": "Aktiva timers",
+    "timeRemaining": "{{time}} kvar",
+    "startTimerFor": "Starta timer ({{time}})"
   }
 }
 

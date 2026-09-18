@@ -735,6 +735,19 @@
     "oct": "Oct",
     "nov": "Nov",
     "dec": "Dec"
+  },
+  "timers": {
+    "start": "Start timer",
+    "pause": "Pause",
+    "resume": "Resume",
+    "reset": "Reset",
+    "addMinute": "+1 min",
+    "dismiss": "Dismiss",
+    "done": "Done!",
+    "step": "Step {{step}}",
+    "activeTimers": "Active timers",
+    "timeRemaining": "{{time}} left",
+    "startTimerFor": "Start timer ({{time}})"
   }
 }
 

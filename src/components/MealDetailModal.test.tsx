@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock i18next
 vi.mock('react-i18next', () => ({
     useTranslation: () => ({
-        t: (key: string, defaultText?: string) => {
+        t: (key: string, defaultTextOrOptions?: string | Record<string, unknown>, options?: Record<string, unknown>) => {
             const translations: Record<string, string> = {
                 'meals.addToShoppingList': 'Handla',
                 'meals.planInMealPlan': 'Planera',
@@ -27,9 +27,23 @@ vi.mock('react-i18next', () => ({
                 'tabs.ingredients': 'Ingredienser',
                 'tabs.instructions': 'Tillagning',
                 'meals.servings': 'portioner',
-                'common.random': 'Slumpa ny'
+                'common.random': 'Slumpa ny',
+                'timers.start': 'Starta timer',
+                'timers.done': 'Klart!',
+                'timers.startTimerFor': 'Starta timer ({{time}})'
             };
-            return translations[key] || defaultText || key;
+            if (translations[key]) {
+                const opts = (typeof defaultTextOrOptions === 'object' ? defaultTextOrOptions : options) as Record<string, string> | undefined;
+                let text = translations[key];
+                if (opts) {
+                    Object.entries(opts).forEach(([k, v]) => {
+                        text = text.replace(`{{${k}}}`, String(v));
+                    });
+                }
+                return text;
+            }
+            if (typeof defaultTextOrOptions === 'string') return defaultTextOrOptions;
+            return key;
         }
     })
 }));
@@ -256,4 +270,33 @@ describe('MealDetailModal', () => {
         expect(screen.queryByText('Vill du också planera in denna måltid?')).not.toBeInTheDocument();
         expect(mockOnPlanMeal).not.toHaveBeenCalled();
     });
+
+    it('detects cooking times and starts a timer in instructions tab', () => {
+        render(
+            <MealDetailModal
+                isOpen={true}
+                onClose={mockOnClose}
+                meal={mockMeal}
+            />
+        );
+
+        // Switch to instructions
+        const instructionsTab = screen.getByRole('button', { name: /Tillagning/i });
+        fireEvent.click(instructionsTab);
+
+        // Step 2 has "Baka i ugnen i 20 minuter", timer button should be displayed
+        const timerButton = screen.getByRole('button', { name: /20 min/i });
+        expect(timerButton).toBeInTheDocument();
+
+        // Timer bar should not be visible before clicking
+        expect(screen.queryByTestId('recipe-timer-bar')).not.toBeInTheDocument();
+
+        // Click to start timer
+        fireEvent.click(timerButton);
+
+        // Timer bar should now be visible
+        expect(screen.getByTestId('recipe-timer-bar')).toBeInTheDocument();
+        expect(screen.getByText('20:00')).toBeInTheDocument();
+    });
 });
+

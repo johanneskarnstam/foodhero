@@ -10,12 +10,16 @@ import {
     ShoppingCart, 
     Users,
     Trash2,
-    CheckCircle2
+    CheckCircle2,
+    Timer
 } from 'lucide-react';
 import { Meal, MealPlan, MealType } from '../types';
 import { useTranslation } from 'react-i18next';
 import { ConfirmModal } from './ConfirmModal';
 import { getDayName } from '../utils/dateUtils';
+import { useRecipeTimers } from '../hooks/useRecipeTimers';
+import { RecipeTimerBar } from './RecipeTimerBar';
+import { parseStepTimers, formatRemainingTime } from '../utils/timerUtils';
 
 interface MealDetailModalProps {
     isOpen: boolean;
@@ -51,6 +55,22 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showCloseQuestion, setShowCloseQuestion] = useState(false);
     const [showPlanMealPrompt, setShowPlanMealPrompt] = useState(false);
+
+    const {
+        timers,
+        startOrAddTimer,
+        toggleTimer,
+        resetTimer,
+        adjustTimer,
+        removeTimer,
+        clearAllTimers
+    } = useRecipeTimers();
+
+    useEffect(() => {
+        if (!isOpen) {
+            clearAllTimers();
+        }
+    }, [isOpen, clearAllTimers]);
 
     const handleDelete = () => {
         if (meal && onDelete) {
@@ -302,17 +322,67 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                         <div className="space-y-2.5 animate-in fade-in duration-150">
                             {hasInstructions ? (
                                 <ol className="space-y-2">
-                                    {meal.instructions!.map((step, idx) => (
-                                        <li 
-                                            key={idx} 
-                                            className="text-xs text-gray-700 dark:text-gray-300 flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800"
-                                        >
-                                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-[11px] mt-0.5">
-                                                {idx + 1}
-                                            </span>
-                                            <span className="leading-relaxed">{step}</span>
-                                        </li>
-                                    ))}
+                                    {meal.instructions!.map((step, idx) => {
+                                        const detectedTimers = parseStepTimers(step);
+
+                                        return (
+                                            <li 
+                                                key={idx} 
+                                                className="text-xs text-gray-700 dark:text-gray-300 flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800"
+                                            >
+                                                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-[11px] mt-0.5">
+                                                    {idx + 1}
+                                                </span>
+                                                <div className="flex-1 min-w-0">
+                                                    <span className="leading-relaxed block">{step}</span>
+                                                    {detectedTimers.length > 0 && (
+                                                        <div className="flex flex-wrap gap-1.5 mt-2">
+                                                            {detectedTimers.map((dt, dtIdx) => {
+                                                                const activeTimer = timers.find(
+                                                                    t => t.stepIndex === idx && t.label === dt.label
+                                                                );
+                                                                const isRunning = activeTimer?.isRunning;
+                                                                const isFinished = activeTimer?.isFinished;
+
+                                                                return (
+                                                                    <button
+                                                                        key={dtIdx}
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            if (activeTimer) {
+                                                                                toggleTimer(activeTimer.id);
+                                                                            } else {
+                                                                                startOrAddTimer(idx, idx + 1, dt.totalSeconds, dt.label);
+                                                                            }
+                                                                        }}
+                                                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all ${
+                                                                            isFinished
+                                                                                ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 animate-pulse'
+                                                                                : isRunning
+                                                                                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/20'
+                                                                                    : activeTimer
+                                                                                        ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700'
+                                                                                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
+                                                                        }`}
+                                                                        title={activeTimer ? (isRunning ? t('timers.pause', 'Pausa') : t('timers.resume', 'Starta')) : t('timers.start', 'Starta timer')}
+                                                                    >
+                                                                        <Timer size={12} className={isRunning ? 'animate-spin' : ''} />
+                                                                        {isFinished ? (
+                                                                            <span>{t('timers.done', 'Klart!')} ({dt.label})</span>
+                                                                        ) : activeTimer ? (
+                                                                            <span>{formatRemainingTime(activeTimer.remainingSeconds)} ({dt.label})</span>
+                                                                        ) : (
+                                                                            <span>{t('timers.startTimerFor', `Starta timer (${dt.label})`, { time: dt.label })}</span>
+                                                                        )}
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </li>
+                                        );
+                                    })}
                                 </ol>
                             ) : (
                                 <p className="text-xs text-gray-400 italic text-center py-6">
@@ -322,6 +392,15 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                         </div>
                     )}
                 </div>
+
+                {/* Floating/Fixed Timer Bar if any timers are active */}
+                <RecipeTimerBar
+                    timers={timers}
+                    onToggle={toggleTimer}
+                    onReset={resetTimer}
+                    onAdjust={adjustTimer}
+                    onRemove={removeTimer}
+                />
 
                 {/* Action Footer */}
                 <div className="p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/60 border-t border-gray-100 dark:border-gray-700/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
