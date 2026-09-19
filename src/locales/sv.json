@@ -179,6 +179,7 @@
     "confirm": "Bekräfta",
     "close": "Stäng",
     "done": "Klar",
+        "search": "Sök",
     "name": "Namn",
     "edit": "Redigera",
     "add": "Lägg till",
@@ -204,7 +205,9 @@
     "unsyncedChanges": "{{count}} osynkade ändringar.",
     "saving": "Sparar...",
     "savingShort": "...",
-    "reset": "Återställ"
+    "reset": "Återställ",
+    "imageUrl": "Bild-URL",
+    "servings": "Portioner"
 
   },
   "settings": {
@@ -333,6 +336,8 @@
     "fetchRecipeWithAIButton": "Hämta recept med AI",
     "enrichingWithAI": "Kompletterar med AI...",
     "recipeFetchedWithAI": "Receptet har hämtats och kompletterats med AI",
+    "noImageFound": "Ingen bild hittades",
+    "previewRecipe": "Förhandsvisning",
     "unknownMeal": "Okänd måltid",
     "jsonExportTitle": "Exportera recept som JSON",
     "jsonExportDescription": "Kopiera denna JSON för att spara eller dela ditt recept.",
@@ -627,7 +632,10 @@
     "enrichFailedWithSuggestion": "Kunde inte komplettera receptet med vald AI-modell. Förslag: Byt till {{model}} i Inställningar.",
     "suggestAlternativePrompt": "Vald modell svarade inte. Prova med {{model}} istället?",
     "useSuggestedModel": "Byt till {{model}} och försök igen",
-    "modelBusy": "AI-modellen är tillfälligt överbelastad. Vänligen vänta en stund och försök igen."
+    "modelBusy": "AI-modellen är tillfälligt överbelastad. Vänligen vänta en stund och försök igen.",
+    "changeImage": "Byt bild",
+    "searchImage": "Sök bild med API",
+    "removeImage": "Ta bort bild"
   },
   "autocomplete": {
     "tooltip": "Tryck på <kbd>Tab</kbd> eller klicka för att slutföra",

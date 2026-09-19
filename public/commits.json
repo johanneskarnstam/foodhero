@@ -1,5 +1,40 @@
 [
   {
+    "hash": "29453e836a483c57bbc744622c270545950834ce",
+    "date": "2026-09-18 14:05:11 +0200",
+    "message": "feat: prestandaindex, modellsortering och intelligenta modellförslag vid AI-fel"
+  },
+  {
+    "hash": "0d3e49fbae820d4929678a28c373b2392dc9908a",
+    "date": "2026-09-18 13:47:52 +0200",
+    "message": "Översättningsfiler fix"
+  },
+  {
+    "hash": "bbc081478e2067af6661d459d562a2677cb91bae",
+    "date": "2026-09-18 13:33:52 +0200",
+    "message": "feat: lägg till prestandaindex och förklaringsmodal i AI-modellväljaren"
+  },
+  {
+    "hash": "e7f2a8390b90b03d8342fed3646d2713988db1e6",
+    "date": "2026-09-18 13:17:54 +0200",
+    "message": "feat: ersätt tekniskt modell-id med beskrivning av modellens styrkor"
+  },
+  {
+    "hash": "20234b2bf403ee956328720d254055d9bc6b5a09",
+    "date": "2026-09-18 13:08:51 +0200",
+    "message": "feat: rangordna AI-modeller med bäst överst, filtrera bort bildmodeller och lägg till styrkebeskrivningar"
+  },
+  {
+    "hash": "4c2308252bb5bc92a4863e8e452e763118588aa8",
+    "date": "2026-09-18 11:38:11 +0200",
+    "message": "feat: lägg till dynamisk hämtning och val av AI-modeller i inställningar"
+  },
+  {
+    "hash": "ff8c488f4d0f36e786c5f545ae3a3c284ae4f0fe",
+    "date": "2026-09-18 10:55:53 +0200",
+    "message": "feat: förbättra och åtgärda AI-komplettering av recept med modell-fallback och persistent sparande"
+  },
+  {
     "hash": "0cad6e9e64abe72b85add1697cd60cc53576e684",
     "date": "2026-09-18 06:01:37 +0200",
     "message": "feat: lägg till recepttimers i tillagningssteg"
@@ -63,40 +98,5 @@
     "hash": "e1ff571282c68d7513a94dfbd5eb345da42a0f26",
     "date": "2026-09-17 13:30:34 +0200",
     "message": "feat: lägg till planeringsprompt för shopping-ikonen och möjlighet att planera flera tillfällen"
-  },
-  {
-    "hash": "ac3b38042c80d3d6e0fa6da2d47cd68dde12bfcc",
-    "date": "2026-09-17 13:01:14 +0200",
-    "message": "fix: korrigera flöde för måltidsplanerings-prompt efter inköpslista"
-  },
-  {
-    "hash": "8d331a9377338d049ae87cfcafcac35c31880d6f",
-    "date": "2026-09-17 11:23:04 +0200",
-    "message": "feat: fråga om att planera måltid när ingredienser läggs till inköpslistan"
-  },
-  {
-    "hash": "7bbdbf8782da586f55d03e07012fe277cde5bd17",
-    "date": "2026-09-17 11:13:04 +0200",
-    "message": "fix: möjliggör skrollning av modalinnehåll i PlanMealModal"
-  },
-  {
-    "hash": "fbaf247b481354d09930bd4ba2ce59f08c1df9a7",
-    "date": "2026-09-17 11:08:40 +0200",
-    "message": "feat: lägg till i18n-stöd för förkortade veckodagar och månader"
-  },
-  {
-    "hash": "6bf780ee273a6c1fbe9feef614cb93723fefbb0c",
-    "date": "2026-09-17 09:57:44 +0200",
-    "message": "feat: visa planerade måltider i PlanMealModal för 10 dagar med lunch och middag"
-  },
-  {
-    "hash": "166d33bc4710f1f023083033db142a9356bea897",
-    "date": "2026-09-17 09:34:40 +0200",
-    "message": "fix: centrera modalen för fråga om att stänga receptmodalen"
-  },
-  {
-    "hash": "1c5e94fccca2e42077e69d226cc899130e0d2f84",
-    "date": "2026-09-17 09:28:38 +0200",
-    "message": "fix: visa fråga om att stänga modalen när PlanMealModal stängs efter lyckad planering"
   }
 ]

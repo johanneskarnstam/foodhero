@@ -179,6 +179,7 @@
     "confirm": "Confirm",
     "close": "Close",
     "done": "Done",
+        "search": "Search",
     "name": "Name",
     "edit": "Edit",
     "add": "Add",
@@ -204,7 +205,9 @@
     "clear": "Clear",
     "saving": "Saving...",
     "savingShort": "...",
-    "reset": "Reset"
+    "reset": "Reset",
+    "imageUrl": "Image URL",
+    "servings": "Servings"
   },
   "settings": {
     "title": "Settings",
@@ -332,6 +335,8 @@
     "fetchRecipeWithAIButton": "Fetch recipe with AI",
     "enrichingWithAI": "Completing with AI...",
     "recipeFetchedWithAI": "Recipe has been fetched and completed with AI",
+    "noImageFound": "No image found",
+    "previewRecipe": "Preview",
     "unknownMeal": "Unknown meal",
     "jsonExportTitle": "Export Recipe as JSON",
     "jsonExportDescription": "Copy this JSON to save or share your recipe.",
@@ -626,7 +631,10 @@
     "enrichFailedWithSuggestion": "Could not complete the recipe with the selected AI model. Suggestion: Switch to {{model}} in Settings.",
     "suggestAlternativePrompt": "Selected model did not respond. Try {{model}} instead?",
     "useSuggestedModel": "Switch to {{model}} and try again",
-    "modelBusy": "The AI model is temporarily overloaded. Please try again shortly."
+    "modelBusy": "The AI model is temporarily overloaded. Please try again shortly.",
+    "changeImage": "Change image",
+    "searchImage": "Search image with API",
+    "removeImage": "Remove image"
   },
   "autocomplete": {
     "tooltip": "Press <kbd>Tab</kbd> or tap to complete",

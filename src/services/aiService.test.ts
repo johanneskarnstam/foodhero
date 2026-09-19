@@ -1,5 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { isRetryableError, FALLBACK_MODEL } from './aiService';
+import { isRetryableError, FALLBACK_MODEL, generateRecipe, enrichMeal } from './aiService';
+
+// Mocka imageService
+vi.mock('./imageService', () => ({
+  fetchRecipeImageWithFallback: vi.fn(),
+}));
+
+// Hämta den mockade funktionen
+import { fetchRecipeImageWithFallback } from './imageService';
+const mockFetchRecipeImageWithFallback = fetchRecipeImageWithFallback as jest.Mock;
 
 const mockGenerateContent = vi.fn();
 const mockGetGenerativeModel = vi.fn().mockImplementation(() => ({
@@ -145,6 +154,60 @@ describe('aiService - generateRecipe', () => {
 
         const { generateRecipe } = await import('./aiService');
         await expect(generateRecipe('test')).rejects.toThrow(/format/i);
+    });
+
+    it('lägger till imageUrl när en bild hittas', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        const payload = makeRecipePayload();
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+
+        // Mocka bildhämtning
+        mockFetchRecipeImageWithFallback.mockResolvedValueOnce('https://example.com/image.jpg');
+
+        const { generateRecipe } = await import('./aiService');
+        const result = await generateRecipe('laxpasta');
+
+        expect(result.imageUrl).toBe('https://example.com/image.jpg');
+        expect(mockFetchRecipeImageWithFallback).toHaveBeenCalledWith('Laxpasta');
+    });
+
+    it('sätter imageUrl till undefined när ingen bild hittas', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        const payload = makeRecipePayload();
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+
+        // Mocka bildhämtning som returnerar null
+        mockFetchRecipeImageWithFallback.mockResolvedValueOnce(null);
+
+        const { generateRecipe } = await import('./aiService');
+        const result = await generateRecipe('laxpasta');
+
+        expect(result.imageUrl).toBeUndefined();
+        expect(mockFetchRecipeImageWithFallback).toHaveBeenCalledWith('Laxpasta');
+    });
+
+    it('hanterar fel vid bildhämtning och returnerar ändå receptet', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        const payload = makeRecipePayload();
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+
+        // Mocka bildhämtning som kastar fel
+        mockFetchRecipeImageWithFallback.mockRejectedValueOnce(new Error('API-fel'));
+
+        const { generateRecipe } = await import('./aiService');
+        const result = await generateRecipe('laxpasta');
+
+        expect(result.imageUrl).toBeUndefined();
+        expect(result.name).toBe('Laxpasta');
     });
 
     it('kastar användarvänligt fel vid ogiltigt JSON', async () => {
@@ -309,6 +372,57 @@ describe('aiService - enrichMeal', () => {
 
         const { enrichMeal } = await import('./aiService');
         await expect(enrichMeal({ name: 'Test' })).rejects.toThrow(/Nätverksfel/);
+    });
+
+    it('lägger till imageUrl när måltiden saknar imageUrl och en bild hittas', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+        const payload = makeRecipePayload({ name: 'Köttbullar' });
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+        mockFetchRecipeImageWithFallback.mockResolvedValueOnce('https://example.com/koettbullar.jpg');
+        const { enrichMeal } = await import('./aiService');
+        const result = await enrichMeal({ name: 'Köttbullar' });
+        expect(result.imageUrl).toBe('https://example.com/koettbullar.jpg');
+        expect(mockFetchRecipeImageWithFallback).toHaveBeenCalledWith('Köttbullar');
+    });
+
+    it('behåller befintlig imageUrl och hämtar inte ny bild', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+        const payload = makeRecipePayload({ name: 'Köttbullar' });
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+        const { enrichMeal } = await import('./aiService');
+        const result = await enrichMeal({ name: 'Köttbullar', imageUrl: 'https://existing-image.jpg' });
+        expect(result.imageUrl).toBe('https://existing-image.jpg');
+        expect(mockFetchRecipeImageWithFallback).not.toHaveBeenCalled();
+    });
+
+    it('sätter imageUrl till undefined när ingen bild hittas', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+        const payload = makeRecipePayload({ name: 'Köttbullar' });
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+        mockFetchRecipeImageWithFallback.mockResolvedValueOnce(null);
+        const { enrichMeal } = await import('./aiService');
+        const result = await enrichMeal({ name: 'Köttbullar' });
+        expect(result.imageUrl).toBeUndefined();
+        expect(mockFetchRecipeImageWithFallback).toHaveBeenCalledWith('Köttbullar');
+    });
+
+    it('hanterar fel vid bildhämtning och returnerar ändå receptet', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+        const payload = makeRecipePayload({ name: 'Köttbullar' });
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => JSON.stringify(payload) },
+        });
+        mockFetchRecipeImageWithFallback.mockRejectedValueOnce(new Error('API-fel'));
+        const { enrichMeal } = await import('./aiService');
+        const result = await enrichMeal({ name: 'Köttbullar' });
+        expect(result.imageUrl).toBeUndefined();
+        expect(result.name).toBe('Köttbullar');
     });
 });
 

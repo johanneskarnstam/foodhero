@@ -85,3 +85,14 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
    npm run dev
    ```
 4. Öppna [http://localhost:5173](http://localhost:5173) i din webbläsare.
+
+### Bildsökning för recept
+
+För automatisk och manuell receptbildsökning, lägg till följande variabler i `.env`:
+
+```env
+VITE_UNSPLASH_ACCESS_KEY=din_unsplash_nyckel
+VITE_PEXELS_API_KEY=din_pexels_nyckel
+```
+
+Unsplash används först och Pexels som fallback. Utan nycklar fortsätter receptgenerering och redigering att fungera, men utan automatisk bild.

@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Meal, AIModelOption, DEFAULT_GEMINI_MODEL, DEFAULT_GEMINI_MODELS } from '../types';
+import { fetchRecipeImageWithFallback } from './imageService';
 
 // Initierar API:et med nyckeln från miljövariabler
 // Använder VITE_GEMINI_KEY med fallback till VITE_GEMINI_API_KEY
@@ -14,6 +15,7 @@ export interface GeneratedRecipe {
     tags: string[];
     ingredients: { text: string; amount: string }[];
     instructions: string[];
+    imageUrl?: string;
 }
 
 const SYSTEM_INSTRUCTION =
@@ -518,7 +520,7 @@ async function callWithFallback(prompt: string): Promise<GeneratedRecipe> {
 /**
  * Genererar ett komplett recept baserat på en fri textprompt.
  * Returnerar ett GeneratedRecipe-objekt med namn, beskrivning, portioner,
- * taggar, ingredienser och instruktioner.
+ * taggar, ingredienser, instruktioner och en bild-URL.
  *
  * @throws Error med användarvänligt felmeddelande om anropet misslyckas.
  */
@@ -528,7 +530,21 @@ export const generateRecipe = async (prompt: string): Promise<GeneratedRecipe> =
     }
 
     try {
-        return await callWithFallback(prompt);
+        const recipe = await callWithFallback(prompt);
+
+        // Hämtar en bild baserat på receptnamnet
+        let imageUrl: string | undefined;
+        try {
+            const image = await fetchRecipeImageWithFallback(recipe.name);
+            if (image) {
+                imageUrl = image;
+            }
+        } catch (imageError) {
+            console.warn('Kunde inte hämta bild för recept:', imageError);
+            // Ignorera fel vid bildhämtning - receptet returneras ändå
+        }
+
+        return { ...recipe, imageUrl };
     } catch (error) {
         console.error('Error generating recipe with AI:', error);
         const suggested = getSuggestedAlternativeModel();
@@ -540,7 +556,7 @@ export const generateRecipe = async (prompt: string): Promise<GeneratedRecipe> =
  * Berikar en befintlig måltid som saknar ingredienser eller instruktioner
  * genom att be Gemini fylla i saknad data baserat på måltidsobjektets kontext.
  * Skickar befintliga fält (namn, beskrivning, taggar, portioner) som kontext
- * till modellen.
+ * till modellen. Hämtar också en bild om måltiden saknar imageUrl.
  *
  * @throws Error med användarvänligt felmeddelande om anropet misslyckas.
  */
@@ -568,7 +584,23 @@ export const enrichMeal = async (meal: Partial<Meal>): Promise<GeneratedRecipe> 
         'Behåll befintliga värden om de redan är korrekta, komplettera det som saknas.';
 
     try {
-        return await callWithFallback(prompt);
+        const enrichedRecipe = await callWithFallback(prompt);
+
+        // Hämtar en bild om måltiden saknar imageUrl
+        let imageUrl: string | undefined = meal.imageUrl;
+        if (!imageUrl) {
+            try {
+                const image = await fetchRecipeImageWithFallback(enrichedRecipe.name);
+                if (image) {
+                    imageUrl = image;
+                }
+            } catch (imageError) {
+                console.warn('Kunde inte hämta bild för berikad måltid:', imageError);
+                // Ignorera fel vid bildhämtning - receptet returneras ändå
+            }
+        }
+
+        return { ...enrichedRecipe, imageUrl };
     } catch (error) {
         console.error('Error enriching meal with AI:', error);
         const suggested = getSuggestedAlternativeModel();

@@ -82,6 +82,19 @@ describe('MealEditModal', () => {
         expect(screen.getByDisplayValue('Enkel pasta med kyckling och parmesan')).toBeInTheDocument();
     });
 
+    it('shows image search when editing a meal without an image', () => {
+        render(
+            <MealEditModal
+                isOpen={true}
+                onClose={mockOnClose}
+                onSave={mockOnSave}
+                meal={{ ...mockMeal, imageUrl: undefined }}
+            />
+        );
+
+        expect(screen.getByRole('button', { name: /Sök bild med API/i })).toBeInTheDocument();
+    });
+
     it('allows toggling tags', () => {
         render(
             <MealEditModal
@@ -232,6 +245,7 @@ describe('MealEditModal', () => {
                     { text: 'Ströbröd', amount: '0.5 dl' },
                 ],
                 instructions: ['Blanda färs och ströbröd', 'Rulla och stek'],
+                imageUrl: 'https://example.com/koettbullar.jpg',
             });
 
             render(
@@ -263,6 +277,8 @@ describe('MealEditModal', () => {
             );
 
             await screen.findByDisplayValue('Blandfärs');
+            fireEvent.click(screen.getByRole('button', { name: /Grundinfo/i }));
+            expect(screen.getByRole('img', { name: 'Köttbullar med mos' })).toHaveAttribute('src', 'https://example.com/koettbullar.jpg');
             await waitFor(() => {
                 expect(mockShowToast).toHaveBeenCalledWith(
                     'Receptet har hämtats och kompletterats med AI',

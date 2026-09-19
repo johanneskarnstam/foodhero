@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Sparkles, RefreshCw, Save, ChefHat, AlertCircle, Users, Tag } from 'lucide-react';
+import { X, Sparkles, RefreshCw, Save, ChefHat, AlertCircle, Users, Tag, Image } from 'lucide-react';
 import { useAiRecipe } from '../hooks/useAiRecipe';
 import { GeneratedRecipe } from '../services/aiService';
 import { Meal } from '../types';
+import { RecipeImageSearchModal } from './RecipeImageSearchModal';
 
 interface AiRecipeModalProps {
     isOpen: boolean;
@@ -26,6 +27,7 @@ export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, o
     const [prompt, setPrompt] = useState('');
     const [recipe, setRecipe] = useState<GeneratedRecipe | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isImageSearchOpen, setIsImageSearchOpen] = useState(false);
 
     // Handle body scroll lock
     useEffect(() => {
@@ -69,6 +71,7 @@ export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, o
             await onSave({
                 name: recipe.name,
                 description: recipe.description || undefined,
+                imageUrl: recipe.imageUrl || undefined,
                 servings: recipe.servings,
                 tags: recipe.tags,
                 ingredients: recipe.ingredients.map(i => ({
@@ -195,6 +198,35 @@ export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, o
                     {/* Förhandsvisning av recept */}
                     {hasRecipe && (
                         <div id="ai-recipe-preview" className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                            {/* Bildförhandsvisning */}
+                            {recipe.imageUrl && (
+                                <div className="relative h-48 w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
+                                    <img
+                                        src={recipe.imageUrl}
+                                        alt={recipe.name}
+                                        className="h-full w-full object-cover"
+                                    />
+                                     <div className="absolute top-2 right-2 flex gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsImageSearchOpen(true)}
+                                            className="flex items-center gap-1 px-2 py-1 bg-black/50 hover:bg-black/70 text-white text-xs rounded-lg transition-colors"
+                                        >
+                                            <Image className="w-3.5 h-3.5" />
+                                            {t('ai.changeImage')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRecipe({ ...recipe, imageUrl: undefined })}
+                                            className="flex items-center gap-1 px-2 py-1 bg-black/50 hover:bg-black/70 text-white text-xs rounded-lg transition-colors"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                            {t('ai.removeImage')}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Recept-header */}
                             <div className="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-b border-gray-200 dark:border-gray-700">
                                 <div className="flex items-start gap-3">
@@ -320,6 +352,14 @@ export const AiRecipeModal: React.FC<AiRecipeModalProps> = ({ isOpen, onClose, o
                     </div>
                 </div>
             </div>
+
+            {/* Image Search Modal */}
+            <RecipeImageSearchModal
+                isOpen={isImageSearchOpen}
+                onClose={() => setIsImageSearchOpen(false)}
+                onSelectImage={(url) => setRecipe({ ...recipe!, imageUrl: url })}
+                recipeName={recipe?.name || ''}
+            />
         </div>
     );
 };

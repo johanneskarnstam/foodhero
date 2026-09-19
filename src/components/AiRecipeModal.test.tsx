@@ -174,6 +174,21 @@ describe('AiRecipeModal', () => {
         });
     });
 
+    it('visar bild och knapp för att byta bild i förhandsvisningen', async () => {
+        mockGenerateRecipe.mockResolvedValueOnce(makeRecipe({ imageUrl: 'https://example.com/laxpasta.jpg' }));
+        renderModal();
+
+        fireEvent.change(screen.getByPlaceholderText('ai.recipePromptPlaceholder'), {
+            target: { value: 'laxpasta' },
+        });
+        fireEvent.click(screen.getByRole('button', { name: /ai\.generate/ }));
+
+        await waitFor(() => {
+            expect(screen.getByRole('img', { name: 'Laxpasta' })).toHaveAttribute('src', 'https://example.com/laxpasta.jpg');
+        });
+        expect(screen.getByRole('button', { name: 'ai.changeImage' })).toBeInTheDocument();
+    });
+
     it('visar spara- och generera-om-knappar efter lyckad generering', async () => {
         mockGenerateRecipe.mockResolvedValueOnce(makeRecipe());
         renderModal();
