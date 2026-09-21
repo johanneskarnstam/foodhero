@@ -30,11 +30,14 @@ Object.defineProperty(window, 'localStorage', {
 describe('imageService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('VITE_UNSPLASH_ACCESS_KEY', 'test_unsplash_key');
+    vi.stubEnv('VITE_PEXELS_API_KEY', 'test_pexels_key');
     localStorageMock.clear();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   describe('fetchRecipeImage', () => {

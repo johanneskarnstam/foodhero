@@ -8,9 +8,6 @@ interface CacheEntry {
 const CACHE_KEY = 'recipeImageCache';
 const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 timmar
 
-const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
-const PEXELS_API_KEY = import.meta.env.VITE_PEXELS_API_KEY;
-
 /**
  * Hämtar en cachad bild-URL för en given sökterm, om den finns och inte har löpt ut.
  */
@@ -50,7 +47,9 @@ function setCachedImage(query: string, url: string): void {
  * Returnerar null om ingen bild hittas eller om API-anropet misslyckas.
  */
 async function fetchUnsplashImage(query: string, size: ImageSize = 'medium'): Promise<string | null> {
-  if (!UNSPLASH_ACCESS_KEY) {
+  const unsplashAccessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY || '';
+
+  if (!unsplashAccessKey) {
     console.warn('Unsplash API-nyckel saknas.');
     return null;
   }
@@ -61,7 +60,7 @@ async function fetchUnsplashImage(query: string, size: ImageSize = 'medium'): Pr
     const height = size === 'small' ? 300 : size === 'medium' ? 400 : 600;
 
     const response = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&client_id=${UNSPLASH_ACCESS_KEY}&per_page=1&w=${width}&h=${height}`
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&client_id=${unsplashAccessKey}&per_page=1&w=${width}&h=${height}`
     );
 
     if (!response.ok) {
@@ -90,7 +89,9 @@ async function fetchUnsplashImage(query: string, size: ImageSize = 'medium'): Pr
  * Returnerar null om ingen bild hittas eller om API-anropet misslyckas.
  */
 async function fetchPexelsImage(query: string, size: ImageSize = 'medium'): Promise<string | null> {
-  if (!PEXELS_API_KEY) {
+  const pexelsApiKey = import.meta.env.VITE_PEXELS_API_KEY || '';
+
+  if (!pexelsApiKey) {
     console.warn('Pexels API-nyckel saknas.');
     return null;
   }
@@ -100,7 +101,7 @@ async function fetchPexelsImage(query: string, size: ImageSize = 'medium'): Prom
       `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`,
       {
         headers: {
-          Authorization: PEXELS_API_KEY,
+          Authorization: pexelsApiKey,
         },
       }
     );
