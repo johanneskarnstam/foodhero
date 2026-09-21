@@ -426,6 +426,76 @@ describe('aiService - enrichMeal', () => {
     });
 });
 
+describe('aiService - askAboutRecipe', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        vi.resetModules();
+        vi.unstubAllEnvs();
+    });
+
+    it('returnerar ett textsvar och skickar receptkontext samt tidigare meddelanden', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => 'Du kan använda crème fraîche i stället.' },
+        });
+
+        const { askAboutRecipe } = await import('./aiService');
+        const result = await askAboutRecipe(
+            'Vad kan jag använda i stället för grädde?',
+            {
+                name: 'Laxpasta',
+                description: 'Krämig vardagspasta',
+                servings: 4,
+                ingredients: [
+                    { text: 'Lax', amount: '400 g' },
+                    { text: 'Grädde', amount: '2 dl' },
+                ],
+                instructions: ['Koka pastan.', 'Blanda ner grädden.'],
+            },
+            [{ role: 'user', content: 'Jag tål inte laktos.' }]
+        );
+
+        expect(result).toEqual({ text: 'Du kan använda crème fraîche i stället.' });
+        expect(mockGenerateContent).toHaveBeenCalledOnce();
+        const prompt = mockGenerateContent.mock.calls[0][0] as string;
+        expect(prompt).toContain('Receptets namn: Laxpasta');
+        expect(prompt).toContain('400 g Lax');
+        expect(prompt).toContain('1. Koka pastan.');
+        expect(prompt).toContain('Användare: Jag tål inte laktos.');
+        expect(prompt).toContain('Vad kan jag använda i stället för grädde?');
+        expect(mockGetGenerativeModel).toHaveBeenCalledWith(
+            expect.objectContaining({
+                systemInstruction: expect.stringContaining('Svara som vanlig text, inte som JSON.'),
+            })
+        );
+    });
+
+    it('avvisar tom fråga utan att anropa AI', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+
+        const { askAboutRecipe } = await import('./aiService');
+        await expect(askAboutRecipe('   ', { name: 'Laxpasta' })).rejects.toThrow(/Frågan får inte vara tom/);
+        expect(mockGenerateContent).not.toHaveBeenCalled();
+    });
+
+    it('gör fallback till FALLBACK_MODEL vid retryable-fel', async () => {
+        vi.stubEnv('VITE_GEMINI_KEY', 'test-api-key');
+        mockGenerateContent.mockRejectedValueOnce(new Error('503 Service Unavailable'));
+        mockGenerateContent.mockResolvedValueOnce({
+            response: { text: () => 'Använd extra buljong och smaka av.' },
+        });
+
+        const { askAboutRecipe } = await import('./aiService');
+        const result = await askAboutRecipe('Hur räddar jag smaken?', { name: 'Soppa' });
+
+        expect(result.text).toBe('Använd extra buljong och smaka av.');
+        expect(mockGenerateContent).toHaveBeenCalledTimes(2);
+        expect(mockGetGenerativeModel).toHaveBeenLastCalledWith(
+            expect.objectContaining({ model: FALLBACK_MODEL })
+        );
+    });
+});
+
 describe('Model selection och dynamisk hämtning', () => {
     beforeEach(() => {
         vi.clearAllMocks();
