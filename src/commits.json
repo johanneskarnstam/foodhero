@@ -1,5 +1,30 @@
 [
   {
+    "hash": "097b43b68e1e95cb93f7cae9769c3524e5aa3900",
+    "date": "2026-09-21 15:33:37 +0200",
+    "message": "fix(imageService): use runtime env vars and update tests"
+  },
+  {
+    "hash": "e8f22e218a10afa0f60f6ad303428d7a17e8b34b",
+    "date": "2026-09-21 15:30:19 +0200",
+    "message": "Node upgrade"
+  },
+  {
+    "hash": "62dd2f7b8791f5fae49630f667a2ccb8cc139fbb",
+    "date": "2026-09-21 15:26:24 +0200",
+    "message": "Github Actions"
+  },
+  {
+    "hash": "5c1b8906cd387cd1ee305c33a6595450354da96e",
+    "date": "2026-09-21 15:19:24 +0200",
+    "message": "Merge pull request #1 from johanneskarnstam/feature/recipe-ai-help"
+  },
+  {
+    "hash": "d20ba3d5c549834ccc612542aa582b4b4c82818e",
+    "date": "2026-09-21 15:15:11 +0200",
+    "message": "feat: lägg till AI-hjälp för recept"
+  },
+  {
     "hash": "66ca7cac532f1dedc84a8343b7cb6299ae63853c",
     "date": "2026-09-19 11:07:37 +0200",
     "message": "feat: lägg till automatisk bildsökning för recept"
@@ -73,30 +98,5 @@
     "hash": "12b9c5bacede86fed6349cfb87e0efa4af84c82e",
     "date": "2026-09-17 16:21:48 +0200",
     "message": "feat: lägg till funktion för att spara enhetsdebuginfo med titel och visa sparade poster på /debug sidan"
-  },
-  {
-    "hash": "2a6ae581e35c0531606dc7e4577c8b67535e28d9",
-    "date": "2026-09-17 15:34:04 +0200",
-    "message": "feat: lägg till debug-sida med enhetsinformation"
-  },
-  {
-    "hash": "360358f025332992178c6f85556ed2c5cc006559",
-    "date": "2026-09-17 14:20:24 +0200",
-    "message": "feat(modal): improve modal responsiveness and lock body scroll"
-  },
-  {
-    "hash": "2d69fe3b0c6015f22f8613b500c41ccd08acbb00",
-    "date": "2026-09-17 14:02:08 +0200",
-    "message": "Taggar med klick"
-  },
-  {
-    "hash": "447485b703287bf2acdc7f444cca841cc6a49b1f",
-    "date": "2026-09-17 13:49:56 +0200",
-    "message": "Offline hantering är nu bättre"
-  },
-  {
-    "hash": "a62af338864ef12bd652659d6336b58ed2df4840",
-    "date": "2026-09-17 13:42:51 +0200",
-    "message": "fix: justera responsiv layout för IngredientSearchView på mobilen"
   }
 ]
