@@ -1,5 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Meal, AIModelOption, DEFAULT_GEMINI_MODEL, DEFAULT_GEMINI_MODELS } from '../types';
+import {
+    Meal,
+    AIModelOption,
+    DEFAULT_GEMINI_MODEL,
+    DEFAULT_GEMINI_MODELS,
+    RecipeAiAnswer,
+    RecipeAiMessage,
+} from '../types';
 import { fetchRecipeImageWithFallback } from './imageService';
 
 // Initierar API:et med nyckeln från miljövariabler
@@ -24,6 +31,13 @@ const SYSTEM_INSTRUCTION =
     '{ "name": string, "description": string, "servings": number, "tags": string[], ' +
     '"ingredients": { "text": string, "amount": string }[], "instructions": string[] }. ' +
     'Ge inga förklaringar, kommentarer eller annan text utanför JSON-objektet.';
+
+const RECIPE_HELP_SYSTEM_INSTRUCTION =
+    'Du är en hjälpsam receptassistent. Svara kort och konkret på användarens fråga utifrån receptkontexten. ' +
+    'Svara som vanlig text, inte som JSON. Svara på svenska om användaren skriver på svenska. ' +
+    'Hitta inte på ingredienser eller instruktioner som inte finns i kontexten. ' +
+    'Markera tydligt när något är ett förslag eller en uppskattning. ' +
+    'Ge inte garantier om allergier, medicinska frågor eller livsmedelssäkerhet.';
 
 /**
  * Extraherar JSON-sträng från ett API-svar som eventuellt är inlindat i
@@ -474,9 +488,9 @@ export async function fetchAvailableGeminiModels(forceRefresh = false): Promise<
 /**
  * Hämtar och returnerar en konfigurerad Gemini-modell.
  */
-function getModel(modelName?: string) {
+function getModel(modelName?: string, systemInstruction = SYSTEM_INSTRUCTION) {
     const name = modelName || getActiveModelId();
-    return genAI.getGenerativeModel({ model: name, systemInstruction: SYSTEM_INSTRUCTION });
+    return genAI.getGenerativeModel({ model: name, systemInstruction });
 }
 
 /**
@@ -516,6 +530,84 @@ async function callWithFallback(prompt: string): Promise<GeneratedRecipe> {
         throw primaryError;
     }
 }
+
+async function callTextWithFallback(prompt: string): Promise<string> {
+    try {
+        const model = getModel(undefined, RECIPE_HELP_SYSTEM_INSTRUCTION);
+        const result = await model.generateContent(prompt);
+        return result.response.text().trim();
+    } catch (primaryError) {
+        if (isRetryableError(primaryError)) {
+            const activeModel = getActiveModelId();
+            console.warn(`Primärmodell (${activeModel}) gav retryable-fel, försöker med fallback (${FALLBACK_MODEL})...`);
+            const fallbackModel = getModel(FALLBACK_MODEL, RECIPE_HELP_SYSTEM_INSTRUCTION);
+            const result = await fallbackModel.generateContent(prompt);
+            return result.response.text().trim();
+        }
+        throw primaryError;
+    }
+}
+
+function buildRecipeHelpPrompt(
+    question: string,
+    meal: Partial<Meal>,
+    history: RecipeAiMessage[]
+): string {
+    const contextParts: string[] = [];
+    if (meal.name) contextParts.push(`Receptets namn: ${meal.name}`);
+    if (meal.description) contextParts.push(`Beskrivning: ${meal.description}`);
+    if (meal.servings) contextParts.push(`Antal portioner: ${meal.servings}`);
+    if (meal.ingredients?.length) {
+        const ingredients = meal.ingredients
+            .map(ingredient => `${ingredient.amount ? `${ingredient.amount} ` : ''}${ingredient.text}`)
+            .join(', ');
+        contextParts.push(`Ingredienser: ${ingredients}`);
+    }
+    if (meal.instructions?.length) {
+        contextParts.push(`Instruktioner:\n${meal.instructions.map((step, index) => `${index + 1}. ${step}`).join('\n')}`);
+    }
+
+    const recentHistory = history
+        .slice(-6)
+        .map(message => `${message.role === 'user' ? 'Användare' : 'Assistent'}: ${message.content}`)
+        .join('\n');
+
+    return [
+        'RECEPTKONTEXT:',
+        contextParts.join('\n'),
+        recentHistory ? `TIDIGARE KONVERSATION:\n${recentHistory}` : '',
+        `AKTUELL FRÅGA:\n${question.trim()}`,
+    ].filter(Boolean).join('\n\n');
+}
+
+/**
+ * Svarar på en fråga om ett befintligt recept utan att ändra receptet.
+ */
+export const askAboutRecipe = async (
+    question: string,
+    meal: Partial<Meal>,
+    history: RecipeAiMessage[] = []
+): Promise<RecipeAiAnswer> => {
+    const normalizedQuestion = question.trim();
+    if (!normalizedQuestion) {
+        throw new Error('Frågan får inte vara tom.');
+    }
+    if (!apiKey) {
+        throw new Error('Ingen API-nyckel hittades. Vänligen lägg till VITE_GEMINI_KEY i din .env-fil.');
+    }
+
+    try {
+        const text = await callTextWithFallback(buildRecipeHelpPrompt(normalizedQuestion, meal, history));
+        if (!text) {
+            throw new Error('AI:n returnerade ett tomt svar.');
+        }
+        return { text };
+    } catch (error) {
+        console.error('Error asking AI about recipe:', error);
+        const suggested = getSuggestedAlternativeModel();
+        throw new Error(toUserFriendlyError(error, suggested));
+    }
+};
 
 /**
  * Genererar ett komplett recept baserat på en fri textprompt.

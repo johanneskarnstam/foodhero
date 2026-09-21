@@ -9,6 +9,7 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
 - **Interaktiv måltidsplanerare**: Planera veckans luncher och middagar med ett intuitivt visuellt gränssnitt.
 - **Recepthantering**: Spara och organisera dina favoritrecept med ingredienser, instruktioner och taggar.
 - **AI-komplettering och generering av recept**: Skapa nya recept från fri textprompt eller komplettera automatiskt ofärdiga recept (ingredienser, tillagningssteg, portioner och taggar) via Google Gemini AI direkt i appen.
+- **AI-hjälp inne i receptvyn**: Ställ kontextmedvetna frågor om ingredienser, ersättare, tillagning och portioner utan att ändra receptet.
 - **AI-modellväljare med prestandaindex**: Välj och anpassa Gemini-modell i inställningarna. Modellerna rangordnas med bäst prestanda överst, har tydliga beskrivningar av sina styrkor och ett beräknat prestandaindex (1.0–10.0) med förklarande modal.
 - **Intelligenta modellförslag & automatisk fallback**: Om vald modell är överbelastad, inte svarar eller inte kan leverera resultat föreslås automatiskt en lämplig alternativ modell med snabbvalsknapp direkt i felvyn samt automatisk fallback vid nätverks- och kapacitetsfel.
 - **Receptanalysator**: Klistra in recepttext eller webbadresser, så extraherar FoodHero automatiskt ingredienser direkt till din inköpslista.
@@ -85,6 +86,18 @@ FoodHero är en modern och intuitiv app för måltidsplanering och inköpslistor
    npm run dev
    ```
 4. Öppna [http://localhost:5173](http://localhost:5173) i din webbläsare.
+
+### AI-inställningar
+
+Gemini-baserade funktioner använder samma nycklar som resten av appen:
+
+```env
+VITE_GEMINI_KEY=din_gemini_nyckel
+# eller
+VITE_GEMINI_API_KEY=din_gemini_nyckel
+```
+
+För AI-hjälp i receptvyn krävs ingen separat nyckel eller extra Firebase-konfiguration; samma modellinställning som övriga AI-funktioner används.
 
 ### Bildsökning för recept
 

@@ -637,6 +637,21 @@
     "searchImage": "Sök bild med API",
     "removeImage": "Ta bort bild"
   },
+  "recipeAiHelp": {
+    "title": "Fråga AI om receptet",
+    "openButton": "Fråga AI",
+    "intro": "Fråga om ingredienser, tillagningssteg eller möjliga ersättare.",
+    "quickQuestionsLabel": "Vanliga frågor",
+    "quickQuestionSubstitute": "Vad kan jag använda i stället?",
+    "quickQuestionMissing": "Vad gör jag om jag saknar en ingrediens?",
+    "quickQuestionSteps": "Kan du förklara tillagningsstegen?",
+    "questionLabel": "Din fråga",
+    "placeholder": "T.ex. Jag saknar grädde, vad kan jag använda?",
+    "send": "Skicka fråga",
+    "loading": "AI funderar...",
+    "retry": "Försök igen",
+    "disclaimer": "AI-svar kan vara felaktiga. Kontrollera alltid allergier och livsmedelssäkerhet."
+  },
   "autocomplete": {
     "tooltip": "Tryck på <kbd>Tab</kbd> eller klicka för att slutföra",
     "tapToComplete": "Klicka för att slutföra"

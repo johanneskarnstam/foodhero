@@ -144,6 +144,17 @@ export interface Meal {
     instructions?: string[];
 }
 
+export type RecipeAiMessageRole = 'user' | 'assistant';
+
+export interface RecipeAiMessage {
+    role: RecipeAiMessageRole;
+    content: string;
+}
+
+export interface RecipeAiAnswer {
+    text: string;
+}
+
 export interface QuickItem {
     key: string;
     emoji: string;

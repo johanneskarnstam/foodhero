@@ -22,6 +22,7 @@ import { getDayName } from '../utils/dateUtils';
 import { useRecipeTimers } from '../hooks/useRecipeTimers';
 import { RecipeTimerBar } from './RecipeTimerBar';
 import { parseStepTimers, formatRemainingTime } from '../utils/timerUtils';
+import { RecipeAiHelpModal } from './RecipeAiHelpModal';
 
 interface MealDetailModalProps {
     isOpen: boolean;
@@ -59,6 +60,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showCloseQuestion, setShowCloseQuestion] = useState(false);
     const [showPlanMealPrompt, setShowPlanMealPrompt] = useState(false);
+    const [showRecipeAiHelp, setShowRecipeAiHelp] = useState(false);
 
     const {
         timers,
@@ -456,6 +458,14 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                                 <span>{t('common.delete', 'Ta bort')}</span>
                             </button>
                         )}
+                        <button
+                            type="button"
+                            onClick={() => setShowRecipeAiHelp(true)}
+                            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 border border-purple-200/60 dark:border-purple-800/40 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors"
+                        >
+                            <Sparkles size={13} />
+                            <span>{t('recipeAiHelp.openButton', 'Fråga AI')}</span>
+                        </button>
                     </div>
 
                     {/* Primary actions */}
@@ -494,6 +504,12 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                 confirmText={t('common.delete', 'Ta bort')}
                 cancelText={t('common.cancel', 'Avbryt')}
                 isDestructive={true}
+            />
+
+            <RecipeAiHelpModal
+                isOpen={showRecipeAiHelp}
+                onClose={() => setShowRecipeAiHelp(false)}
+                meal={meal}
             />
 
             {showPlanMealPrompt && (

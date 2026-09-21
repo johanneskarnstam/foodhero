@@ -636,6 +636,21 @@
     "searchImage": "Search image with API",
     "removeImage": "Remove image"
   },
+  "recipeAiHelp": {
+    "title": "Ask AI about this recipe",
+    "openButton": "Ask AI",
+    "intro": "Ask about ingredients, cooking steps, or possible substitutions.",
+    "quickQuestionsLabel": "Common questions",
+    "quickQuestionSubstitute": "What can I use instead?",
+    "quickQuestionMissing": "What if I am missing an ingredient?",
+    "quickQuestionSteps": "Can you explain the cooking steps?",
+    "questionLabel": "Your question",
+    "placeholder": "E.g. I am missing cream, what can I use?",
+    "send": "Send question",
+    "loading": "AI is thinking...",
+    "retry": "Try again",
+    "disclaimer": "AI answers may be inaccurate. Always check allergies and food safety."
+  },
   "autocomplete": {
     "tooltip": "Press <kbd>Tab</kbd> or tap to complete",
     "tapToComplete": "Tap to complete"

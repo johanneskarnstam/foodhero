@@ -1,5 +1,10 @@
 [
   {
+    "hash": "66ca7cac532f1dedc84a8343b7cb6299ae63853c",
+    "date": "2026-09-19 11:07:37 +0200",
+    "message": "feat: lägg till automatisk bildsökning för recept"
+  },
+  {
     "hash": "29453e836a483c57bbc744622c270545950834ce",
     "date": "2026-09-18 14:05:11 +0200",
     "message": "feat: prestandaindex, modellsortering och intelligenta modellförslag vid AI-fel"
@@ -93,10 +98,5 @@
     "hash": "a62af338864ef12bd652659d6336b58ed2df4840",
     "date": "2026-09-17 13:42:51 +0200",
     "message": "fix: justera responsiv layout för IngredientSearchView på mobilen"
-  },
-  {
-    "hash": "e1ff571282c68d7513a94dfbd5eb345da42a0f26",
-    "date": "2026-09-17 13:30:34 +0200",
-    "message": "feat: lägg till planeringsprompt för shopping-ikonen och möjlighet att planera flera tillfällen"
   }
 ]

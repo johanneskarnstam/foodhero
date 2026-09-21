@@ -138,6 +138,20 @@ describe('MealDetailModal', () => {
         expect(mockOnTagClick).toHaveBeenCalledWith('Fisk');
     });
 
+    it('opens the AI help modal from the recipe actions', () => {
+        render(
+            <MealDetailModal
+                isOpen={true}
+                onClose={mockOnClose}
+                meal={mockMeal}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /Fråga AI/i }));
+
+        expect(screen.getByRole('heading', { name: 'recipeAiHelp.title' })).toBeInTheDocument();
+    });
+
     it('triggers action callbacks when action buttons are clicked', async () => {
         render(
             <MealDetailModal
