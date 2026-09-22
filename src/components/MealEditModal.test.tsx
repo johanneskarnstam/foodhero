@@ -5,7 +5,6 @@ import { Meal } from '../types';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { useToast } from '../context/ToastContext';
-import { useAiRecipe } from '../hooks/useAiRecipe';
 
 vi.mock('../context/ToastContext');
 const mockEnrichMeal = vi.fn();

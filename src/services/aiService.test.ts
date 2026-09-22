@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { isRetryableError, FALLBACK_MODEL, generateRecipe, enrichMeal } from './aiService';
+import { isRetryableError, FALLBACK_MODEL } from './aiService';
 
 // Mocka imageService
 vi.mock('./imageService', () => ({

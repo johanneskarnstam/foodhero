@@ -1,5 +1,15 @@
 [
   {
+    "hash": "9837ceb976327075e41b9d0e147d247ffb5ae6c1",
+    "date": "2026-09-22 15:34:50 +0200",
+    "message": "Upgraded npm libraries"
+  },
+  {
+    "hash": "dc91489c4650dbd9cd7aed7b14cda8ba9bdad3c2",
+    "date": "2026-09-21 16:03:37 +0200",
+    "message": "feat(ci): add Firebase and API environment variables to workflows"
+  },
+  {
     "hash": "097b43b68e1e95cb93f7cae9769c3524e5aa3900",
     "date": "2026-09-21 15:33:37 +0200",
     "message": "fix(imageService): use runtime env vars and update tests"
@@ -88,15 +98,5 @@
     "hash": "21836ebf215a7816a70db66aa31f90e184484d0b",
     "date": "2026-09-17 17:50:53 +0200",
     "message": "feat: lägg till knapp för att hämta recept med AI i måltidsdetaljmodal"
-  },
-  {
-    "hash": "7e0edcda851b6e8a0d1da0ebaa456f103ec6c951",
-    "date": "2026-09-17 16:42:51 +0200",
-    "message": "feat: öppna receptmodal vid klick på inplanerad måltid på hemsidan"
-  },
-  {
-    "hash": "12b9c5bacede86fed6349cfb87e0efa4af84c82e",
-    "date": "2026-09-17 16:21:48 +0200",
-    "message": "feat: lägg till funktion för att spara enhetsdebuginfo med titel och visa sparade poster på /debug sidan"
   }
 ]
