@@ -268,9 +268,9 @@ describe('HomeView Component', () => {
 
         expect(screen.getByText('Lasagne al Forno')).toBeDefined();
 
-        // Click meal plan card - should open modal, not navigate
-        const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
-        fireEvent.click(mealCard);
+        // Click meal name - should open modal, not navigate
+        const mealName = screen.getByText('Lasagne al Forno').closest('button')!;
+        fireEvent.click(mealName);
         // Since MealDetailModal is mocked, we just verify that navigation did not occur
         expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -286,9 +286,9 @@ describe('HomeView Component', () => {
         fireEvent.keyDown(shoppingCard, { key: 'Enter' });
         expect(mockNavigate).toHaveBeenCalledWith('/shopping');
 
-        // For meal plan card without a planned meal, it should navigate to /mealplan
-        const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
-        fireEvent.keyDown(mealCard, { key: ' ' });
+        // For meal plan header with arrow, it should navigate to /mealplan
+        const mealPlanHeader = screen.getByLabelText('Matsedel');
+        fireEvent.keyDown(mealPlanHeader, { key: ' ' });
         expect(mockNavigate).toHaveBeenCalledWith('/mealplan');
     });
 
@@ -514,9 +514,9 @@ describe('HomeView Component', () => {
                 </MemoryRouter>
             );
 
-            // Click meal card to open modal
-            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
-            fireEvent.click(mealCard);
+            // Click meal name to open modal
+            const mealName = screen.getByText('Pasta Carbonara').closest('button')!;
+            fireEvent.click(mealName);
 
             // Click the AI enrich button in the mocked modal
             const enrichBtn = await screen.findByTestId('ai-enrich-btn');
@@ -558,8 +558,8 @@ describe('HomeView Component', () => {
                 </MemoryRouter>
             );
 
-            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
-            fireEvent.click(mealCard);
+            const mealName = screen.getByText('Pasta Carbonara').closest('button')!;
+            fireEvent.click(mealName);
 
             const enrichBtn = await screen.findByTestId('ai-enrich-btn');
             fireEvent.click(enrichBtn);
@@ -584,8 +584,8 @@ describe('HomeView Component', () => {
                 </MemoryRouter>
             );
 
-            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
-            fireEvent.click(mealCard);
+            const mealName = screen.getByText('Pasta Carbonara').closest('button')!;
+            fireEvent.click(mealName);
 
             const enrichBtn = await screen.findByTestId('ai-enrich-btn');
             fireEvent.click(enrichBtn);
@@ -610,8 +610,8 @@ describe('HomeView Component', () => {
                 </MemoryRouter>
             );
 
-            const mealCard = screen.getByText('Måltidsplanering').closest('[role="button"]')!;
-            fireEvent.click(mealCard);
+            const mealName = screen.getByText('Pasta Carbonara').closest('button')!;
+            fireEvent.click(mealName);
 
             const enrichBtn = await screen.findByTestId('ai-enrich-btn');
             expect(enrichBtn).toBeDisabled();

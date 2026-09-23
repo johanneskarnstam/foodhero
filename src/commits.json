@@ -1,5 +1,10 @@
 [
   {
+    "hash": "31a014ae1692423fe8cf9e8be24d22bdd1506e23",
+    "date": "2026-09-22 15:46:57 +0200",
+    "message": "Minor fixes after upgrade"
+  },
+  {
     "hash": "9837ceb976327075e41b9d0e147d247ffb5ae6c1",
     "date": "2026-09-22 15:34:50 +0200",
     "message": "Upgraded npm libraries"
@@ -93,10 +98,5 @@
     "hash": "c7124f1232574b555445667b80d3bb2f271bbb47",
     "date": "2026-09-18 05:12:31 +0200",
     "message": "Debug info"
-  },
-  {
-    "hash": "21836ebf215a7816a70db66aa31f90e184484d0b",
-    "date": "2026-09-17 17:50:53 +0200",
-    "message": "feat: lägg till knapp för att hämta recept med AI i måltidsdetaljmodal"
   }
 ]

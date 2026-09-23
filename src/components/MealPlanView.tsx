@@ -375,18 +375,6 @@ export const MealPlanView: React.FC = () => {
                                     </span>
                                 )}
                             </div>
-                            {meal?.tags && meal.tags.length > 0 && (
-                                <div className="flex items-center gap-1 mt-1 flex-wrap">
-                                    {meal.tags.map(tag => (
-                                        <span 
-                                            key={tag} 
-                                            className="px-1.5 py-0.5 text-[10px] font-medium rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
                         </button>
 
                         <div className="flex items-center gap-1 flex-shrink-0">

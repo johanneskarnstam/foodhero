@@ -387,47 +387,7 @@ export const HomeView: React.FC = () => {
             </div>
 
             {/* Sektion 2: Måltidsplanering */}
-            <div
-                role="button"
-                tabIndex={0}
-                onClick={() => {
-                    if (nextMealInfo.hasMeal && nextMealInfo.meal) {
-                        setSelectedMeal(nextMealInfo.meal);
-                        setShowMealDetailModal(true);
-                    } else if (nextMealInfo.hasMeal && !nextMealInfo.meal) {
-                        // Skapa ett temporärt Meal-objekt för måltider utan recept
-                        const tempMeal: Meal = {
-                            id: nextMealInfo.mealId || uuidv4(),
-                            name: nextMealInfo.title || t('meals.unknownMeal'),
-                            createdAt: new Date().toISOString(),
-                        };
-                        setSelectedMeal(tempMeal);
-                        setShowMealDetailModal(true);
-                    } else {
-                        navigate('/mealplan');
-                    }
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        if (nextMealInfo.hasMeal && nextMealInfo.meal) {
-                            setSelectedMeal(nextMealInfo.meal);
-                            setShowMealDetailModal(true);
-                        } else if (nextMealInfo.hasMeal && !nextMealInfo.meal) {
-                            const tempMeal: Meal = {
-                                id: nextMealInfo.mealId || uuidv4(),
-                                name: nextMealInfo.title || t('meals.unknownMeal'),
-                                createdAt: new Date().toISOString(),
-                            };
-                            setSelectedMeal(tempMeal);
-                            setShowMealDetailModal(true);
-                        } else {
-                            navigate('/mealplan');
-                        }
-                    }
-                }}
-                className="group relative bg-white dark:bg-gray-800/90 rounded-2xl p-5 md:p-6 border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md hover:border-amber-500/50 dark:hover:border-amber-400/50 transition-all duration-200 cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-            >
+            <div className="group relative bg-white dark:bg-gray-800/90 rounded-2xl p-5 md:p-6 border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md hover:border-amber-500/50 dark:hover:border-amber-400/50 transition-all duration-200 text-left">
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
@@ -443,15 +403,62 @@ export const HomeView: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-1 transition-all">
+                    <button
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => navigate('/mealplan')}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                navigate('/mealplan');
+                            }
+                        }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+                        aria-label={t('nav.mealplan', 'Matsedel')}
+                    >
                         <ArrowRight size={18} />
-                    </div>
+                    </button>
                 </div>
 
                 {/* Innehåll: Planerad måltid ELLER uppmaning */}
                 <div className="pt-2 border-t border-gray-100 dark:border-gray-700/60">
                     {nextMealInfo.hasMeal ? (
-                        <div className="flex items-center gap-3 py-1.5">
+                        <button
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => {
+                                if (nextMealInfo.meal) {
+                                    setSelectedMeal(nextMealInfo.meal);
+                                    setShowMealDetailModal(true);
+                                } else {
+                                    const tempMeal: Meal = {
+                                        id: nextMealInfo.mealId || uuidv4(),
+                                        name: nextMealInfo.title || t('meals.unknownMeal'),
+                                        createdAt: new Date().toISOString(),
+                                    };
+                                    setSelectedMeal(tempMeal);
+                                    setShowMealDetailModal(true);
+                                }
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    if (nextMealInfo.meal) {
+                                        setSelectedMeal(nextMealInfo.meal);
+                                        setShowMealDetailModal(true);
+                                    } else {
+                                        const tempMeal: Meal = {
+                                            id: nextMealInfo.mealId || uuidv4(),
+                                            name: nextMealInfo.title || t('meals.unknownMeal'),
+                                            createdAt: new Date().toISOString(),
+                                        };
+                                        setSelectedMeal(tempMeal);
+                                        setShowMealDetailModal(true);
+                                    }
+                                }
+                            }}
+                            className="w-full flex items-center gap-3 py-1.5 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg p-1 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                        >
                             <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex-shrink-0">
                                 <UtensilsCrossed size={16} />
                             </div>
@@ -463,7 +470,7 @@ export const HomeView: React.FC = () => {
                                     {nextMealInfo.label}
                                 </span>
                             </div>
-                        </div>
+                        </button>
                     ) : (
                         <div className="flex flex-col gap-3 py-2">
                             <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
