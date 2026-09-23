@@ -388,7 +388,19 @@ export const HomeView: React.FC = () => {
 
             {/* Sektion 2: Måltidsplanering */}
             <div className="group relative bg-white dark:bg-gray-800/90 rounded-2xl p-5 md:p-6 border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md hover:border-amber-500/50 dark:hover:border-amber-400/50 transition-all duration-200 text-left">
-                <div className="flex items-center justify-between mb-3">
+                <button
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => navigate('/mealplan')}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            navigate('/mealplan');
+                        }
+                    }}
+                    className="w-full flex items-center justify-between mb-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg p-1 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    aria-label={t('nav.mealplan', 'Matsedel')}
+                >
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
                             <CalendarDays size={22} />
@@ -403,22 +415,10 @@ export const HomeView: React.FC = () => {
                         </div>
                     </div>
 
-                    <button
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => navigate('/mealplan')}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                navigate('/mealplan');
-                            }
-                        }}
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-                        aria-label={t('nav.mealplan', 'Matsedel')}
-                    >
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-1 transition-all">
                         <ArrowRight size={18} />
-                    </button>
-                </div>
+                    </div>
+                </button>
 
                 {/* Innehåll: Planerad måltid ELLER uppmaning */}
                 <div className="pt-2 border-t border-gray-100 dark:border-gray-700/60">

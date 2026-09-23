@@ -287,7 +287,7 @@ describe('HomeView Component', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/shopping');
 
         // For meal plan header with arrow, it should navigate to /mealplan
-        const mealPlanHeader = screen.getByLabelText('Matsedel');
+        const mealPlanHeader = screen.getByText('Måltidsplanering').closest('button')!;
         fireEvent.keyDown(mealPlanHeader, { key: ' ' });
         expect(mockNavigate).toHaveBeenCalledWith('/mealplan');
     });
