@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { playTimerAlert } from '../utils/timerUtils';
 
 export interface RecipeTimer {
     id: string;
@@ -10,35 +11,6 @@ export interface RecipeTimer {
     isRunning: boolean;
     isFinished: boolean;
 }
-
-export const playTimerAlert = () => {
-    try {
-        const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        if (!AudioContextClass) return;
-        const ctx = new AudioContextClass();
-        const now = ctx.currentTime;
-
-        // 3 pleasant tone beeps
-        [0, 0.2, 0.4].forEach((delay, idx) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800 + idx * 150, now + delay);
-            gain.gain.setValueAtTime(0.25, now + delay);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.18);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(now + delay);
-            osc.stop(now + delay + 0.18);
-        });
-
-        if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
-            navigator.vibrate([200, 100, 200]);
-        }
-    } catch {
-        // Silently catch audio policy blocks
-    }
-};
 
 export const useRecipeTimers = () => {
     const [timers, setTimers] = useState<RecipeTimer[]>([]);

@@ -4,6 +4,90 @@ export interface DetectedTimer {
     totalSeconds: number;
 }
 
+export const TIMER_SIGNAL_STORAGE_KEY = 'foodhero.timerSignal';
+export const TIMER_SIGNAL_OPTIONS = ['classic', 'bell', 'soft'] as const;
+export type TimerSignal = typeof TIMER_SIGNAL_OPTIONS[number];
+
+export const parseTimerSignal = (value: string | null): TimerSignal =>
+    TIMER_SIGNAL_OPTIONS.find((signal) => signal === value) ?? 'classic';
+
+export const getTimerSignal = (): TimerSignal =>
+    typeof window === 'undefined'
+        ? 'classic'
+        : parseTimerSignal(window.localStorage.getItem(TIMER_SIGNAL_STORAGE_KEY));
+
+export const saveTimerSignal = (signal: TimerSignal): void => {
+    if (typeof window !== 'undefined') {
+        window.localStorage.setItem(TIMER_SIGNAL_STORAGE_KEY, signal);
+    }
+};
+
+export const playTimerAlert = (signal: TimerSignal = getTimerSignal()): void => {
+    const presets: Record<TimerSignal, {
+        waveform: OscillatorType;
+        volume: number;
+        tones: { frequency: number; delay: number; duration: number }[];
+        vibration: number[];
+    }> = {
+        classic: {
+            waveform: 'sine',
+            volume: 0.25,
+            tones: [
+                { frequency: 800, delay: 0, duration: 0.18 },
+                { frequency: 950, delay: 0.2, duration: 0.18 },
+                { frequency: 1100, delay: 0.4, duration: 0.18 },
+            ],
+            vibration: [200, 100, 200],
+        },
+        bell: {
+            waveform: 'triangle',
+            volume: 0.22,
+            tones: [
+                { frequency: 880, delay: 0, duration: 0.32 },
+                { frequency: 1175, delay: 0.24, duration: 0.32 },
+                { frequency: 1568, delay: 0.48, duration: 0.38 },
+            ],
+            vibration: [260, 90, 260],
+        },
+        soft: {
+            waveform: 'sine',
+            volume: 0.16,
+            tones: [
+                { frequency: 523, delay: 0, duration: 0.45 },
+                { frequency: 659, delay: 0.36, duration: 0.45 },
+            ],
+            vibration: [120, 80, 120],
+        },
+    };
+
+    try {
+        const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioContextClass) {
+            const ctx = new AudioContextClass();
+            const now = ctx.currentTime;
+
+            presets[signal].tones.forEach(({ frequency, delay, duration }) => {
+                const oscillator = ctx.createOscillator();
+                const gain = ctx.createGain();
+                oscillator.type = presets[signal].waveform;
+                oscillator.frequency.setValueAtTime(frequency, now + delay);
+                gain.gain.setValueAtTime(presets[signal].volume, now + delay);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + delay + duration);
+                oscillator.connect(gain);
+                gain.connect(ctx.destination);
+                oscillator.start(now + delay);
+                oscillator.stop(now + delay + duration);
+            });
+        }
+
+        if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+            navigator.vibrate(presets[signal].vibration);
+        }
+    } catch {
+        // Audio may be blocked by browser policy.
+    }
+};
+
 /**
  * Format seconds into MM:SS or H:MM:SS
  */

@@ -6,6 +6,7 @@ import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useWakeLock } from '../hooks/useWakeLock';
+import * as timerUtils from '../utils/timerUtils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../context/AppContext');
@@ -33,6 +34,7 @@ describe('SettingsView Export & Import Functionality', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        localStorage.removeItem(timerUtils.TIMER_SIGNAL_STORAGE_KEY);
 
         vi.mocked(useAuth).mockReturnValue({
             user: null,
@@ -77,6 +79,20 @@ describe('SettingsView Export & Import Functionality', () => {
         render(<SettingsView />);
         expect(screen.getByText('settings.exportTitle')).toBeInTheDocument();
     }, 10000);
+
+    it('saves the timer signal selection and previews that signal', () => {
+        const playTimerAlert = vi.spyOn(timerUtils, 'playTimerAlert');
+        render(<SettingsView />);
+
+        const signalSelect = screen.getByLabelText('settings.timerSignal') as HTMLSelectElement;
+        expect(signalSelect.value).toBe('classic');
+        fireEvent.change(signalSelect, { target: { value: 'bell' } });
+        expect(localStorage.getItem(timerUtils.TIMER_SIGNAL_STORAGE_KEY)).toBe('bell');
+
+        fireEvent.click(screen.getByRole('button', { name: 'settings.previewTimerSignal' }));
+        expect(playTimerAlert).toHaveBeenCalledWith('bell');
+        playTimerAlert.mockRestore();
+    });
 
     it('opens export section and shows active items only by default in simple array format', () => {
         render(<SettingsView />);

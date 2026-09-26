@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, CalendarDays, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, Sparkles, Plus, X } from 'lucide-react';
+import { ShoppingCart, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, Plus, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
 import { useToast } from '../context/ToastContext';
@@ -9,8 +9,7 @@ import { useAiRecipe } from '../hooks/useAiRecipe';
 import { getSuggestedAlternativeModel } from '../services/aiService';
 import { formatDate } from '../utils/dateUtils';
 import { v4 as uuidv4 } from 'uuid';
-import type { List, Item, MealType, HistoryItem, Meal } from '../types';
-import { MealPlanEditModal } from './MealPlanEditModal';
+import type { List, Item, HistoryItem, Meal } from '../types';
 import { MealDetailModal } from './MealDetailModal';
 
 export const HomeView: React.FC = () => {
@@ -82,33 +81,21 @@ export const HomeView: React.FC = () => {
         setShowSuggestions(false);
     };
 
-    // State för måltidsplaneringsmodal
-    const [mealPlanModal, setMealPlanModal] = useState<{
-        isOpen: boolean;
-        date: Date | null;
-        type: MealType | null;
-    }>({ isOpen: false, date: null, type: null });
-
     // State för receptmodal
     const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
     const [showMealDetailModal, setShowMealDetailModal] = useState(false);
 
-    const { uncompletedItems, completedCount, totalCount, previewItems, moreCount } = useMemo(() => {
+    const { uncompletedItems, completedCount, totalCount } = useMemo(() => {
         if (!list || !list.items) {
-            return { uncompletedItems: [], completedCount: 0, totalCount: 0, previewItems: [], moreCount: 0 };
+            return { uncompletedItems: [], completedCount: 0, totalCount: 0 };
         }
         const total = list.items.length;
         const completed = list.items.filter((i: Item) => i.completed).length;
         const uncompleted = list.items.filter((i: Item) => !i.completed);
-        const preview = uncompleted.slice(0, 4);
-        const more = Math.max(0, uncompleted.length - 4);
-
         return {
             uncompletedItems: uncompleted,
             completedCount: completed,
             totalCount: total,
-            previewItems: preview,
-            moreCount: more,
         };
     }, [list]);
 
@@ -150,23 +137,11 @@ export const HomeView: React.FC = () => {
             return null;
         };
 
-        // Get missing meal types for target date
-        const getMissingMealTypes = (d: Date) => {
-            const plan = getPlanForDate(d);
-            const dateStr = formatDate(d);
-            const day = plan?.days.find((dayPlan) => dayPlan.date === dateStr);
-            const existingMealTypes = day?.meals.map((m) => m.type) || [];
-            const allMealTypes: MealType[] = ['lunch', 'dinner'];
-            return allMealTypes.filter((type) => !existingMealTypes.includes(type));
-        };
-
         // Funktion för att hitta fullständigt Meal-objekt baserat på customTitle
         const findMealByTitle = (title: string): Meal | null => {
             if (!title) return null;
             return meals.find(meal => meal.name.toLowerCase() === title.toLowerCase()) || null;
         };
-
-        const missingMealTypes = getMissingMealTypes(targetDate);
 
         // 1. Kolla targetDate (idag eller imorgon beroende på klockslag)
         const primaryMatch = getMealForDay(targetDate);
@@ -177,7 +152,6 @@ export const HomeView: React.FC = () => {
                 title: primaryMatch.meal.plannedMeal.customTitle,
                 label: isTomorrow ? t('dashboard.tomorrowDinner') : t('dashboard.todayDinner'),
                 targetDate,
-                missingMealTypes,
                 mealId: primaryMatch.meal.plannedMeal.id,
                 meal: mealObj,
                 mealType: primaryMatch.mealType,
@@ -196,7 +170,6 @@ export const HomeView: React.FC = () => {
                     title: tomorrowMatch.meal.plannedMeal.customTitle,
                     label: t('dashboard.tomorrowDinner'),
                     targetDate: tomorrow,
-                    missingMealTypes: getMissingMealTypes(tomorrow),
                     mealId: tomorrowMatch.meal.plannedMeal.id,
                     meal: mealObj,
                     mealType: tomorrowMatch.mealType,
@@ -218,7 +191,6 @@ export const HomeView: React.FC = () => {
                     title: match.meal.plannedMeal.customTitle,
                     label: `${capitalizedDay} - ${t('dashboard.nextMeal')}`,
                     targetDate: upcoming,
-                    missingMealTypes: getMissingMealTypes(upcoming),
                     mealId: match.meal.plannedMeal.id,
                     meal: mealObj,
                     mealType: match.mealType,
@@ -226,22 +198,53 @@ export const HomeView: React.FC = () => {
             }
         }
 
-        return { hasMeal: false, title: '', label: '', targetDate, missingMealTypes, mealId: null, meal: null, mealType: null };
+        return { hasMeal: false, title: '', label: '', targetDate, mealId: null, meal: null, mealType: null };
     }, [getPlanForDate, mealPlans, meals, t]);
 
     return (
         <div className="max-w-3xl mx-auto space-y-6 pb-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                        {t('dashboard.title', 'Hem')}
-                    </h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                        {t('app.title', 'FoodHero')}
-                    </p>
+            <section className="flex items-center gap-4 rounded-xl bg-blue-600 px-5 py-4 text-white shadow-sm">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <UtensilsCrossed size={21} className="shrink-0 text-blue-100" />
+                    <div className="min-w-0">
+                        <p className="text-xs font-medium text-blue-100">
+                            {nextMealInfo.hasMeal ? nextMealInfo.label : t('dashboard.nextMeal', 'Nästa måltid')}
+                        </p>
+                        {nextMealInfo.hasMeal ? (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (nextMealInfo.meal) {
+                                        setSelectedMeal(nextMealInfo.meal);
+                                    } else {
+                                        setSelectedMeal({
+                                            id: nextMealInfo.mealId || uuidv4(),
+                                            name: nextMealInfo.title || t('meals.unknownMeal'),
+                                            createdAt: new Date().toISOString(),
+                                        });
+                                    }
+                                    setShowMealDetailModal(true);
+                                }}
+                                className="block max-w-full truncate text-left text-lg font-semibold text-white hover:underline focus:outline-none focus:ring-2 focus:ring-white"
+                            >
+                                {nextMealInfo.title}
+                            </button>
+                        ) : (
+                            <p className="text-sm font-semibold">
+                                {t('dashboard.noMealsPlannedPrompt', 'Ingen måltid planerad')}
+                            </p>
+                        )}
+                    </div>
                 </div>
-            </div>
+                <button
+                    type="button"
+                    onClick={() => navigate('/mealplan')}
+                    aria-label={t('nav.mealplan', 'Matsedel')}
+                    className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                    <ArrowRight size={20} />
+                </button>
+            </section>
 
             {/* Sektion 1: Inköpslista med integrerat snabbfält */}
             <div className="bg-white dark:bg-gray-800/90 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 shadow-sm overflow-hidden">
@@ -305,21 +308,20 @@ export const HomeView: React.FC = () => {
                 )}
 
                 {/* Förhandsvisning av varor */}
-                {uncompletedItems.length > 0 ? (
+                {totalCount > 0 ? (
                     <div className="space-y-2 pt-1 border-t border-gray-100 dark:border-gray-700/60">
-                        {previewItems.map((item) => (
+                        {list?.items?.map((item) => (
                             <div key={item.id} className="flex items-center gap-2.5 text-sm text-gray-700 dark:text-gray-300">
-                                <Circle size={13} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                                <span className="truncate">{item.text}</span>
+                                {item.completed ? (
+                                    <CheckCircle2 size={14} className="text-emerald-500 flex-shrink-0" />
+                                ) : (
+                                    <Circle size={13} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                )}
+                                <span className={`truncate ${item.completed ? 'text-gray-400 line-through dark:text-gray-500' : ''}`}>
+                                    {item.text}
+                                </span>
                             </div>
                         ))}
-
-                        {/* Indikation om fler varor */}
-                        {moreCount > 0 && (
-                            <div className="pt-1 text-xs font-medium text-blue-600 dark:text-blue-400">
-                                {t('dashboard.moreItems', { count: moreCount })}
-                            </div>
-                        )}
                     </div>
                 ) : (
                     <div className="py-2 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-700/60 pt-3">
@@ -385,146 +387,6 @@ export const HomeView: React.FC = () => {
                     </form>
                 </div>
             </div>
-
-            {/* Sektion 2: Måltidsplanering */}
-            <div className="group relative bg-white dark:bg-gray-800/90 rounded-2xl p-5 md:p-6 border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md hover:border-amber-500/50 dark:hover:border-amber-400/50 transition-all duration-200 text-left">
-                <button
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => navigate('/mealplan')}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            navigate('/mealplan');
-                        }
-                    }}
-                    className="w-full flex items-center justify-between mb-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg p-1 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                    aria-label={t('nav.mealplan', 'Matsedel')}
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
-                            <CalendarDays size={22} />
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                                {t('dashboard.mealPlanTitle', 'Måltidsplanering')}
-                            </h2>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {nextMealInfo.hasMeal ? nextMealInfo.label : t('nav.mealplan', 'Matsedel')}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-1 transition-all">
-                        <ArrowRight size={18} />
-                    </div>
-                </button>
-
-                {/* Innehåll: Planerad måltid ELLER uppmaning */}
-                <div className="pt-2 border-t border-gray-100 dark:border-gray-700/60">
-                    {nextMealInfo.hasMeal ? (
-                        <button
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => {
-                                if (nextMealInfo.meal) {
-                                    setSelectedMeal(nextMealInfo.meal);
-                                    setShowMealDetailModal(true);
-                                } else {
-                                    const tempMeal: Meal = {
-                                        id: nextMealInfo.mealId || uuidv4(),
-                                        name: nextMealInfo.title || t('meals.unknownMeal'),
-                                        createdAt: new Date().toISOString(),
-                                    };
-                                    setSelectedMeal(tempMeal);
-                                    setShowMealDetailModal(true);
-                                }
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    if (nextMealInfo.meal) {
-                                        setSelectedMeal(nextMealInfo.meal);
-                                        setShowMealDetailModal(true);
-                                    } else {
-                                        const tempMeal: Meal = {
-                                            id: nextMealInfo.mealId || uuidv4(),
-                                            name: nextMealInfo.title || t('meals.unknownMeal'),
-                                            createdAt: new Date().toISOString(),
-                                        };
-                                        setSelectedMeal(tempMeal);
-                                        setShowMealDetailModal(true);
-                                    }
-                                }
-                            }}
-                            className="w-full flex items-center gap-3 py-1.5 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-lg p-1 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                        >
-                            <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex-shrink-0">
-                                <UtensilsCrossed size={16} />
-                            </div>
-                            <div className="min-w-0">
-                                <span className="text-sm font-semibold text-gray-900 dark:text-white truncate block">
-                                    {nextMealInfo.title}
-                                </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                    {nextMealInfo.label}
-                                </span>
-                            </div>
-                        </button>
-                    ) : (
-                        <div className="flex flex-col gap-3 py-2">
-                            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
-                                <Sparkles size={18} className="text-amber-500 flex-shrink-0" />
-                                <span className="text-sm font-medium">
-                                    {t('dashboard.noMealsPlannedPrompt', 'Hey, hittar inga planerade måltider, dags att planera matsedeln!')}
-                                </span>
-                            </div>
-                            {nextMealInfo.missingMealTypes.length > 0 && (
-                                <div className="flex flex-wrap gap-2">
-                                    {nextMealInfo.missingMealTypes.map((type) => {
-                                        const isToday = formatDate(nextMealInfo.targetDate) === formatDate(new Date());
-                                        const dayLabel = isToday ? t('dashboard.today', 'idag') : t('dashboard.tomorrow', 'imorgon');
-                                        return (
-                                            <button
-                                                key={type}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setMealPlanModal({
-                                                        isOpen: true,
-                                                        date: nextMealInfo.targetDate,
-                                                        type: type
-                                                    });
-                                                }}
-                                                className="px-3 py-1.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-lg text-xs font-medium hover:bg-amber-100 dark:hover:bg-amber-800/40 transition-colors"
-                                            >
-                                                + {t(`mealTypes.${type}`, type)} {dayLabel}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <MealPlanEditModal
-                isOpen={mealPlanModal.isOpen}
-                onClose={() => setMealPlanModal({ isOpen: false, date: null, type: null })}
-                initialValue=""
-                meals={meals}
-                mealPlans={mealPlans}
-                onSave={async (mealName) => {
-                    if (mealPlanModal.date && mealPlanModal.type) {
-                        await handleMealChange(
-                            mealPlanModal.date,
-                            mealPlanModal.type,
-                            mealName
-                        );
-                    }
-                    setMealPlanModal({ isOpen: false, date: null, type: null });
-                }}
-            />
 
             <MealDetailModal
                 isOpen={showMealDetailModal}

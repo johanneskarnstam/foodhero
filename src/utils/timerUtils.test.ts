@@ -1,7 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import { parseStepTimers, formatRemainingTime, formatDurationLabel } from './timerUtils';
+import {
+    getTimerSignal,
+    parseStepTimers,
+    formatRemainingTime,
+    formatDurationLabel,
+    parseTimerSignal,
+    saveTimerSignal,
+    TIMER_SIGNAL_STORAGE_KEY,
+} from './timerUtils';
 
 describe('timerUtils', () => {
+    describe('timer signal preference', () => {
+        it('defaults to the classic signal and stores a selected signal', () => {
+            localStorage.removeItem(TIMER_SIGNAL_STORAGE_KEY);
+            expect(getTimerSignal()).toBe('classic');
+
+            saveTimerSignal('bell');
+            expect(getTimerSignal()).toBe('bell');
+        });
+
+        it('falls back to the classic signal for invalid stored values', () => {
+            expect(parseTimerSignal('unknown')).toBe('classic');
+        });
+    });
+
     describe('formatRemainingTime', () => {
         it('formats minutes and seconds correctly', () => {
             expect(formatRemainingTime(900)).toBe('15:00');

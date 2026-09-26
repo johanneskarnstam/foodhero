@@ -214,6 +214,14 @@
     "subtitle": "Manage your app preferences and account",
     "language": "Language",
     "theme": "Theme",
+    "timerSignal": "Timer sound",
+    "timerSignalDesc": "Choose how the app timer sounds when it finishes.",
+    "timerSignalOptions": {
+      "classic": "Three tones",
+      "bell": "Bell",
+      "soft": "Soft tone"
+    },
+    "previewTimerSignal": "Preview sound",
     "light": "Light",
     "dark": "Dark",
     "auto": "Auto",

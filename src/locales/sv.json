@@ -215,6 +215,14 @@
     "subtitle": "Hantera dina appinställningar och konto",
     "language": "Språk",
     "theme": "Tema",
+    "timerSignal": "Timersignal",
+    "timerSignalDesc": "Välj hur appens timer låter när den är klar.",
+    "timerSignalOptions": {
+      "classic": "Tre toner",
+      "bell": "Klockspel",
+      "soft": "Mjuk ton"
+    },
+    "previewTimerSignal": "Testa signal",
     "light": "Ljust",
     "dark": "Mörkt",
     "auto": "Auto",

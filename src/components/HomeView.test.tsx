@@ -143,22 +143,22 @@ describe('HomeView Component', () => {
         } as unknown as ReturnType<typeof useAiRecipe>);
     });
 
-    it('renders header and empty states when list and mealplan are empty', () => {
+    it('renders the meal banner and empty shopping-list state', () => {
         render(
             <MemoryRouter>
                 <HomeView />
             </MemoryRouter>
         );
 
-        expect(screen.getByText('Hem')).toBeDefined();
+        expect(screen.getByText('Nästa måltid')).toBeDefined();
+        expect(screen.getByText('Ingen måltid planerad')).toBeDefined();
         expect(screen.getByText('Inköpslista')).toBeDefined();
         expect(screen.getByText('0 varor kvar att handla')).toBeDefined();
         expect(screen.getByText('Inköpslistan är tom')).toBeDefined();
-        expect(screen.getByText('Måltidsplanering')).toBeDefined();
-        expect(screen.getByText('Hey, hittar inga planerade måltider, dags att planera matsedeln!')).toBeDefined();
+        expect(screen.queryByText('Måltidsplanering')).toBeNull();
     });
 
-    it('renders preview of items and more indicator, navigating to /shopping on click', () => {
+    it('renders all uncompleted items and navigates to /shopping on click', () => {
         vi.mocked(useApp).mockReturnValue({
             lists: [
                 {
@@ -184,15 +184,14 @@ describe('HomeView Component', () => {
             </MemoryRouter>
         );
 
-        // Should show preview of first 4 items
+        // All uncompleted items remain visible on the home page.
         expect(screen.getByText('Mjölk')).toBeDefined();
         expect(screen.getByText('Bröd')).toBeDefined();
         expect(screen.getByText('Smör')).toBeDefined();
         expect(screen.getByText('Ägg')).toBeDefined();
-        expect(screen.queryByText('Kaffe')).toBeNull(); // 5th item is behind "+1 till"
-
-        // Indicator for more items (5 uncompleted, 4 shown -> +1 till)
-        expect(screen.getByText('+1 till')).toBeDefined();
+        expect(screen.getByText('Kaffe')).toBeDefined();
+        expect(screen.getByText('Ost')).toBeDefined();
+        expect(screen.queryByText('+1 till')).toBeNull();
         expect(screen.getByText('5 varor kvar att handla')).toBeDefined();
 
         // Click shopping card to navigate
@@ -286,9 +285,9 @@ describe('HomeView Component', () => {
         fireEvent.keyDown(shoppingCard, { key: 'Enter' });
         expect(mockNavigate).toHaveBeenCalledWith('/shopping');
 
-        // For meal plan header with arrow, it should navigate to /mealplan
-        const mealPlanHeader = screen.getByText('Måltidsplanering').closest('button')!;
-        fireEvent.keyDown(mealPlanHeader, { key: ' ' });
+        // The meal banner arrow navigates to the meal plan.
+        const mealPlanButton = screen.getByLabelText('Matsedel');
+        fireEvent.click(mealPlanButton);
         expect(mockNavigate).toHaveBeenCalledWith('/mealplan');
     });
 

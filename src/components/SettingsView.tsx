@@ -2,7 +2,7 @@ import React from 'react';
 import {
     LogOut, SortAsc, Calendar, ChevronDown, Settings, Eye, EyeOff,
     Globe, Sliders, Database, Trash2, Edit3, X, History, User,
-    Download, Copy, Check, Zap, Bug
+    Download, Copy, Check, Zap, Bug, Volume2
 } from 'lucide-react';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { useAuth } from '../context/AuthContext';
@@ -14,6 +14,14 @@ import { useTranslation } from 'react-i18next';
 import { parseJsonItems, convertToItems } from '../utils/importUtils';
 import { Modal } from './Modal';
 import { AiModelSelector } from './AiModelSelector';
+import {
+    getTimerSignal,
+    parseTimerSignal,
+    playTimerAlert,
+    saveTimerSignal,
+    TIMER_SIGNAL_OPTIONS,
+    type TimerSignal,
+} from '../utils/timerUtils';
 
 const SIMPLE_EXAMPLE = `[{"text": "Pajdeg", "note": "1st", "checkIfExistAtHome": true}, {"text": "Mjölk", "note": "1liter"}]`;
 
@@ -78,10 +86,17 @@ export const SettingsView: React.FC = () => {
     const [importError, setImportError] = React.useState('');
     const [clearAllItemsModalOpen, setClearAllItemsModalOpen] = React.useState(false);
     const [quickItemsSettingsModalOpen, setQuickItemsSettingsModalOpen] = React.useState(false);
+    const [timerSignal, setTimerSignal] = React.useState<TimerSignal>(() => getTimerSignal());
     const list = lists.find(l => l.id === defaultListId);
     const sortBy = list?.settings?.defaultSort || 'manual';
 
     const { isSupported, isLocked, requestWakeLock, releaseWakeLock } = useWakeLock();
+
+    const handleTimerSignalChange = (value: string) => {
+        const signal = parseTimerSignal(value);
+        saveTimerSignal(signal);
+        setTimerSignal(signal);
+    };
 
     const [calendarAccordionOpen, setCalendarAccordionOpen] = React.useState(false);
     const [historyAccordionOpen, setHistoryAccordionOpen] = React.useState(false);
@@ -531,6 +546,43 @@ export const SettingsView: React.FC = () => {
                                         {t(`settings.themeModes.${mode}`)}
                                     </button>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* Timer signal */}
+                        <div className="space-y-3">
+                            <div>
+                                <label htmlFor="timer-signal" className="text-sm font-semibold text-gray-600 dark:text-gray-400 flex items-center gap-2 px-1">
+                                    <Volume2 size={16} className="text-gray-400 dark:text-gray-500" />
+                                    {t('settings.timerSignal')}
+                                </label>
+                                <p className="mt-1 px-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                                    {t('settings.timerSignalDesc')}
+                                </p>
+                            </div>
+                            <div className="flex gap-2">
+                                <select
+                                    id="timer-signal"
+                                    value={timerSignal}
+                                    onChange={(event) => handleTimerSignalChange(event.currentTarget.value)}
+                                    className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                                >
+                                    {TIMER_SIGNAL_OPTIONS.map((signal) => (
+                                        <option key={signal} value={signal}>
+                                            {t(`settings.timerSignalOptions.${signal}`)}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    onClick={() => playTimerAlert(timerSignal)}
+                                    aria-label={t('settings.previewTimerSignal')}
+                                    title={t('settings.previewTimerSignal')}
+                                    className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                >
+                                    <Volume2 size={17} />
+                                    <span className="hidden sm:inline">{t('settings.previewTimerSignal')}</span>
+                                </button>
                             </div>
                         </div>
 
