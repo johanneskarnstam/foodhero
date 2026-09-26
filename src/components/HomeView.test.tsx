@@ -72,6 +72,7 @@ vi.mock('react-i18next', () => ({
             const translations: Record<string, string> = {
                 'dashboard.title': 'Hem',
                 'dashboard.shoppingTitle': 'Inköpslista',
+                'lists.completedItems': 'Handlade varor',
                 'dashboard.emptyList': 'Inköpslistan är tom',
                 'dashboard.allDone': 'Allt är inhandlat! 🎉',
                 'dashboard.mealPlanTitle': 'Måltidsplanering',
@@ -158,7 +159,7 @@ describe('HomeView Component', () => {
         expect(screen.queryByText('Måltidsplanering')).toBeNull();
     });
 
-    it('renders all uncompleted items and navigates to /shopping on click', () => {
+    it('renders uncompleted items first with quick add and navigates to /shopping', () => {
         vi.mocked(useApp).mockReturnValue({
             lists: [
                 {
@@ -190,9 +191,19 @@ describe('HomeView Component', () => {
         expect(screen.getByText('Smör')).toBeDefined();
         expect(screen.getByText('Ägg')).toBeDefined();
         expect(screen.getByText('Kaffe')).toBeDefined();
-        expect(screen.getByText('Ost')).toBeDefined();
+        expect(screen.queryByText('Ost')).toBeNull();
         expect(screen.queryByText('+1 till')).toBeNull();
         expect(screen.getByText('5 varor kvar att handla')).toBeDefined();
+        expect(screen.queryByText(/av 6 klara/)).toBeNull();
+        expect(screen.getByPlaceholderText('Lägg till matvara...')).toBeInTheDocument();
+        expect(screen.getAllByTestId('home-shopping-item').map((item) => item.textContent?.trim()))
+            .toEqual(['Mjölk', 'Bröd', 'Smör', 'Ägg', 'Kaffe']);
+
+        const completedItemsButton = screen.getByRole('button', { name: 'Handlade varor (1)' });
+        expect(completedItemsButton).toHaveAttribute('aria-expanded', 'false');
+        fireEvent.click(completedItemsButton);
+        expect(screen.getByText('Ost')).toBeInTheDocument();
+        expect(completedItemsButton).toHaveAttribute('aria-expanded', 'true');
 
         // Click shopping card to navigate
         const shoppingCard = screen.getByText('Inköpslista').closest('[role="button"]')!;

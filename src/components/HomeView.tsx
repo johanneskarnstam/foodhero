@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, Plus, X } from 'lucide-react';
+import { ShoppingCart, ArrowRight, CheckCircle2, Circle, ChevronDown, UtensilsCrossed, Plus, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useMealPlan } from '../hooks/useMealPlan';
 import { useToast } from '../context/ToastContext';
@@ -84,17 +84,18 @@ export const HomeView: React.FC = () => {
     // State för receptmodal
     const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
     const [showMealDetailModal, setShowMealDetailModal] = useState(false);
+    const [completedItemsExpanded, setCompletedItemsExpanded] = useState(false);
 
-    const { uncompletedItems, completedCount, totalCount } = useMemo(() => {
+    const { uncompletedItems, completedItems, totalCount } = useMemo(() => {
         if (!list || !list.items) {
-            return { uncompletedItems: [], completedCount: 0, totalCount: 0 };
+            return { uncompletedItems: [], completedItems: [], completedCount: 0, totalCount: 0 };
         }
         const total = list.items.length;
-        const completed = list.items.filter((i: Item) => i.completed).length;
         const uncompleted = list.items.filter((i: Item) => !i.completed);
+        const completedItems = list.items.filter((i: Item) => i.completed);
         return {
             uncompletedItems: uncompleted,
-            completedCount: completed,
+            completedItems,
             totalCount: total,
         };
     }, [list]);
@@ -291,49 +292,50 @@ export const HomeView: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Progress bar om listan innehåller både klara och oklara varor */}
-                {totalCount > 0 && completedCount > 0 && uncompletedItems.length > 0 && (
-                    <div className="mb-4">
-                        <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
-                            <span>{completedCount} av {totalCount} klara</span>
-                            <span>{Math.round((completedCount / totalCount) * 100)}%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                                style={{ width: `${(completedCount / totalCount) * 100}%` }}
-                            />
-                        </div>
-                    </div>
-                )}
-
                 {/* Förhandsvisning av varor */}
-                {totalCount > 0 ? (
+                {uncompletedItems.length > 0 ? (
                     <div className="space-y-2 pt-1 border-t border-gray-100 dark:border-gray-700/60">
-                        {list?.items?.map((item) => (
-                            <div key={item.id} className="flex items-center gap-2.5 text-sm text-gray-700 dark:text-gray-300">
-                                {item.completed ? (
-                                    <CheckCircle2 size={14} className="text-emerald-500 flex-shrink-0" />
-                                ) : (
-                                    <Circle size={13} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                                )}
-                                <span className={`truncate ${item.completed ? 'text-gray-400 line-through dark:text-gray-500' : ''}`}>
-                                    {item.text}
-                                </span>
+                        {uncompletedItems.map((item) => (
+                            <div key={item.id} data-testid="home-shopping-item" className="flex min-h-9 items-center gap-3 py-1 text-base text-gray-700 dark:text-gray-300">
+                                <Circle size={16} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                <span className="truncate">{item.text}</span>
                             </div>
                         ))}
                     </div>
                 ) : (
                     <div className="py-2 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-700/60 pt-3">
                         <CheckCircle2 size={16} className="text-emerald-500" />
-                        <span>
-                            {totalCount > 0
-                                ? t('dashboard.allDone', 'Allt är inhandlat! 🎉')
-                                : t('dashboard.emptyList', 'Inköpslistan är tom')}
-                        </span>
+                        <span>{totalCount > 0
+                            ? t('dashboard.allDone', 'Allt är inhandlat! 🎉')
+                            : t('dashboard.emptyList', 'Inköpslistan är tom')}</span>
                     </div>
                 )}
                 </div>
+
+                {completedItems.length > 0 && (
+                    <div className="border-t border-gray-100 px-5 py-3 dark:border-gray-700/60">
+                        <button
+                            type="button"
+                            onClick={() => setCompletedItemsExpanded((expanded) => !expanded)}
+                            aria-expanded={completedItemsExpanded}
+                            aria-controls="home-completed-items"
+                            className="flex w-full items-center gap-2 py-1 text-left text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        >
+                            <ChevronDown size={16} className={`transition-transform ${completedItemsExpanded ? 'rotate-180' : ''}`} />
+                            <span>{t('lists.completedItems', 'Handlade varor')} ({completedItems.length})</span>
+                        </button>
+                        {completedItemsExpanded && (
+                            <div id="home-completed-items" className="space-y-2 pb-1 pt-2">
+                                {completedItems.map((item) => (
+                                    <div key={item.id} data-testid="home-completed-item" className="flex min-h-9 items-center gap-3 py-1 text-base text-gray-400 dark:text-gray-500">
+                                        <CheckCircle2 size={17} className="flex-shrink-0 text-emerald-500" />
+                                        <span className="truncate line-through">{item.text}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
                 
                 {/* Snabbaddition - integrerat i inköpslistans container */}
                 <div className="border-t border-gray-200/80 dark:border-gray-700/80 p-4">
@@ -347,7 +349,8 @@ export const HomeView: React.FC = () => {
                                     onFocus={() => quickAddText.trim() && setShowSuggestions(true)}
                                     onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                                     placeholder={t('dashboard.quickAddPlaceholder', 'Lägg till matvara...')}
-                                    className="flex-1 px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    aria-label={t('dashboard.quickAddPlaceholder', 'Lägg till matvara...')}
+                                    className="min-h-11 flex-1 px-4 py-2.5 text-base bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                                 {quickAddText && (
                                     <button
