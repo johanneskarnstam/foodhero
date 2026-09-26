@@ -204,11 +204,11 @@ export const HomeView: React.FC = () => {
 
     return (
         <div className="max-w-3xl mx-auto space-y-6 pb-6">
-            <section className="flex items-center gap-4 rounded-xl bg-blue-600 px-5 py-4 text-white shadow-sm">
+            <section className="flex items-center gap-4 rounded-xl border border-blue-100 bg-blue-50 px-5 py-4 dark:border-blue-900/50 dark:bg-blue-950/30">
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <UtensilsCrossed size={21} className="shrink-0 text-blue-100" />
+                    <UtensilsCrossed size={21} className="shrink-0 text-blue-600 dark:text-blue-400" />
                     <div className="min-w-0">
-                        <p className="text-xs font-medium text-blue-100">
+                        <p className="text-xs font-medium text-blue-700 dark:text-blue-300">
                             {nextMealInfo.hasMeal ? nextMealInfo.label : t('dashboard.nextMeal', 'Nästa måltid')}
                         </p>
                         {nextMealInfo.hasMeal ? (
@@ -226,12 +226,12 @@ export const HomeView: React.FC = () => {
                                     }
                                     setShowMealDetailModal(true);
                                 }}
-                                className="block max-w-full truncate text-left text-lg font-semibold text-white hover:underline focus:outline-none focus:ring-2 focus:ring-white"
+                                className="block max-w-full truncate text-left text-lg font-semibold text-blue-900 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-100 dark:focus:ring-blue-300"
                             >
                                 {nextMealInfo.title}
                             </button>
                         ) : (
-                            <p className="text-sm font-semibold">
+                            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                                 {t('dashboard.noMealsPlannedPrompt', 'Ingen måltid planerad')}
                             </p>
                         )}
@@ -241,7 +241,7 @@ export const HomeView: React.FC = () => {
                     type="button"
                     onClick={() => navigate('/mealplan')}
                     aria-label={t('nav.mealplan', 'Matsedel')}
-                    className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-white"
+                    className="flex size-10 shrink-0 items-center justify-center rounded-lg text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-blue-300 dark:hover:bg-blue-900/40 dark:focus:ring-blue-300"
                 >
                     <ArrowRight size={20} />
                 </button>

@@ -219,9 +219,13 @@
     "timerSignalOptions": {
       "classic": "Three tones",
       "bell": "Bell",
-      "soft": "Soft tone"
+      "soft": "Soft tone",
+      "digital": "Digital beeps",
+      "alarm": "Alarm",
+      "chime": "Chime"
     },
     "previewTimerSignal": "Preview sound",
+    "stopTimerSignal": "Stop sound",
     "light": "Light",
     "dark": "Dark",
     "auto": "Auto",
@@ -756,6 +760,7 @@
     "addMinute": "+1 min",
     "dismiss": "Dismiss",
     "done": "Done!",
+    "stopAlert": "Stop sound",
     "step": "Step {{step}}",
     "activeTimers": "Active timers",
     "timeRemaining": "{{time}} left",

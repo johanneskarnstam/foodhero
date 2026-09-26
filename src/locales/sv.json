@@ -220,9 +220,13 @@
     "timerSignalOptions": {
       "classic": "Tre toner",
       "bell": "Klockspel",
-      "soft": "Mjuk ton"
+      "soft": "Mjuk ton",
+      "digital": "Digitalt pip",
+      "alarm": "Väckarklocka",
+      "chime": "Ljus klang"
     },
     "previewTimerSignal": "Testa signal",
+    "stopTimerSignal": "Stoppa ljud",
     "light": "Ljust",
     "dark": "Mörkt",
     "auto": "Auto",
@@ -757,6 +761,7 @@
     "addMinute": "+1 min",
     "dismiss": "Stäng",
     "done": "Klart!",
+    "stopAlert": "Stoppa ljudet",
     "step": "Steg {{step}}",
     "activeTimers": "Aktiva timers",
     "timeRemaining": "{{time}} kvar",

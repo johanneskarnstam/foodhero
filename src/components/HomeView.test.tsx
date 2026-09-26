@@ -152,6 +152,7 @@ describe('HomeView Component', () => {
         );
 
         expect(screen.getByText('Nästa måltid')).toBeDefined();
+        expect(screen.getByText('Nästa måltid').closest('section')).toHaveClass('bg-blue-50');
         expect(screen.getByText('Ingen måltid planerad')).toBeDefined();
         expect(screen.getByText('Inköpslista')).toBeDefined();
         expect(screen.getByText('0 varor kvar att handla')).toBeDefined();

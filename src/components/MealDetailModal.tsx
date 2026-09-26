@@ -69,7 +69,9 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
         resetTimer,
         adjustTimer,
         removeTimer,
-        clearAllTimers
+        clearAllTimers,
+        isAlarmPlaying,
+        stopAlarm
     } = useRecipeTimers();
 
     useEffect(() => {
@@ -422,6 +424,8 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
                     onReset={resetTimer}
                     onAdjust={adjustTimer}
                     onRemove={removeTimer}
+                    isAlarmPlaying={isAlarmPlaying}
+                    onStopAlarm={stopAlarm}
                 />
 
                 {/* Action Footer */}

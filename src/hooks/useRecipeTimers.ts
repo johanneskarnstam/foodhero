@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { playTimerAlert } from '../utils/timerUtils';
+import { getTimerSignal, playTimerAlert, stopTimerAlert } from '../utils/timerUtils';
 
 export interface RecipeTimer {
     id: string;
@@ -14,8 +14,15 @@ export interface RecipeTimer {
 
 export const useRecipeTimers = () => {
     const [timers, setTimers] = useState<RecipeTimer[]>([]);
+    const [isAlarmPlaying, setIsAlarmPlaying] = useState(false);
     const timersRef = useRef(timers);
     timersRef.current = timers;
+    const finishedTimerIds = useRef(new Set<string>());
+
+    const stopAlarm = useCallback(() => {
+        stopTimerAlert();
+        setIsAlarmPlaying(false);
+    }, []);
 
     // Start or add a timer for a specific step
     const startOrAddTimer = useCallback((
@@ -61,6 +68,9 @@ export const useRecipeTimers = () => {
 
     // Toggle pause/play
     const toggleTimer = useCallback((id: string) => {
+        if (timersRef.current.some((timer) => timer.id === id && timer.isFinished)) {
+            stopAlarm();
+        }
         setTimers(prev => prev.map(t => {
             if (t.id === id) {
                 if (t.isFinished) {
@@ -75,10 +85,13 @@ export const useRecipeTimers = () => {
             }
             return t;
         }));
-    }, []);
+    }, [stopAlarm]);
 
     // Reset timer
     const resetTimer = useCallback((id: string) => {
+        if (timersRef.current.some((timer) => timer.id === id && timer.isFinished)) {
+            stopAlarm();
+        }
         setTimers(prev => prev.map(t => {
             if (t.id === id) {
                 return {
@@ -90,7 +103,7 @@ export const useRecipeTimers = () => {
             }
             return t;
         }));
-    }, []);
+    }, [stopAlarm]);
 
     // Adjust timer by delta seconds (e.g. +60)
     const adjustTimer = useCallback((id: string, deltaSeconds: number) => {
@@ -109,13 +122,33 @@ export const useRecipeTimers = () => {
 
     // Remove timer
     const removeTimer = useCallback((id: string) => {
+        if (timersRef.current.some((timer) => timer.id === id && timer.isFinished)) {
+            stopAlarm();
+        }
         setTimers(prev => prev.filter(t => t.id !== id));
-    }, []);
+    }, [stopAlarm]);
 
     // Clear all timers
     const clearAllTimers = useCallback(() => {
+        stopAlarm();
         setTimers([]);
-    }, []);
+        finishedTimerIds.current.clear();
+    }, [stopAlarm]);
+
+    useEffect(() => {
+        const currentFinishedTimerIds = new Set(
+            timers.filter((timer) => timer.isFinished).map((timer) => timer.id)
+        );
+        const hasNewlyFinishedTimer = [...currentFinishedTimerIds].some(
+            (id) => !finishedTimerIds.current.has(id)
+        );
+        finishedTimerIds.current = currentFinishedTimerIds;
+
+        if (hasNewlyFinishedTimer) {
+            setIsAlarmPlaying(true);
+            playTimerAlert(getTimerSignal(), () => setIsAlarmPlaying(false));
+        }
+    }, [timers]);
 
     // Active ticking effect
     useEffect(() => {
@@ -124,12 +157,10 @@ export const useRecipeTimers = () => {
 
         const interval = setInterval(() => {
             setTimers(prev => {
-                let finishedAny = false;
                 const next = prev.map(t => {
                     if (!t.isRunning || t.isFinished) return t;
 
                     if (t.remainingSeconds <= 1) {
-                        finishedAny = true;
                         return {
                             ...t,
                             remainingSeconds: 0,
@@ -143,10 +174,6 @@ export const useRecipeTimers = () => {
                         remainingSeconds: t.remainingSeconds - 1
                     };
                 });
-
-                if (finishedAny) {
-                    playTimerAlert();
-                }
 
                 return next;
             });
@@ -162,6 +189,8 @@ export const useRecipeTimers = () => {
         resetTimer,
         adjustTimer,
         removeTimer,
-        clearAllTimers
+        clearAllTimers,
+        isAlarmPlaying,
+        stopAlarm,
     };
 };

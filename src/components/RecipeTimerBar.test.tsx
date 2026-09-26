@@ -8,6 +8,7 @@ describe('RecipeTimerBar', () => {
     const mockOnReset = vi.fn();
     const mockOnAdjust = vi.fn();
     const mockOnRemove = vi.fn();
+    const mockOnStopAlarm = vi.fn();
 
     const sampleTimers: RecipeTimer[] = [
         {
@@ -40,6 +41,8 @@ describe('RecipeTimerBar', () => {
                 onReset={mockOnReset}
                 onAdjust={mockOnAdjust}
                 onRemove={mockOnRemove}
+                isAlarmPlaying={false}
+                onStopAlarm={mockOnStopAlarm}
             />
         );
         expect(container.firstChild).toBeNull();
@@ -53,6 +56,8 @@ describe('RecipeTimerBar', () => {
                 onReset={mockOnReset}
                 onAdjust={mockOnAdjust}
                 onRemove={mockOnRemove}
+                isAlarmPlaying={false}
+                onStopAlarm={mockOnStopAlarm}
             />
         );
 
@@ -69,6 +74,8 @@ describe('RecipeTimerBar', () => {
                 onReset={mockOnReset}
                 onAdjust={mockOnAdjust}
                 onRemove={mockOnRemove}
+                isAlarmPlaying={false}
+                onStopAlarm={mockOnStopAlarm}
             />
         );
 
@@ -91,5 +98,22 @@ describe('RecipeTimerBar', () => {
         const dismissBtns = screen.getAllByTitle(/Stäng|Dismiss/i);
         fireEvent.click(dismissBtns[0]);
         expect(mockOnRemove).toHaveBeenCalledWith('t-1');
+    });
+
+    it('shows a stop control while the alarm is playing', () => {
+        render(
+            <RecipeTimerBar
+                timers={sampleTimers}
+                onToggle={mockOnToggle}
+                onReset={mockOnReset}
+                onAdjust={mockOnAdjust}
+                onRemove={mockOnRemove}
+                isAlarmPlaying={true}
+                onStopAlarm={mockOnStopAlarm}
+            />
+        );
+
+        fireEvent.click(screen.getByRole('button', { name: /Stoppa ljudet/i }));
+        expect(mockOnStopAlarm).toHaveBeenCalledOnce();
     });
 });

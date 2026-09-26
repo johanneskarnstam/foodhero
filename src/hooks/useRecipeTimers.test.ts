@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRecipeTimers } from './useRecipeTimers';
+import * as timerUtils from '../utils/timerUtils';
 
 describe('useRecipeTimers', () => {
     beforeEach(() => {
@@ -8,6 +9,7 @@ describe('useRecipeTimers', () => {
     });
 
     afterEach(() => {
+        vi.restoreAllMocks();
         vi.useRealTimers();
     });
 
@@ -61,6 +63,27 @@ describe('useRecipeTimers', () => {
         expect(result.current.timers[0].remainingSeconds).toBe(0);
         expect(result.current.timers[0].isRunning).toBe(false);
         expect(result.current.timers[0].isFinished).toBe(true);
+    });
+
+    it('plays the saved signal when a recipe timer finishes and allows stopping it', () => {
+        let onAutoStop: (() => void) | undefined;
+        const playAlert = vi.spyOn(timerUtils, 'playTimerAlert').mockImplementation((_signal, callback) => {
+            onAutoStop = callback;
+        });
+        const stopAlert = vi.spyOn(timerUtils, 'stopTimerAlert').mockImplementation(() => {});
+        localStorage.setItem(timerUtils.TIMER_SIGNAL_STORAGE_KEY, 'chime');
+
+        const { result } = renderHook(() => useRecipeTimers());
+        act(() => result.current.startOrAddTimer(0, 1, 1, '1 s'));
+        act(() => vi.advanceTimersByTime(1000));
+
+        expect(result.current.isAlarmPlaying).toBe(true);
+        expect(playAlert).toHaveBeenCalledWith('chime', expect.any(Function));
+
+        act(() => result.current.stopAlarm());
+        expect(result.current.isAlarmPlaying).toBe(false);
+        expect(stopAlert).toHaveBeenCalledOnce();
+        expect(onAutoStop).toEqual(expect.any(Function));
     });
 
     it('allows multiple timers to run concurrently', () => {

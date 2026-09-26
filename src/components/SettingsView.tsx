@@ -2,7 +2,7 @@ import React from 'react';
 import {
     LogOut, SortAsc, Calendar, ChevronDown, Settings, Eye, EyeOff,
     Globe, Sliders, Database, Trash2, Edit3, X, History, User,
-    Download, Copy, Check, Zap, Bug, Volume2
+    Download, Copy, Check, Zap, Bug, Volume2, VolumeX
 } from 'lucide-react';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { useAuth } from '../context/AuthContext';
@@ -19,6 +19,7 @@ import {
     parseTimerSignal,
     playTimerAlert,
     saveTimerSignal,
+    stopTimerAlert,
     TIMER_SIGNAL_OPTIONS,
     type TimerSignal,
 } from '../utils/timerUtils';
@@ -87,16 +88,37 @@ export const SettingsView: React.FC = () => {
     const [clearAllItemsModalOpen, setClearAllItemsModalOpen] = React.useState(false);
     const [quickItemsSettingsModalOpen, setQuickItemsSettingsModalOpen] = React.useState(false);
     const [timerSignal, setTimerSignal] = React.useState<TimerSignal>(() => getTimerSignal());
+    const [timerPreviewPlaying, setTimerPreviewPlaying] = React.useState(false);
     const list = lists.find(l => l.id === defaultListId);
     const sortBy = list?.settings?.defaultSort || 'manual';
 
     const { isSupported, isLocked, requestWakeLock, releaseWakeLock } = useWakeLock();
 
     const handleTimerSignalChange = (value: string) => {
+        if (timerPreviewPlaying) {
+            stopTimerAlert();
+            setTimerPreviewPlaying(false);
+        }
         const signal = parseTimerSignal(value);
         saveTimerSignal(signal);
         setTimerSignal(signal);
     };
+
+    const handleTimerSignalPreview = () => {
+        if (timerPreviewPlaying) {
+            stopTimerAlert();
+            setTimerPreviewPlaying(false);
+            return;
+        }
+
+        setTimerPreviewPlaying(true);
+        playTimerAlert(timerSignal, () => setTimerPreviewPlaying(false));
+    };
+
+    React.useEffect(() => {
+        if (!timerPreviewPlaying) return;
+        return () => stopTimerAlert();
+    }, [timerPreviewPlaying]);
 
     const [calendarAccordionOpen, setCalendarAccordionOpen] = React.useState(false);
     const [historyAccordionOpen, setHistoryAccordionOpen] = React.useState(false);
@@ -575,13 +597,15 @@ export const SettingsView: React.FC = () => {
                                 </select>
                                 <button
                                     type="button"
-                                    onClick={() => playTimerAlert(timerSignal)}
-                                    aria-label={t('settings.previewTimerSignal')}
-                                    title={t('settings.previewTimerSignal')}
+                                    onClick={handleTimerSignalPreview}
+                                    aria-label={t(timerPreviewPlaying ? 'settings.stopTimerSignal' : 'settings.previewTimerSignal')}
+                                    title={t(timerPreviewPlaying ? 'settings.stopTimerSignal' : 'settings.previewTimerSignal')}
                                     className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                 >
-                                    <Volume2 size={17} />
-                                    <span className="hidden sm:inline">{t('settings.previewTimerSignal')}</span>
+                                    {timerPreviewPlaying ? <VolumeX size={17} /> : <Volume2 size={17} />}
+                                    <span className="hidden sm:inline">
+                                        {t(timerPreviewPlaying ? 'settings.stopTimerSignal' : 'settings.previewTimerSignal')}
+                                    </span>
                                 </button>
                             </div>
                         </div>

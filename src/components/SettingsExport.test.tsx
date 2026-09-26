@@ -81,17 +81,22 @@ describe('SettingsView Export & Import Functionality', () => {
     }, 10000);
 
     it('saves the timer signal selection and previews that signal', () => {
-        const playTimerAlert = vi.spyOn(timerUtils, 'playTimerAlert');
+        const playTimerAlert = vi.spyOn(timerUtils, 'playTimerAlert').mockImplementation(() => {});
+        const stopTimerAlert = vi.spyOn(timerUtils, 'stopTimerAlert').mockImplementation(() => {});
         render(<SettingsView />);
 
         const signalSelect = screen.getByLabelText('settings.timerSignal') as HTMLSelectElement;
         expect(signalSelect.value).toBe('classic');
+        expect(signalSelect.options).toHaveLength(6);
         fireEvent.change(signalSelect, { target: { value: 'bell' } });
         expect(localStorage.getItem(timerUtils.TIMER_SIGNAL_STORAGE_KEY)).toBe('bell');
 
         fireEvent.click(screen.getByRole('button', { name: 'settings.previewTimerSignal' }));
-        expect(playTimerAlert).toHaveBeenCalledWith('bell');
+        expect(playTimerAlert).toHaveBeenCalledWith('bell', expect.any(Function));
+        fireEvent.click(screen.getByRole('button', { name: 'settings.stopTimerSignal' }));
+        expect(stopTimerAlert).toHaveBeenCalled();
         playTimerAlert.mockRestore();
+        stopTimerAlert.mockRestore();
     });
 
     it('opens export section and shows active items only by default in simple array format', () => {
