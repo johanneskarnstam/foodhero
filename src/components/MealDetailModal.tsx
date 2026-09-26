@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
     X, 
     Utensils, 
@@ -19,9 +19,10 @@ import { Meal, MealPlan, MealType } from '../types';
 import { useTranslation } from 'react-i18next';
 import { ConfirmModal } from './ConfirmModal';
 import { getDayName } from '../utils/dateUtils';
-import { useRecipeTimers } from '../hooks/useRecipeTimers';
+import { useRecipeTimers, type RecipeTimer } from '../hooks/useRecipeTimers';
 import { RecipeTimerBar } from './RecipeTimerBar';
 import { parseStepTimers, formatRemainingTime } from '../utils/timerUtils';
+import { showRecipeTimerNotification } from '../utils/timerNotifications';
 import { RecipeAiHelpModal } from './RecipeAiHelpModal';
 
 interface MealDetailModalProps {
@@ -62,6 +63,14 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
     const [showPlanMealPrompt, setShowPlanMealPrompt] = useState(false);
     const [showRecipeAiHelp, setShowRecipeAiHelp] = useState(false);
 
+    const handleRecipeTimerFinished = useCallback((timer: RecipeTimer) => {
+        void showRecipeTimerNotification({
+            id: timer.id,
+            title: t('timers.notificationTitle'),
+            body: t('timers.notificationBody', { step: timer.stepNumber, label: timer.label }),
+        });
+    }, [t]);
+
     const {
         timers,
         startOrAddTimer,
@@ -72,7 +81,7 @@ export const MealDetailModal: React.FC<MealDetailModalProps> = ({
         clearAllTimers,
         isAlarmPlaying,
         stopAlarm
-    } = useRecipeTimers();
+    } = useRecipeTimers(handleRecipeTimerFinished);
 
     useEffect(() => {
         if (!isOpen) {

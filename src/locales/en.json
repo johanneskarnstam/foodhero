@@ -216,6 +216,20 @@
     "theme": "Theme",
     "timerSignal": "Timer sound",
     "timerSignalDesc": "Choose how the app timer sounds when it finishes.",
+    "timerNotifications": "Timer completion notifications",
+    "timerNotificationStatus": {
+      "default": "Allow system notifications for recipe timers.",
+      "granted": "System notifications are allowed.",
+      "denied": "Notifications are blocked. Change permission in your browser's site settings.",
+      "unsupported": "This browser does not support system notifications."
+    },
+    "timerNotificationAction": {
+      "default": "Allow notifications",
+      "granted": "Allowed",
+      "denied": "Blocked",
+      "unsupported": "Not supported"
+    },
+    "timerNotificationsRequesting": "Requesting permission...",
     "timerSignalOptions": {
       "classic": "Three tones",
       "bell": "Bell",
@@ -761,6 +775,8 @@
     "dismiss": "Dismiss",
     "done": "Done!",
     "stopAlert": "Stop sound",
+    "notificationTitle": "Recipe timer finished",
+    "notificationBody": "Step {{step}} is done: {{label}}",
     "step": "Step {{step}}",
     "activeTimers": "Active timers",
     "timeRemaining": "{{time}} left",

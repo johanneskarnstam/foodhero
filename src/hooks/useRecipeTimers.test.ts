@@ -65,20 +65,22 @@ describe('useRecipeTimers', () => {
         expect(result.current.timers[0].isFinished).toBe(true);
     });
 
-    it('plays the saved signal when a recipe timer finishes and allows stopping it', () => {
+    it('plays the saved signal, reports completion, and allows stopping it', () => {
         let onAutoStop: (() => void) | undefined;
         const playAlert = vi.spyOn(timerUtils, 'playTimerAlert').mockImplementation((_signal, callback) => {
             onAutoStop = callback;
         });
         const stopAlert = vi.spyOn(timerUtils, 'stopTimerAlert').mockImplementation(() => {});
+        const onTimerFinished = vi.fn();
         localStorage.setItem(timerUtils.TIMER_SIGNAL_STORAGE_KEY, 'chime');
 
-        const { result } = renderHook(() => useRecipeTimers());
+        const { result } = renderHook(() => useRecipeTimers(onTimerFinished));
         act(() => result.current.startOrAddTimer(0, 1, 1, '1 s'));
         act(() => vi.advanceTimersByTime(1000));
 
         expect(result.current.isAlarmPlaying).toBe(true);
         expect(playAlert).toHaveBeenCalledWith('chime', expect.any(Function));
+        expect(onTimerFinished).toHaveBeenCalledWith(expect.objectContaining({ stepNumber: 1, label: '1 s' }));
 
         act(() => result.current.stopAlarm());
         expect(result.current.isAlarmPlaying).toBe(false);

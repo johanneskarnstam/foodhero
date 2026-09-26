@@ -2,7 +2,7 @@ import React from 'react';
 import {
     LogOut, SortAsc, Calendar, ChevronDown, Settings, Eye, EyeOff,
     Globe, Sliders, Database, Trash2, Edit3, X, History, User,
-    Download, Copy, Check, Zap, Bug, Volume2, VolumeX
+    Download, Copy, Check, Zap, Bug, Volume2, VolumeX, Bell
 } from 'lucide-react';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { useAuth } from '../context/AuthContext';
@@ -23,6 +23,11 @@ import {
     TIMER_SIGNAL_OPTIONS,
     type TimerSignal,
 } from '../utils/timerUtils';
+import {
+    getTimerNotificationPermission,
+    requestTimerNotificationPermission,
+    type TimerNotificationPermission,
+} from '../utils/timerNotifications';
 
 const SIMPLE_EXAMPLE = `[{"text": "Pajdeg", "note": "1st", "checkIfExistAtHome": true}, {"text": "Mjölk", "note": "1liter"}]`;
 
@@ -89,6 +94,10 @@ export const SettingsView: React.FC = () => {
     const [quickItemsSettingsModalOpen, setQuickItemsSettingsModalOpen] = React.useState(false);
     const [timerSignal, setTimerSignal] = React.useState<TimerSignal>(() => getTimerSignal());
     const [timerPreviewPlaying, setTimerPreviewPlaying] = React.useState(false);
+    const [timerNotificationPermission, setTimerNotificationPermission] = React.useState<TimerNotificationPermission>(
+        () => getTimerNotificationPermission()
+    );
+    const [isRequestingTimerNotifications, setIsRequestingTimerNotifications] = React.useState(false);
     const list = lists.find(l => l.id === defaultListId);
     const sortBy = list?.settings?.defaultSort || 'manual';
 
@@ -113,6 +122,13 @@ export const SettingsView: React.FC = () => {
 
         setTimerPreviewPlaying(true);
         playTimerAlert(timerSignal, () => setTimerPreviewPlaying(false));
+    };
+
+    const handleRequestTimerNotifications = async () => {
+        setIsRequestingTimerNotifications(true);
+        const permission = await requestTimerNotificationPermission();
+        setTimerNotificationPermission(permission);
+        setIsRequestingTimerNotifications(false);
     };
 
     React.useEffect(() => {
@@ -608,6 +624,31 @@ export const SettingsView: React.FC = () => {
                                     </span>
                                 </button>
                             </div>
+                        </div>
+
+                        {/* Timer notifications */}
+                        <div className="flex flex-col gap-3 border-t border-gray-100 pt-4 dark:border-gray-700/60 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <Bell size={18} className="shrink-0 text-gray-500 dark:text-gray-400" />
+                                <div className="min-w-0">
+                                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                                        {t('settings.timerNotifications')}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {t(`settings.timerNotificationStatus.${timerNotificationPermission}`)}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleRequestTimerNotifications}
+                                disabled={timerNotificationPermission !== 'default' || isRequestingTimerNotifications}
+                                className="shrink-0 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-700"
+                            >
+                                {isRequestingTimerNotifications
+                                    ? t('settings.timerNotificationsRequesting')
+                                    : t(`settings.timerNotificationAction.${timerNotificationPermission}`)}
+                            </button>
                         </div>
 
                         {/* Wake lock */}

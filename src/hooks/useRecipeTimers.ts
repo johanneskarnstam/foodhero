@@ -12,7 +12,9 @@ export interface RecipeTimer {
     isFinished: boolean;
 }
 
-export const useRecipeTimers = () => {
+export type RecipeTimerCompletionHandler = (timer: RecipeTimer) => void;
+
+export const useRecipeTimers = (onTimerFinished?: RecipeTimerCompletionHandler) => {
     const [timers, setTimers] = useState<RecipeTimer[]>([]);
     const [isAlarmPlaying, setIsAlarmPlaying] = useState(false);
     const timersRef = useRef(timers);
@@ -136,19 +138,20 @@ export const useRecipeTimers = () => {
     }, [stopAlarm]);
 
     useEffect(() => {
-        const currentFinishedTimerIds = new Set(
-            timers.filter((timer) => timer.isFinished).map((timer) => timer.id)
+        const newlyFinishedTimers = timers.filter(
+            (timer) => timer.isFinished && !finishedTimerIds.current.has(timer.id)
         );
-        const hasNewlyFinishedTimer = [...currentFinishedTimerIds].some(
-            (id) => !finishedTimerIds.current.has(id)
-        );
+        const currentFinishedTimerIds = new Set(timers.filter((timer) => timer.isFinished).map((timer) => timer.id));
         finishedTimerIds.current = currentFinishedTimerIds;
 
-        if (hasNewlyFinishedTimer) {
+        if (newlyFinishedTimers.length > 0) {
             setIsAlarmPlaying(true);
             playTimerAlert(getTimerSignal(), () => setIsAlarmPlaying(false));
+            newlyFinishedTimers.forEach((timer) => {
+                onTimerFinished?.(timer);
+            });
         }
-    }, [timers]);
+    }, [timers, onTimerFinished]);
 
     // Active ticking effect
     useEffect(() => {

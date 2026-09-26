@@ -217,6 +217,20 @@
     "theme": "Tema",
     "timerSignal": "Timersignal",
     "timerSignalDesc": "Välj hur appens timer låter när den är klar.",
+    "timerNotifications": "Notiser när timern är klar",
+    "timerNotificationStatus": {
+      "default": "Tillåt systemnotiser för recepttimers.",
+      "granted": "Systemnotiser är tillåtna.",
+      "denied": "Notiser är blockerade. Ändra behörigheten i webbläsarens webbplatsinställningar.",
+      "unsupported": "Den här webbläsaren stöder inte systemnotiser."
+    },
+    "timerNotificationAction": {
+      "default": "Tillåt notiser",
+      "granted": "Tillåtna",
+      "denied": "Blockerade",
+      "unsupported": "Stöds inte"
+    },
+    "timerNotificationsRequesting": "Begär behörighet...",
     "timerSignalOptions": {
       "classic": "Tre toner",
       "bell": "Klockspel",
@@ -762,6 +776,8 @@
     "dismiss": "Stäng",
     "done": "Klart!",
     "stopAlert": "Stoppa ljudet",
+    "notificationTitle": "Recepttimer klar",
+    "notificationBody": "Steg {{step}} är klart: {{label}}",
     "step": "Steg {{step}}",
     "activeTimers": "Aktiva timers",
     "timeRemaining": "{{time}} kvar",

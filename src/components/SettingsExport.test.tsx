@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useWakeLock } from '../hooks/useWakeLock';
 import * as timerUtils from '../utils/timerUtils';
+import * as timerNotifications from '../utils/timerNotifications';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../context/AppContext');
@@ -97,6 +98,22 @@ describe('SettingsView Export & Import Functionality', () => {
         expect(stopTimerAlert).toHaveBeenCalled();
         playTimerAlert.mockRestore();
         stopTimerAlert.mockRestore();
+    });
+
+    it('requests system notification permission from settings', async () => {
+        const getPermission = vi.spyOn(timerNotifications, 'getTimerNotificationPermission').mockReturnValue('default');
+        const requestPermission = vi.spyOn(timerNotifications, 'requestTimerNotificationPermission')
+            .mockResolvedValue('granted');
+        render(<SettingsView />);
+
+        await act(async () => {
+            fireEvent.click(screen.getByRole('button', { name: 'settings.timerNotificationAction.default' }));
+        });
+
+        expect(requestPermission).toHaveBeenCalledOnce();
+        expect(screen.getByText('settings.timerNotificationStatus.granted')).toBeInTheDocument();
+        getPermission.mockRestore();
+        requestPermission.mockRestore();
     });
 
     it('opens export section and shows active items only by default in simple array format', () => {
