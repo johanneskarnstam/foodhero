@@ -1,5 +1,35 @@
 [
   {
+    "hash": "6004adc0950f475f9913b6af21310e75a80fc4a6",
+    "date": "2026-09-26 12:55:57 +0200",
+    "message": "feat: visa systemnotis när recepttimer är klar"
+  },
+  {
+    "hash": "08a85e6c6c11eadc4adc1cff77c385305272fec5",
+    "date": "2026-09-26 12:47:15 +0200",
+    "message": "feat: loopa valbar timersignal i 20 sekunder"
+  },
+  {
+    "hash": "13abb3b4277de385524a66b4ad5e9e7f8c3e651d",
+    "date": "2026-09-26 12:32:36 +0200",
+    "message": "fix: gör avbockade varor hopfällbara på startsidan"
+  },
+  {
+    "hash": "63a9166e29c6b17acf64b75a72a53b8b9b29ecc1",
+    "date": "2026-09-26 12:24:34 +0200",
+    "message": "feat: lägg till valbar timersignal och fokusera startsidan"
+  },
+  {
+    "hash": "4d59c67b2a681782ad60b3025e6cd40ee62cc865",
+    "date": "2026-09-23 06:10:13 +0200",
+    "message": "feat: ändra måltidsplaneringssektion på startsidan - hela övre div med rubrik och pil navigera till måltidsplanering, klick på måltid öppnar modal. Ta bort taggar från måltidsplaneringsvyn"
+  },
+  {
+    "hash": "a7b73cba848e51d6cac9270bbe014744214452fd",
+    "date": "2026-09-23 06:04:57 +0200",
+    "message": "feat: ändra måltidsplaneringssektion på startsidan - klick på rubrik navigera till måltidsplanering, klick på måltid öppnar modal. Ta bort taggar från måltidsplaneringsvyn"
+  },
+  {
     "hash": "31a014ae1692423fe8cf9e8be24d22bdd1506e23",
     "date": "2026-09-22 15:46:57 +0200",
     "message": "Minor fixes after upgrade"
@@ -68,35 +98,5 @@
     "hash": "20234b2bf403ee956328720d254055d9bc6b5a09",
     "date": "2026-09-18 13:08:51 +0200",
     "message": "feat: rangordna AI-modeller med bäst överst, filtrera bort bildmodeller och lägg till styrkebeskrivningar"
-  },
-  {
-    "hash": "4c2308252bb5bc92a4863e8e452e763118588aa8",
-    "date": "2026-09-18 11:38:11 +0200",
-    "message": "feat: lägg till dynamisk hämtning och val av AI-modeller i inställningar"
-  },
-  {
-    "hash": "ff8c488f4d0f36e786c5f545ae3a3c284ae4f0fe",
-    "date": "2026-09-18 10:55:53 +0200",
-    "message": "feat: förbättra och åtgärda AI-komplettering av recept med modell-fallback och persistent sparande"
-  },
-  {
-    "hash": "0cad6e9e64abe72b85add1697cd60cc53576e684",
-    "date": "2026-09-18 06:01:37 +0200",
-    "message": "feat: lägg till recepttimers i tillagningssteg"
-  },
-  {
-    "hash": "24c3a09e97789beae308e195383389fbb6c86ba1",
-    "date": "2026-09-18 05:48:04 +0200",
-    "message": "Remove of unused files"
-  },
-  {
-    "hash": "f2c95a91df76179210246bc860774062f019b66d",
-    "date": "2026-09-18 05:36:57 +0200",
-    "message": "fix: korrigera modal-bredd på tablet i liggande läge"
-  },
-  {
-    "hash": "c7124f1232574b555445667b80d3bb2f271bbb47",
-    "date": "2026-09-18 05:12:31 +0200",
-    "message": "Debug info"
   }
 ]
